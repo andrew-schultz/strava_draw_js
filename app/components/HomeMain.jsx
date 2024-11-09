@@ -13,7 +13,8 @@ const HomeMain = ({stravaCookies}) => {
     const [selectedActivity, setSelectedActivity] = useState();
     const [cookies, setCookies] = useState(stravaCookies, null);
 
-    const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=http://localhost:3000/&approval_prompt=force&scope=activity:read_all`
+    const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI || 'http://localhost:3000/'
+    const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
     // const activitiesUrl = `${window.location.protocol}//${window.location.host}?activities`
     
     // useEffect(() => {
