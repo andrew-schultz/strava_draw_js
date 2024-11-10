@@ -9,14 +9,20 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const MapComponent = ({polylines}) => {
+const MapComponent = ({polylines, lineColor}) => {
     const mapRef = useRef(null);
+    const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
+    const mapHeight = window.innerHeight - 20 - infoDiv.offsetHeight;
 
     useEffect(() => {
         if (mapRef.current) return; // Map already initialized
-
-        mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() }).setView(polylines[0], 13);
-        const lineColor = 'black'
+        mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() });
+        mapRef.current.touchZoom.disable();
+        mapRef.current.doubleClickZoom.disable();
+        mapRef.current.scrollWheelZoom.disable();
+        mapRef.current.boxZoom.disable();
+        mapRef.current.keyboard.disable();
+        mapRef.current.dragging.disable();
 
         var polyline = new L.Polyline(polylines, {
             color: lineColor,
@@ -27,7 +33,7 @@ const MapComponent = ({polylines}) => {
         mapRef.current.fitBounds(polyline.getBounds());
     }, []);
 
-    return <div id="map" style={{ height: '800px' }} />;
+    return <div id="map" style={{ height: `${mapHeight}px` }} />;
 }
 
 export default MapComponent;

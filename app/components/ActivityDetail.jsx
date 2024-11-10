@@ -8,6 +8,8 @@ var polyline = require('@mapbox/polyline');
 
 const ActivityDetail = ({activity, setActivity}) => {
     const [polylines, setPolylines] = useState();
+    const [lineColor, setLineColor] = useState('white');
+    const [rawLineColor, setRawLine] = useState('1');
 
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
@@ -63,18 +65,34 @@ const ActivityDetail = ({activity, setActivity}) => {
         })
     }
 
+    const handleSetColor = (e) => {
+        const rawVal = e.target.value;
+        setRawLine(rawVal)
+
+        if (rawVal == '1') {
+            setLineColor('white')
+        } else if (rawVal == '2') {
+            setLineColor('black')
+        }
+    }
+
     return (
         <div className="actvityListItem detail" >
-            <div className='ActivityListItemDetailTextContainer'>
-                <div className="mapButton" onClick={localSetActivity}>back</div>
-                <div className="mapButton right" onClick={DownloadCanvasAsImage}>save</div>
+            <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
+                <div className='controlContainer'>
+                    <div className="mapButton" onClick={localSetActivity}>back</div>
+                    <div class="sliderContainer">
+                        <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>
+                    </div>
+                    <div className="mapButton right" onClick={DownloadCanvasAsImage}>save</div>
+                </div>
                 <div className="activityListItemTextBox">
                     <p className="activityListButtonP">Name: {activity.name}</p>
                     <p className="activityListButtonP">Date: {activity.start_date}</p>
                     <p className="activityListButtonP">Distance: {activity.distance / 1609.34}</p>
                 </div>
             </div>
-            {polylines ? (<MapComponent polylines={polylines}></MapComponent>) : null}
+            {polylines ? (<MapComponent polylines={polylines} lineColor={lineColor}></MapComponent>) : null}
         </div>
     )
 };
