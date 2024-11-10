@@ -12,11 +12,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 env: 
-  NEXT_PUBLIC_STRAVA_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_ID }}
-  NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
-  NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ secrets.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
-  NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ secrets.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
-  NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}s
+  NEXT_PUBLIC_STRAVA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_ID }}
+  NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
+  NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
+  NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
+  NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}s
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -34,6 +34,12 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env: 
+      NEXT_PUBLIC_STRAVA_CLIENT_ID: 139675
+      NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
+      NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
+      NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
+      NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,12 +95,6 @@ jobs:
           echo NEXT_PUBLIC_STRAVA_REDIRECT_URI=${{ vars.NEXT_PUBLIC_STRAVA_REDIRECT_URI }} >> .env
           cat .env
       - name: Build with Next.js
-        env: 
-          NEXT_PUBLIC_STRAVA_CLIENT_ID: 139675
-          NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ env.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
-          NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ env.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
-          NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ env.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
-          NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ env.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
