@@ -4,10 +4,10 @@ const ActivityListItem = ({activity, setActivity}) => {
     }
 
     return (
-        <div className="activity-list-item" onClick={localSetActivity}>
-            <p>Name: {activity.name}</p>
-            <p>Date: {activity.start_date}</p>
-            <p>Distance: {activity.distance / 1609.34}</p>
+        <div className="actvityListItem" onClick={localSetActivity}>
+            <p className="activityListButtonP">Name: {activity.name}</p>
+            <p className="activityListButtonP">Date: {activity.start_date}</p>
+            <p className="activityListButtonP">Distance: {activity.distance / 1609.34}</p>
         </div>
     )
 };

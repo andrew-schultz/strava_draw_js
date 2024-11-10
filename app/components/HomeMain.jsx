@@ -101,9 +101,14 @@ const HomeMain = ({stravaCookies}) => {
 
     return (
         <div>
-            {accessToken == null ? (<a style={{height:'100px', width:'100px'}} href={authUrl}>
-                GETAUTH
-            </a>) : (null) } 
+            {accessToken == null ? (
+            <div className='authButtonContainer'>
+                <a className='authLink' href={authUrl}>
+                    <div className='authButton'>
+                        GET AUTH
+                    </div>
+                </a>
+            </div>) : (null) } 
 
             {(activities == null) || selectedActivity ? (null) : (
                 activities.map((activity, index) => (
@@ -113,7 +118,7 @@ const HomeMain = ({stravaCookies}) => {
                 ))
             )}
             {selectedActivity ? 
-                <ActivityDetail activity={selectedActivity}></ActivityDetail> : (null)
+                <ActivityDetail activity={selectedActivity} setActivity={setSelectedActivity}></ActivityDetail> : (null)
             }
         </div>
     )

@@ -83,9 +83,6 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo "NextPublicaswhasdff : $NEXT_PUBLIC_STRAVA_CLIENT_ID "
-          echo "next asdfasdfasfd : $NEXT_PUBLIC_STRAVA_CLIENT_SECRET" 
-          echo "nextpublishasdfhasdfhsd: $NEXT_PUBLIC_STRAVA_REDIRECT_URI"
           echo NEXT_PUBLIC_STRAVA_CLIENT_ID="${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_ID }}" >> .env
           echo NEXT_PUBLIC_STRAVA_CLIENT_SECRET=${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }} >> .env
           echo NEXT_PUBLIC_STRAVA_ACCESS_TOKEN=${{ secrets.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }} >> .env
