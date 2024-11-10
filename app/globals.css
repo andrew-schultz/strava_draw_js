@@ -32,6 +32,7 @@
 
 .actvityListItem {
     margin-bottom: 10px;
+    cursor: pointer;
 
     &.detail {
     }
@@ -80,8 +81,8 @@
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 25px;
-    height: 25px;
+    width: 26px;
+    height: 26px;
     cursor: pointer;
     background-color: white;
     border: 1px solid #000000;
@@ -101,11 +102,14 @@
 }
   
 .slider::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    border-width: 1px;
-    background: white;
-    border-color: black;
+    width: 26px;
+    height: 26px;
     cursor: pointer;
+    background-color: white;
+    border: 1px solid #000000;
+    border-radius: 50%;
+
+    &.black {
+        background: black;
+    }
 }
