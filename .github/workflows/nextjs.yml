@@ -30,11 +30,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     env: 
-      NEXT_PUBLIC_STRAVA_CLIENT_ID: ${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_ID }}
-      NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
-      NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
-      NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ vars.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
-      NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}
+      NEXT_PUBLIC_STRAVA_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_ID }}
+      NEXT_PUBLIC_STRAVA_CLIENT_SECRET: ${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }}
+      NEXT_PUBLIC_STRAVA_ACCESS_TOKEN: ${{ secrets.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }}
+      NEXT_PUBLIC_STRAVA_REFRESH_TOKEN: ${{ secrets.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }}
+      NEXT_PUBLIC_STRAVA_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_STRAVA_REDIRECT_URI }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -86,11 +86,11 @@ jobs:
           echo "NextPublicaswhasdff : $NEXT_PUBLIC_STRAVA_CLIENT_ID "
           echo "next asdfasdfasfd : $NEXT_PUBLIC_STRAVA_CLIENT_SECRET" 
           echo "nextpublishasdfhasdfhsd: $NEXT_PUBLIC_STRAVA_REDIRECT_URI"
-          echo NEXT_PUBLIC_STRAVA_CLIENT_ID="${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_ID }}" >> .env
-          echo NEXT_PUBLIC_STRAVA_CLIENT_SECRET=${{ vars.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }} >> .env
-          echo NEXT_PUBLIC_STRAVA_ACCESS_TOKEN=${{ vars.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }} >> .env
-          echo NEXT_PUBLIC_STRAVA_REFRESH_TOKEN=${{ vars.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }} >> .env
-          echo NEXT_PUBLIC_STRAVA_REDIRECT_URI=${{ vars.NEXT_PUBLIC_STRAVA_REDIRECT_URI }} >> .env
+          echo NEXT_PUBLIC_STRAVA_CLIENT_ID="${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_ID }}" >> .env
+          echo NEXT_PUBLIC_STRAVA_CLIENT_SECRET=${{ secrets.NEXT_PUBLIC_STRAVA_CLIENT_SECRET }} >> .env
+          echo NEXT_PUBLIC_STRAVA_ACCESS_TOKEN=${{ secrets.NEXT_PUBLIC_STRAVA_ACCESS_TOKEN }} >> .env
+          echo NEXT_PUBLIC_STRAVA_REFRESH_TOKEN=${{ secrets.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN }} >> .env
+          echo NEXT_PUBLIC_STRAVA_REDIRECT_URI=${{ secrets.NEXT_PUBLIC_STRAVA_REDIRECT_URI }} >> .env
           cat .env
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
