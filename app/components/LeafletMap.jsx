@@ -17,6 +17,9 @@ const MapComponent = ({polylines, lineColor}) => {
     useEffect(() => {
         if (mapRef.current) return; // Map already initialized
         mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() });
+
+        
+
         mapRef.current.touchZoom.disable();
         mapRef.current.doubleClickZoom.disable();
         mapRef.current.scrollWheelZoom.disable();
@@ -31,9 +34,50 @@ const MapComponent = ({polylines, lineColor}) => {
         });
         polyline.addTo(mapRef.current);
         mapRef.current.fitBounds(polyline.getBounds());
+
+        setTimeout(() => {
+            let canvas = document.getElementsByTagName('canvas')[0];
+            var dataURL = canvas.toDataURL();
+            // Create an image element
+            const img = new Image();
+            // var img = document.createElement('img');
+            var dimensions = mapRef.current.getSize();
+            img.width = dimensions.x;
+            img.height = dimensions.y;
+
+            img.src = dataURL
+
+            document.getElementById('images').innerHTML = '';
+            document.getElementById('images').appendChild(img);
+        }, 50)
+        
+
+        
+
+        
+
+        // Assign the canvas content as the source of the image
+        // image.src = dataURL;
+
+
+        // replace the map div with ethe image
+        // document.body.appendChild(image)
+
+        // mapRef.current.remove()
+
+        
+
+        // var m = document.getElementById('map')
+        // m.style.display = "none"
     }, []);
 
-    return <div id="map" style={{ height: `${mapHeight}px` }} />;
+    // return <div id="map" style={{ height: `${mapHeight}px` }} />;
+    return (
+        <div>
+            <div id="images"></div>
+            <div id="map" style={{ height: `${mapHeight}px` }} />
+        </div>
+    )
 }
 
 export default MapComponent;

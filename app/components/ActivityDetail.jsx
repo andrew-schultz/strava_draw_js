@@ -54,24 +54,23 @@ const ActivityDetail = ({activity, setActivity}) => {
 
     const DownloadCanvasAsImage = async () => {
         let downloadLink = document.createElement('a');
-        downloadLink.setAttribute('download', `${activity.name}_${activity.start_date}.png`);
-        // downloadLink.setAttribute("download", "image");
         let canvas = document.getElementsByTagName('canvas')[0];
+
         await removeBackground(canvas).then( () => {
             var dataURL = canvas.toDataURL("image/png");
-            downloadLink.setAttribute("href", dataURL);
-            downloadLink.click();
 
-            // canvas.toBlob(blob => {
-            //     var reader = new FileReader();
-            //     var base64 = reader.result ;
-            //     console.log(base64)
-            //     downloadLink.setAttribute("href", base64);
-            //     // let url = URL.createObjectURL(blob);
-            //     // console.log(url)
-            //     // downloadLink.setAttribute('href', url);
-            //     downloadLink.click();
-            // });
+            // Create an image element
+            const image = new Image();
+
+            // Assign the canvas content as the source of the image
+            image.src = dataURL;
+
+            // Create a temporary link element to download the image
+            downloadLink.setAttribute("href", image.src);
+            downloadLink.setAttribute('download', `${activity.name}_${activity.start_date}.png`);
+
+            // Trigger the link programmatically to start the download
+            downloadLink.click();
         })
     }
 
