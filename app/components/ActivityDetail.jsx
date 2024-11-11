@@ -47,7 +47,6 @@ const ActivityDetail = ({activity, setActivity}) => {
             }
         }
 
-        
         ctx.putImageData(imgd, 0, 0);
         // return imgd
     }

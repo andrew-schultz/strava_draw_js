@@ -5,7 +5,8 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import Spinner from "./Spinner"
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -13,13 +14,11 @@ const MapComponent = ({polylines, lineColor}) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - 20 - infoDiv.offsetHeight;
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         if (mapRef.current) return; // Map already initialized
         mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() });
-
-        
-
         mapRef.current.touchZoom.disable();
         mapRef.current.doubleClickZoom.disable();
         mapRef.current.scrollWheelZoom.disable();
@@ -35,45 +34,47 @@ const MapComponent = ({polylines, lineColor}) => {
         polyline.addTo(mapRef.current);
         mapRef.current.fitBounds(polyline.getBounds());
 
+        const paintBackground = (canvas) => {
+            var ctx = canvas.getContext("2d")
+            var dimensions = mapRef.current.getSize();
+            ctx.fillStyle = "#dddddd";
+            ctx.fillRect(0, 0, dimensions.x, dimensions.y);
+        }
+
         setTimeout(() => {
             let canvas = document.getElementsByTagName('canvas')[0];
             var dataURL = canvas.toDataURL();
+            var dimensions = mapRef.current.getSize();
+
             // Create an image element
             const img = new Image();
-            // var img = document.createElement('img');
-            var dimensions = mapRef.current.getSize();
+
             img.width = dimensions.x;
             img.height = dimensions.y;
-
             img.src = dataURL
+            img.style.position = 'absolute';
+            img.style.zIndex = 100;
 
             document.getElementById('images').innerHTML = '';
             document.getElementById('images').appendChild(img);
-        }, 50)
+
+            setTimeout(() => {
+                paintBackground(canvas)
+                setLoading(false)
+            }, 50)
+        }, 250)
         
-
-        
-
-        
-
-        // Assign the canvas content as the source of the image
-        // image.src = dataURL;
-
-
-        // replace the map div with ethe image
-        // document.body.appendChild(image)
-
-        // mapRef.current.remove()
-
-        
-
-        // var m = document.getElementById('map')
-        // m.style.display = "none"
+        mapRef.current
     }, []);
+
 
     // return <div id="map" style={{ height: `${mapHeight}px` }} />;
     return (
         <div>
+            {loading ? (
+                <div className='spinnerContainer'>
+                    <Spinner></Spinner>
+                </div> ) : (null)}
             <div id="images"></div>
             <div id="map" style={{ height: `${mapHeight}px` }} />
         </div>
