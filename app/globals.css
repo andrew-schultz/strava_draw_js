@@ -121,7 +121,7 @@
     height: 100vh;
     background: white;
     position: absolute;
-    z-index: 100;
+    z-index: 105;
     display: flex;
     justify-content: center;
     align-items: center;

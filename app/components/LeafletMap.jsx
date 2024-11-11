@@ -34,11 +34,15 @@ const MapComponent = ({polylines, lineColor}) => {
         polyline.addTo(mapRef.current);
         mapRef.current.fitBounds(polyline.getBounds());
 
-        const paintBackground = (canvas) => {
+        const paintBackground = (x, y) => {
+            const canvas = document.createElement('canvas'); 
             var ctx = canvas.getContext("2d")
-            var dimensions = mapRef.current.getSize();
             ctx.fillStyle = "#dddddd";
-            ctx.fillRect(0, 0, dimensions.x, dimensions.y);
+            ctx.fillRect(0, 0, x, y);
+            canvas.style.width = '100%'
+            canvas.style.height = '90vh'
+            document.getElementById('images').appendChild(canvas);
+            console.log('painted it ')
         }
 
         setTimeout(() => {
@@ -57,11 +61,15 @@ const MapComponent = ({polylines, lineColor}) => {
 
             document.getElementById('images').innerHTML = '';
             document.getElementById('images').appendChild(img);
-
+            console.log('added image to dom')
             setTimeout(() => {
-                paintBackground(canvas)
+                paintBackground(canvas.width, canvas.height)
+                
+                var map = document.getElementById('map')
+                map.style.display = 'None'
                 setLoading(false)
-            }, 50)
+                console.log('set loading to false')
+            }, 60)
         }, 250)
         
         mapRef.current
