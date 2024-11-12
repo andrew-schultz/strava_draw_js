@@ -1,7 +1,15 @@
+import { useEffect, useState } from 'react';
 
-const Spinner = () => {
+
+const Spinner = ({loading, setLoading}) => {
     return (
-        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div>
+            { loading ? (
+            <div className='spinnerContainer'>
+                <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div> 
+            ) : (null)}
+        </div>
     )
 };
 

@@ -30,6 +30,11 @@
     }
 }
 
+#genImage {
+    position: absolute;
+    z-index: 99;
+}
+
 .right {
     /* float: right; */
 }
@@ -160,6 +165,7 @@
 .spinnerContainer {
     width: 100%;
     height: 100vh;
+    /* min-height: 800px; */
     background: white;
     position: absolute;
     z-index: 105;

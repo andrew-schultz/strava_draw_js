@@ -42,50 +42,46 @@ const MapComponent = ({polylines, lineColor}) => {
             ctx.fillStyle = "#dddddd";
             ctx.fillRect(0, 0, x, y);
             canvas.style.width = '100%'
-            canvas.style.height = '90vh'
+            canvas.style.height = '85vh'
             document.getElementById('images').appendChild(canvas);
             console.log('painted it ')
         }
 
         setTimeout(() => {
+            let map = document.getElementById('map');
             let canvas = document.getElementsByTagName('canvas')[0];
             var dataURL = canvas.toDataURL();
             var dimensions = mapRef.current.getSize();
-
+            map.style.display = 'None';
             // Create an image element
             const img = new Image();
-            img.id = 'genImage'
             img.width = dimensions.x;
             img.height = dimensions.y;
-            img.src = dataURL
-            img.style.position = 'absolute';
-            img.style.zIndex = 100;
-
+            img.id = 'genImage';
             document.getElementById('images').innerHTML = '';
             document.getElementById('images').appendChild(img);
-            console.log('added image to dom')
+            img.src = dataURL;
+                            
+            paintBackground(canvas.width, canvas.height);
+
             setTimeout(() => {
-                paintBackground(canvas.width, canvas.height)
-                
-                var map = document.getElementById('map')
-                map.style.display = 'None'
+                // paintBackground(canvas.width, canvas.height);
+                var map = document.getElementById('map');
+                map.style.display = 'None';
+                polyline.removeFrom(mapRef.current);
                 // mapRef.current.remove()
-                setLoading(false)
-                console.log('set loading to false')
-            }, 60)
+                setLoading(false);
+            }, 10)
         }, 250)
         
-        mapRef.current
+        // mapRef.current
     }, []);
 
 
     // return <div id="map" style={{ height: `${mapHeight}px` }} />;
     return (
         <div>
-            {loading ? (
-                <div className='spinnerContainer'>
-                    <Spinner></Spinner>
-                </div> ) : (null)}
+            <Spinner loading={loading} setLoading={setLoading}></Spinner>
             <div id="images"></div>
             <div id="map" style={{ height: `${mapHeight}px` }} />
         </div>
