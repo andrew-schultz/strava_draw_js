@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import HelpModal from "./HelpModal";
+
 
 var polyline = require('@mapbox/polyline');
 
@@ -10,6 +12,10 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [polylines, setPolylines] = useState();
     const [lineColor, setLineColor] = useState('white');
     const [rawLineColor, setRawLine] = useState('1');
+    const [showHelpModal, setShowHelpModal] = useState(false);
+    // const [lineColorChanged, setLineColorChanged] = useState(false);
+
+    // var showHelpModal = false;
 
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
@@ -76,12 +82,17 @@ const ActivityDetail = ({activity, setActivity}) => {
     const handleSetColor = (e) => {
         const rawVal = e.target.value;
         setRawLine(rawVal)
-
         if (rawVal == '1') {
             setLineColor('white')
         } else if (rawVal == '2') {
             setLineColor('black')
         }
+    }
+
+    const toggleHelpModal = () => {
+        setShowHelpModal(!showHelpModal) 
+        // showHelpModal = !showHelpModal;
+        // console.log(showHelpModal)
     }
 
     return (
@@ -92,7 +103,9 @@ const ActivityDetail = ({activity, setActivity}) => {
                     <div class="sliderContainer">
                         <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>
                     </div>
-                    <div className="mapButton right" onClick={DownloadCanvasAsImage}>save</div>
+                    {/* <div className="mapButton right" onClick={DownloadCanvasAsImage}>save</div> */}
+                    <HelpModal></HelpModal>
+                    {/* <div className="helpText right">long press image to save</div> */}
                 </div>
                 <div className="activityListItemTextBox">
                     <p className="activityListButtonP">Name: {activity.name}</p>
@@ -100,7 +113,8 @@ const ActivityDetail = ({activity, setActivity}) => {
                     <p className="activityListButtonP">Distance: {activity.distance / 1609.34}</p>
                 </div>
             </div>
-            {polylines ? (<MapComponent polylines={polylines} lineColor={lineColor}></MapComponent>) : null}
+            
+            {polylines ? (<MapComponent polylines={polylines} lineColor={lineColor} ></MapComponent>) : null}
         </div>
     )
 };

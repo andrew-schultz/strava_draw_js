@@ -14,10 +14,12 @@ const MapComponent = ({polylines, lineColor}) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - 20 - infoDiv.offsetHeight;
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (mapRef.current) return; // Map already initialized
+
+        setLoading(true);
         mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() });
         mapRef.current.touchZoom.disable();
         mapRef.current.doubleClickZoom.disable();
@@ -52,7 +54,7 @@ const MapComponent = ({polylines, lineColor}) => {
 
             // Create an image element
             const img = new Image();
-
+            img.id = 'genImage'
             img.width = dimensions.x;
             img.height = dimensions.y;
             img.src = dataURL
@@ -67,6 +69,7 @@ const MapComponent = ({polylines, lineColor}) => {
                 
                 var map = document.getElementById('map')
                 map.style.display = 'None'
+                // mapRef.current.remove()
                 setLoading(false)
                 console.log('set loading to false')
             }, 60)

@@ -22,12 +22,52 @@
     border: 1px solid black;
     padding: 5px;
     display: inline-block;
-    max-width: 25%;
+    /* max-width: 25%; */
     max-height: 20px;
 
     &.right {
         float: right;
     }
+}
+
+.right {
+    /* float: right; */
+}
+
+.helpText {
+    padding-top: 0px;
+    display: inline-block;
+    max-width: 35%;
+    text-align: center;
+}
+
+.helpModalContainer {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+    z-index: 101;
+    left: 0px;
+    top: 30%;
+}
+
+.helpModalContent {
+    text-align: center;
+    max-width: 80%;
+    background-color: white;
+    border: 1px solid black;
+    padding: 5px;
+    position: relative;
+}
+
+.closeModal {
+    position: absolute;
+    right: 5px;
+    top: -15px;
+}
+
+.selected {
+    background-color: grey;
 }
 
 .actvityListItem {
@@ -52,7 +92,8 @@
 }
 
 .controlContainer {
-    display: flex;;
+    display: flex;
+    justify-content: space-between;
 }
 
 .sliderContainer {
