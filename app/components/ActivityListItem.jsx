@@ -3,11 +3,13 @@ const ActivityListItem = ({activity, setActivity}) => {
         setActivity(activity)
     }
 
+    const date = new Date(activity.start_date).toLocaleString()
+
     return (
         <div className="actvityListItem" onClick={localSetActivity}>
             <p className="activityListButtonP">Name: {activity.name}</p>
-            <p className="activityListButtonP">Date: {activity.start_date}</p>
-            <p className="activityListButtonP">Distance: {activity.distance / 1609.34}</p>
+            <p className="activityListButtonP">Date: {date}</p>
+            <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p>
         </div>
     )
 };

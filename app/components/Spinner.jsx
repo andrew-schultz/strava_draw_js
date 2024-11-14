@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
-
-
-const Spinner = ({loading, setLoading}) => {
+const Spinner = ({loading}) => {
     return (
         <div>
             { loading ? (

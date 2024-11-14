@@ -10,7 +10,7 @@ import Spinner from "./Spinner"
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const MapComponent = ({polylines, lineColor}) => {
+const MapComponent = ({polylines, lineColor, showText, activity}) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - 20 - infoDiv.offsetHeight;
@@ -20,7 +20,7 @@ const MapComponent = ({polylines, lineColor}) => {
         if (mapRef.current) return; // Map already initialized
 
         setLoading(true);
-        mapRef.current = L.map('map', {zoomControl: false, renderer: L.canvas() });
+        mapRef.current = L.map('map', {attributionControl: false, zoomControl: false, renderer: L.canvas() });
         mapRef.current.touchZoom.disable();
         mapRef.current.doubleClickZoom.disable();
         mapRef.current.scrollWheelZoom.disable();
@@ -30,55 +30,160 @@ const MapComponent = ({polylines, lineColor}) => {
 
         var polyline = new L.Polyline(polylines, {
             color: lineColor,
-            weight: 2,
+            weight: 3,
             opacity: 1
         });
-        polyline.addTo(mapRef.current);
-        mapRef.current.fitBounds(polyline.getBounds());
 
-        const paintBackground = (x, y) => {
-            const canvas = document.createElement('canvas'); 
-            var ctx = canvas.getContext("2d")
-            ctx.fillStyle = "#dddddd";
-            ctx.fillRect(0, 0, x, y);
-            canvas.style.width = '100%'
-            canvas.style.height = '85vh'
-            document.getElementById('images').appendChild(canvas);
-            console.log('painted it ')
+        polyline.addTo(mapRef.current);
+        const polylineBounds = polyline.getBounds();
+        mapRef.current.fitBounds(polylineBounds);
+        
+        const drawText = async (polylineBounds, canvas, lineColor) => {
+            await generateText(polylineBounds, canvas, lineColor).then(()=> {
+                genImage();
+            });
         }
 
-        setTimeout(() => {
-            let map = document.getElementById('map');
-            let canvas = document.getElementsByTagName('canvas')[0];
-            var dataURL = canvas.toDataURL();
-            var dimensions = mapRef.current.getSize();
-            map.style.display = 'None';
-            // Create an image element
-            const img = new Image();
-            img.width = dimensions.x;
-            img.height = dimensions.y;
-            img.id = 'genImage';
-            document.getElementById('images').innerHTML = '';
-            document.getElementById('images').appendChild(img);
-            img.src = dataURL;
-                            
-            paintBackground(canvas.width, canvas.height);
-
+        const genImage = () => {
             setTimeout(() => {
-                // paintBackground(canvas.width, canvas.height);
-                var map = document.getElementById('map');
+                let dimensions = mapRef.current.getSize();
+                let map = document.getElementById('map');
+                let canvas = document.getElementsByTagName('canvas')[0];
+                let dataURL = canvas.toDataURL();
+    
+                // hide map
                 map.style.display = 'None';
+    
+                // Create an image element
+                const img = new Image();
+                img.width = dimensions.x;
+                img.height = dimensions.y;
+                img.id = 'genImage';
+                document.getElementById('images').innerHTML = '';
+                document.getElementById('images').appendChild(img);
+                img.src = dataURL;
+                                
+                paintBackground(canvas.width, canvas.height);
                 polyline.removeFrom(mapRef.current);
-                // mapRef.current.remove()
-                setLoading(false);
-            }, 10)
-        }, 250)
-        
-        // mapRef.current
+    
+                setTimeout(() => {
+                    var map = document.getElementById('map');
+                    map.style.display = 'None';
+                    setLoading(false);
+                }, 10)
+            }, 250)
+        }
+
+        let canvas = document.getElementsByTagName('canvas')[0];
+        if (showText) {
+            setTimeout(() => {
+                drawText(polylineBounds, canvas, lineColor) 
+            }, 100)
+        }
+        else {
+            genImage()
+        }
+
     }, []);
 
+    const generateText = async (bounds, canvas, lineColor) => {
+        await findLowestPixel(lineColor).then((lowestPixel) => {
+            const ctx = canvas.getContext("2d");
+            ctx.font = "bold 16pt Arial";
+            ctx.fillStyle = lineColor;
 
-    // return <div id="map" style={{ height: `${mapHeight}px` }} />;
+            let dimensions = mapRef.current.getSize();
+            const centerY = (lowestPixel / 2) - 20;
+
+            // get canvas width / 3
+            const third = dimensions.x / 3;
+            const half = dimensions.x / 2;
+            
+            // get half of the value of above, thats the half way point of the third
+            const thirdCenter = third / 2;
+            const halfCenter = half / 2;
+
+            // get width of text
+            const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+            const distanceText = 'Distance';
+            const distanceWidth = ctx.measureText(distance).width;
+            const distanceTextWidth = ctx.measureText(distanceText).width;
+
+            const totalElevation = `${(activity.total_elevation_gain / 3.281).toFixed(2)} ft`;
+            const totalElevationText = 'Elev. Gain';
+            const totalElevationWidth = ctx.measureText(totalElevation).width;
+            const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
+
+            const movingTime = getMovingTime(activity);
+            const movingTimeText = 'Duration';
+            const movingTimeWidth = ctx.measureText(movingTime).width;
+            const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
+
+            // set text start point at text width / 2
+            // distance = 0
+            ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
+            ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 25);
+            
+            // total_elevation_gain = third
+            ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
+            ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 25);
+    
+            // moving_time = third + third
+            ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
+            ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 25);
+        });
+    }
+
+    const getMovingTime = (activity) => {
+        let seconds = activity.moving_time % 60
+        let minutes = Math.round(activity.moving_time / 60);
+        let hours = Math.round(minutes / 60);
+        let time = `${minutes}m ${seconds}s`;
+        if (minutes > 60) {
+            minutes = minutes % 60;
+            time = `${hours}h ${minutes}m`;
+        }
+        return time;
+    }
+
+    const findLowestPixel = async (lineColor) => {
+        const canvas = document.getElementsByTagName('canvas')[0];
+        const ctx = canvas.getContext("2d");
+        const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
+        const pix = imgd.data; // array of pixels
+        let finalPixel = null;
+
+        for (var i = 0, n = pix.length; i < n; i += 4) {
+            var r = pix[i],
+                g = pix[i+1],
+                b = pix[i+2],
+                a = pix[i+3];
+            
+            if (r == color.r && g == color.g && b == color.b && a == color.a) { 
+                finalPixel = i;
+                // console.log(`i=${i}, r ${r}, g ${g}, b ${b}, a ${a}`)
+            }
+        }
+
+        const pixelLocation = finalPixel / 4
+        const rowsAbove = pixelLocation / canvas.width
+
+        return Math.round(rowsAbove);
+    }
+
+    const paintBackground = (x, y) => {
+        const images = document.getElementById('images');
+        const canvas = document.createElement('canvas');
+        canvas.style.width = '100%';
+        canvas.style.height = '85vh';
+        images.appendChild(canvas);
+
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#dddddd";
+        ctx.fillRect(0, 0, x, y);
+    }
+
     return (
         <div>
             <Spinner loading={loading} setLoading={setLoading}></Spinner>

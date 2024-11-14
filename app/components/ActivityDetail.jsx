@@ -3,19 +3,15 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 
-
 var polyline = require('@mapbox/polyline');
-
-// import 'leaflet/dist/leaflet.css';
 
 const ActivityDetail = ({activity, setActivity}) => {
     const [polylines, setPolylines] = useState();
     const [lineColor, setLineColor] = useState('white');
     const [rawLineColor, setRawLine] = useState('1');
-    const [showHelpModal, setShowHelpModal] = useState(false);
-    // const [lineColorChanged, setLineColorChanged] = useState(false);
-
-    // var showHelpModal = false;
+    const [showText, setShowText] = useState(false);
+    const [rawShowText, setRawShowText] = useState('1');
+    const date = new Date(activity.start_date).toLocaleString()
 
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
@@ -38,7 +34,7 @@ const ActivityDetail = ({activity, setActivity}) => {
             pix = imgd.data,
             newColor = {r:0, g:0, b:0, a:0};
 
-        for (var i = 0, n = pix.length; i <n; i += 4) {
+        for (var i = 0, n = pix.length; i < n; i += 4) {
             var r = pix[i],
                 g = pix[i+1],
                 b = pix[i+2];
@@ -89,10 +85,14 @@ const ActivityDetail = ({activity, setActivity}) => {
         }
     }
 
-    const toggleHelpModal = () => {
-        setShowHelpModal(!showHelpModal) 
-        // showHelpModal = !showHelpModal;
-        // console.log(showHelpModal)
+    const handleShowText = (e) => {
+        const rawVal = e.target.value;
+        setRawShowText(rawVal)
+        if (rawVal == '1') {
+            setShowText(false)
+        } else if (rawVal == '2') {
+            setShowText(true)
+        }
     }
 
     return (
@@ -100,21 +100,24 @@ const ActivityDetail = ({activity, setActivity}) => {
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
                     <div className="mapButton" onClick={localSetActivity}>back</div>
-                    <div class="sliderContainer">
-                        <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>
+                    <div className="slidersContainer">
+                        <div class="sliderContainer">
+                            <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>
+                        </div>
+                        <div class="sliderContainer">
+                            <input type="range" min="1" max="2" value={rawShowText} className={`slider ${showText ? ('on') : ('off')}`} id="showTextSelector" onChange={(e) => handleShowText(e)}></input>
+                        </div>
                     </div>
-                    {/* <div className="mapButton right" onClick={DownloadCanvasAsImage}>save</div> */}
                     <HelpModal></HelpModal>
-                    {/* <div className="helpText right">long press image to save</div> */}
                 </div>
                 <div className="activityListItemTextBox">
                     <p className="activityListButtonP">Name: {activity.name}</p>
-                    <p className="activityListButtonP">Date: {activity.start_date}</p>
-                    <p className="activityListButtonP">Distance: {activity.distance / 1609.34}</p>
+                    <p className="activityListButtonP">Date: {date}</p>
+                    <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p>
                 </div>
             </div>
             
-            {polylines ? (<MapComponent polylines={polylines} lineColor={lineColor} ></MapComponent>) : null}
+            {polylines ? (<MapComponent polylines={polylines} lineColor={lineColor} showText={showText} activity={activity}></MapComponent>) : null}
         </div>
     )
 };
