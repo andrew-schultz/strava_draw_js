@@ -109,7 +109,7 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             const distanceWidth = ctx.measureText(distance).width;
             const distanceTextWidth = ctx.measureText(distanceText).width;
 
-            const totalElevation = `${(activity.total_elevation_gain / 3.281).toFixed(2)} ft`;
+            const totalElevation = `${Math.round(activity.total_elevation_gain * 3.281)} ft`;
             const totalElevationText = 'Elev. Gain';
             const totalElevationWidth = ctx.measureText(totalElevation).width;
             const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
