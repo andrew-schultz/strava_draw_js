@@ -93,7 +93,7 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             ctx.fillStyle = lineColor;
 
             let dimensions = mapRef.current.getSize();
-            const centerY = (lowestPixel / 2) - 20;
+            const centerY = (lowestPixel / 2) - 30;
 
             // get canvas width / 3
             const third = dimensions.x / 3;
