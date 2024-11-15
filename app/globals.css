@@ -139,11 +139,19 @@
     margin: 0 auto;
 }
 
-.slidersContainer {
-    display: inline-block;
-    width: 50px;
-    margin: 0 auto;
-}
+/* .slidersContainer {
+  display: flex;
+  /* width: 50px; */
+  /* justify-content: center; */
+  /* margin: 0 auto; */
+/* } */
+
+/* .sliderContainer { */
+  /* max-width: 50px; */
+  /* display: inline-block; */
+  /* margin-left: 5px; */
+  /* margin-right: 5px; */
+/* } */
 
 .slider {
     -webkit-appearance: none;

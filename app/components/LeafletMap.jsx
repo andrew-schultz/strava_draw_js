@@ -36,7 +36,19 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
         });
 
         polyline.addTo(mapRef.current);
-        const polylineBounds = polyline.getBounds();
+        const initialPolylineBounds = polyline.getBounds();
+        let polylineBounds = initialPolylineBounds;
+        // calc how close the north and south lat's are, if within a threshold then do not adjust bounds
+        const northSouthDiff = initialPolylineBounds._northEast.lat - initialPolylineBounds._southWest.lat;
+        console.log(northSouthDiff)
+        if (northSouthDiff > 0.06) {
+            console.log('adjusted')
+            let adjustedPolylineBounds = initialPolylineBounds.pad(0.05);
+            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.025, adjustedPolylineBounds._northEast.lng);
+            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.025, adjustedPolylineBounds._southWest.lng);
+            polylineBounds = L.latLngBounds(corner1, corner2);
+        }
+
         mapRef.current.fitBounds(polylineBounds);
         
         const drawText = async (polylineBounds, canvas, lineColor) => {
