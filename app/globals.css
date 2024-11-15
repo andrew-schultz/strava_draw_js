@@ -1,3 +1,6 @@
+/* ---------------- */
+/* Auth             */
+/* ---------------- */
 .authButtonContainer {
     position: absolute;
     top: 40%;
@@ -17,6 +20,24 @@
     padding: 5px;
     color: black;
 }
+/* ---------------- */
+
+
+
+/* ---------------- */
+/* main element     */
+/* ---------------- */
+.scrollableElement {
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+
+/* ---------------- */
+
+
+
+
 
 .mapButton {
     border: 1px solid black;
@@ -75,12 +96,23 @@
     background-color: grey;
 }
 
-.actvityListItem {
+.activityListItem {
     margin-bottom: 10px;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
 
     &.detail {
     }
+}
+
+.activityListItemText {
+  display: inline-block;
+}
+
+.activityListMap {
+  display: inline-block;
+  width: 25%;
 }
 
 .ActivityListItemDetailTextContainer {
@@ -127,6 +159,10 @@
 
     &.black {
         background: black;
+    }
+
+    &.on {
+      background: black;
     }
 }
   

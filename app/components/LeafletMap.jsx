@@ -13,7 +13,8 @@ import 'leaflet/dist/leaflet.css';
 const MapComponent = ({polylines, lineColor, showText, activity}) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
-    const mapHeight = window.innerHeight - 20 - infoDiv.offsetHeight;
+    const mapHeight = window.innerHeight - infoDiv.offsetHeight;
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -106,31 +107,38 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             // get width of text
             const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
             const distanceText = 'Distance';
-            const distanceWidth = ctx.measureText(distance).width;
             const distanceTextWidth = ctx.measureText(distanceText).width;
 
             const totalElevation = `${Math.round(activity.total_elevation_gain * 3.281)} ft`;
             const totalElevationText = 'Elev. Gain';
-            const totalElevationWidth = ctx.measureText(totalElevation).width;
             const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
             const movingTime = getMovingTime(activity);
             const movingTimeText = 'Duration';
-            const movingTimeWidth = ctx.measureText(movingTime).width;
             const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
 
+
+            ctx.font = "bold 16pt Arial";
             // set text start point at text width / 2
             // distance = 0
             ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
-            ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 25);
             
             // total_elevation_gain = third
             ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
-            ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 25);
     
             // moving_time = third + third
             ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
-            ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 25);
+
+
+            ctx.font = "bold 20pt Arial";
+            const distanceWidth = ctx.measureText(distance).width;
+            ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
+
+            const totalElevationWidth = ctx.measureText(totalElevation).width;
+            ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
+
+            const movingTimeWidth = ctx.measureText(movingTime).width;
+            ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
         });
     }
 

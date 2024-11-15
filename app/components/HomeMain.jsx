@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getActivities, getAuthorization } from "../services/strava";
-import ActivityListItem from "./ActivityListItem"
 import ActivityDetail from "./ActivityDetail"
+import ActivityList from "./ActivityList"
 
 const HomeMain = ({stravaCookies}) => {
     const [accessToken, setAccessToken] = useState();
@@ -11,7 +11,12 @@ const HomeMain = ({stravaCookies}) => {
     const [athleteId, setAthleteId] = useState();
     const [activities, setActivities] = useState();
     const [selectedActivity, setSelectedActivity] = useState();
+    const [activityPage, setActivityPage] = useState(1);
+    const [reachedBottom, setReachedBottom] = useState(false);
     const [cookies, setCookies] = useState(stravaCookies, null);
+
+    const scrollRef = useRef(null);
+
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
@@ -63,8 +68,8 @@ const HomeMain = ({stravaCookies}) => {
             }
             
             if (creds.athlete.id && creds.access_token && creds.refresh_token) {
-                let activities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token)
-                console.log(activities)
+                let activities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token, activityPage)
+                setActivityPage(activityPage + 1);
                 setActivities(activities)      
             }
         }
@@ -85,6 +90,30 @@ const HomeMain = ({stravaCookies}) => {
 
     }, [])
 
+    useEffect(() => {
+        if (reachedBottom) {
+            // Perform action when bottom is reached
+            const getMoreActivities = async () => {
+                let newActivites = await getActivities(athleteId, accessToken, refreshToken, activityPage);
+                const allActivities = activities.concat(newActivites);
+                setActivityPage(activityPage + 1);
+                setActivities( allActivities);
+                setReachedBottom(false); // Reset the flag
+            }
+            getMoreActivities();
+        }
+    }, [reachedBottom]);
+
+
+    const handleScrollEvent = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+        if ((scrollTop + clientHeight >= scrollHeight - 100) && !reachedBottom && !selectedActivity) {
+            setReachedBottom(true);
+        } else {
+            // setReachedBottom(false);
+        }
+    };
+
     // useEffect(() => {
     //     console.log('act', activities)
     //     // if (activities) {
@@ -100,7 +129,7 @@ const HomeMain = ({stravaCookies}) => {
     // }
 
     return (
-        <div>
+        <div className='scrollableElement' ref={scrollRef} onScroll={handleScrollEvent}>
             {accessToken == null ? (
             <div className='authButtonContainer'>
                 <a className='authLink' href={authUrl}>
@@ -110,15 +139,14 @@ const HomeMain = ({stravaCookies}) => {
                 </a>
             </div>) : (null) } 
 
-            {(activities == null) || selectedActivity ? (null) : (
-                activities.map((activity, index) => (
-                    <div key={index}>
-                        <ActivityListItem activity={activity} setActivity={setSelectedActivity}></ActivityListItem>
-                    </div>
-                ))
-            )}
-            {selectedActivity ? 
-                <ActivityDetail activity={selectedActivity} setActivity={setSelectedActivity}></ActivityDetail> : (null)
+            <ActivityList activities={activities} setSelectedActivity={setSelectedActivity} selectedActivity={selectedActivity}></ActivityList>
+            {selectedActivity ? (
+                <ActivityDetail 
+                    activity={selectedActivity} 
+                    setActivity={setSelectedActivity}
+                    selectedActivity={selectedActivity}
+                ></ActivityDetail> 
+            ) : (null)
             }
         </div>
     )

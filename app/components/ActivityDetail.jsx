@@ -9,8 +9,8 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [polylines, setPolylines] = useState();
     const [lineColor, setLineColor] = useState('white');
     const [rawLineColor, setRawLine] = useState('1');
-    const [showText, setShowText] = useState(false);
-    const [rawShowText, setRawShowText] = useState('1');
+    const [showText, setShowText] = useState(true);
+    const [rawShowText, setRawShowText] = useState('2');
     const date = new Date(activity.start_date).toLocaleString()
 
     useEffect(() => {

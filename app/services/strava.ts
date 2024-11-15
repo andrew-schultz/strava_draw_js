@@ -26,14 +26,14 @@ const getAccessToken = async (refreshToken) => {
   return response.json();
 };
 
-export const getActivities = async (athleteId, accessToken, refreshToken) => {
+export const getActivities = async (athleteId, accessToken, refreshToken, page) => {
   // const { access_token: accessToken } = await getAccessToken(refreshToken);
   let uri = `${ATHLETES_ENDPOINT}${athleteId}`
   const response = await fetch(
-    `${uri}/activities?access_token=${accessToken}`
+    `${uri}/activities?access_token=${accessToken}&page=${page}}`
   );
   const json = await response.json();  
-
+  
   return json;
 };
 
