@@ -157,7 +157,7 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
     const getMovingTime = (activity) => {
         let seconds = activity.moving_time % 60
         let minutes = Math.round(activity.moving_time / 60);
-        let hours = Math.round(minutes / 60);
+        let hours = parseInt(minutes / 60);
         let time = `${minutes}m ${seconds}s`;
         if (minutes > 60) {
             minutes = minutes % 60;
