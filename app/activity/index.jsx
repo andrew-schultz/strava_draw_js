@@ -1,3 +1,4 @@
+
 import HomePage from './pages/index'
 
 export default async function Home() {

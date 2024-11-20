@@ -1,12 +1,11 @@
 'use client'
 import HomeMain from '../components/HomeMain'
 
-export default function Page({stravaCookies}) {
+export default function HomePage() {
 
   return (
     <div>
-        {/* <DynamicComponentWithNoSSR stravaCookies={null} /> */}
-        <HomeMain stravaCookies={null}></HomeMain>
+        <HomeMain ></HomeMain>
     </div>
   )
 }

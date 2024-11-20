@@ -26,15 +26,29 @@ const getAccessToken = async (refreshToken) => {
   return response.json();
 };
 
-export const getActivities = async (athleteId, accessToken, refreshToken, page) => {
-  // const { access_token: accessToken } = await getAccessToken(refreshToken);
+export const getActivities = async (athleteId, accessToken, refreshToken, page, retry=false) => {
+  let useThisAccessToken = accessToken;
+  if (retry) {
+    const { access_token } = await getAccessToken(refreshToken);
+    useThisAccessToken = access_token;
+  }
   let uri = `${ATHLETES_ENDPOINT}${athleteId}`
-  const response = await fetch(
-    `${uri}/activities?access_token=${accessToken}&page=${page}}`
-  );
-  const json = await response.json();  
-  
-  return json;
+  try {
+    const response = await fetch(
+      `${uri}/activities?access_token=${useThisAccessToken}&page=${page}}`
+    );
+    const json = await response.json();  
+    if (json.errors && !retry) {
+      getActivities(athleteId, accessToken, refreshToken, page, true)
+    }
+    else {
+      return json;
+    }
+  } catch (error) {
+    if (!retry) {
+      getActivities(athleteId, accessToken, refreshToken, page, true)
+    }
+  }
 };
 
 export const getAuthorization = async (code) => {

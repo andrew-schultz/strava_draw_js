@@ -14,7 +14,7 @@ const HelpModal = () => {
                 <div className='helpModalContainer'>
                     <div className='helpModalContent'>
                         <p className='closeModal' onClick={toggleHelpModal}>x</p>
-                        <p>Long press / right click the image to save. Only the map lines will be saved on a transparent background.</p>
+                        <p>Long press / right click the image to save. Only the map lines and stat text will be saved on a transparent background.</p>
                         <p>The top toggle changes line & text color.</p>
                         <p>The bottom toggle shows/hides stats.</p>
                     </div>

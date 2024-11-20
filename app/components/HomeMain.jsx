@@ -4,8 +4,11 @@ import { useEffect, useState, useRef } from 'react';
 import { getActivities, getAuthorization } from "../services/strava";
 import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
+import cookieCutter from "@boiseitguru/cookie-cutter";
+import Spinner from "./Spinner"
 
-const HomeMain = ({stravaCookies}) => {
+
+const HomeMain = () => {
     const [accessToken, setAccessToken] = useState();
     const [refreshToken, setRefreshToken] = useState();
     const [athleteId, setAthleteId] = useState();
@@ -13,81 +16,74 @@ const HomeMain = ({stravaCookies}) => {
     const [selectedActivity, setSelectedActivity] = useState();
     const [activityPage, setActivityPage] = useState(1);
     const [reachedBottom, setReachedBottom] = useState(false);
-    const [cookies, setCookies] = useState(stravaCookies, null);
+    const [loading, setLoading] = useState(true);
 
     const scrollRef = useRef(null);
-
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
     // const activitiesUrl = `${window.location.protocol}//${window.location.host}?activities`
     
-    // useEffect(() => {
-
-    //     if (stravaCookies) {
-    //         let cookies = stravaCookies;
-
-    //         console.log(stravaCookies)
-    //         debugger
-    //         setAccessToken(cookies.get('accessToken', null))
-    //         setRefreshToken(cookies.get('refreshsToken', null))
-    //         setAthleteId(cookies.get('athletId', null))
-    //         console.log()
-    //     }
-       
-    // }, [cookies])
 
     useEffect(() => {
+        setLoading(true)
         let params = new URLSearchParams(document.location.search);
         let code = params.get('code')
 
-        const getCreds = async (code) => {
+        const getCredsAndActivities = async (code) => {
 
             let creds = await getAuthorization(code)
             console.log(creds)
             
             if (creds.access_token) {
                 setAccessToken(creds.access_token)
-                // if (cookies) {
-                //     cookies.set('accessToken', creds.access_token)
-                // }
+                cookieCutter.set('accessToken', creds.access_token)
             }
 
             if (creds.refresh_token) {
                 setRefreshToken(creds.refresh_token)
-                // if (cookies) {
-                //     cookies.set('refreshToken', creds.refresh_token)
-                // }
+                cookieCutter.set('refreshToken', creds.refresh_token)
             }
 
             if (creds.athlete.id) {
                 setAthleteId(creds.athlete.id)
-                // if (cookies) {
-                //     cookies.set('athletId', creds.athlete.id)
-                // }
+                cookieCutter.set('athleteId', parseInt(creds.athlete.id))
             }
             
             if (creds.athlete.id && creds.access_token && creds.refresh_token) {
                 let activities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token, activityPage)
                 setActivityPage(activityPage + 1);
-                setActivities(activities)      
+                setActivities(activities)  
+                setLoading(false)
             }
         }
 
-        // if (athleteId && accessToken && refreshToken) {
-        // try {
-        //     let activities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token)
-        // }
-        // catch (error) {
-        //     getCreds(code)
-        // }
-
-        if (code && !athleteId) {
-            getCreds(code)
+        const handleGetActivities = async (athleteId, accessToken, refreshToken) => {
+            let activities = await getActivities(athleteId, accessToken, refreshToken, activityPage)
+            setActivityPage(activityPage + 1);
+            setActivities(activities)  
+            setLoading(false)
         }
 
-        // window.location.href = `/?activities`
+        const athleteIdCookie = cookieCutter.get('athleteId')
+        const refreshTokenCookie = cookieCutter.get('refreshToken')
+        const accessTokenCookie = cookieCutter.get('accessToken')
+        // Set a cookie
+        // cookieCutter.set('myCookieName', 'some-value')
 
+        // Delete a cookie
+        // cookieCutter.set('myCookieName', '', { expires: new Date(0) })
+        
+        if (athleteIdCookie && refreshTokenCookie && accessTokenCookie) {
+            setAthleteId(parseInt(athleteIdCookie))
+            setAccessToken(accessTokenCookie)
+            setRefreshToken(refreshTokenCookie)
+            handleGetActivities(parseInt(athleteIdCookie), accessTokenCookie, refreshTokenCookie)
+        } else if (code) {
+            getCredsAndActivities(code)
+        } else {
+            setLoading(false)
+        }
     }, [])
 
     useEffect(() => {
@@ -109,27 +105,12 @@ const HomeMain = ({stravaCookies}) => {
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
         if ((scrollTop + clientHeight >= scrollHeight - 100) && !reachedBottom && !selectedActivity) {
             setReachedBottom(true);
-        } else {
-            // setReachedBottom(false);
         }
     };
 
-    // useEffect(() => {
-    //     console.log('act', activities)
-    //     // if (activities) {
-    //     //     setSelectedActivity(activities[0])
-    //     // }
-    // }, [activities])
-
-    
-    // const getAuth = async () => {
-    //     if (typeof window !== "undefined") {
-    //         window.location.href = authUrl;
-    //     }
-    // }
-
     return (
         <div className='scrollableElement' ref={scrollRef} onScroll={handleScrollEvent}>
+            <Spinner loading={loading} setLoading={setLoading}></Spinner>
             {accessToken == null ? (
             <div className='authButtonContainer'>
                 <a className='authLink' href={authUrl}>
@@ -139,15 +120,17 @@ const HomeMain = ({stravaCookies}) => {
                 </a>
             </div>) : (null) } 
 
-            <ActivityList activities={activities} setSelectedActivity={setSelectedActivity} selectedActivity={selectedActivity}></ActivityList>
+            { activities !== null ? (
+                <ActivityList activities={activities} setSelectedActivity={setSelectedActivity} selectedActivity={selectedActivity}></ActivityList>
+            ) : (null) }
+
             {selectedActivity ? (
                 <ActivityDetail 
                     activity={selectedActivity} 
                     setActivity={setSelectedActivity}
                     selectedActivity={selectedActivity}
                 ></ActivityDetail> 
-            ) : (null)
-            }
+            ) : (null) }
         </div>
     )
 };
