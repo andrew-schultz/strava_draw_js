@@ -8,9 +8,10 @@ export default function Activity() {
         selectedActivity,
         setSelectedActivity,
     } = useActivitiesProvider();
+    const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
 
     if (!selectedActivity) {
-        window.location.href = '/'
+        window.location.href = redirectUri
     }
 
     return (

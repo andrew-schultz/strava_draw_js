@@ -13,6 +13,7 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [showText, setShowText] = useState(true);
     const [rawShowText, setRawShowText] = useState('2');
     const date = new Date(activity.start_date).toLocaleString()
+    const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
 
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
@@ -100,7 +101,7 @@ const ActivityDetail = ({activity, setActivity}) => {
         <div className="actvityListItem detail" >
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
-                    <Link href="/" className="link">
+                    <Link href={redirectUri} className="link">
                         <div className="mapButton" onClick={localSetActivity}>back</div>
                     </Link>
                     <div className="slidersContainer">
