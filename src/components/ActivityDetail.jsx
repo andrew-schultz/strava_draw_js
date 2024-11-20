@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Link from "next/link";
 import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 
@@ -99,7 +100,9 @@ const ActivityDetail = ({activity, setActivity}) => {
         <div className="actvityListItem detail" >
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
-                    <div className="mapButton" onClick={localSetActivity}>back</div>
+                    <Link href="/" className="link">
+                        <div className="mapButton" onClick={localSetActivity}>back</div>
+                    </Link>
                     <div className="slidersContainer">
                         <div class="sliderContainer">
                             <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>

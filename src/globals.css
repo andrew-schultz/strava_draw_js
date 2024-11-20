@@ -96,6 +96,11 @@
     background-color: grey;
 }
 
+.link {
+  text-decoration: none;
+  color: black;
+}
+
 .activityListItem {
     margin-bottom: 10px;
     cursor: pointer;

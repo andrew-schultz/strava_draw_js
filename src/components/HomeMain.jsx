@@ -6,19 +6,25 @@ import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
 import cookieCutter from "@boiseitguru/cookie-cutter";
 import Spinner from "./Spinner"
+import { useActivitiesProvider } from '../providers/ActivitiesProvider'
 
 
 const HomeMain = () => {
     const [accessToken, setAccessToken] = useState();
     const [refreshToken, setRefreshToken] = useState();
     const [athleteId, setAthleteId] = useState();
-    const [activities, setActivities] = useState();
-    const [selectedActivity, setSelectedActivity] = useState();
     const [activityPage, setActivityPage] = useState(1);
     const [reachedBottom, setReachedBottom] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const scrollRef = useRef(null);
+
+    const {
+        activities,
+        selectedActivity,
+        setActivities,
+        setSelectedActivity,
+    } = useActivitiesProvider();
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
@@ -51,17 +57,17 @@ const HomeMain = () => {
             }
             
             if (creds.athlete.id && creds.access_token && creds.refresh_token) {
-                let activities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token, activityPage)
+                let newActivities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token, activityPage)
                 setActivityPage(activityPage + 1);
-                setActivities(activities)  
+                setActivities(newActivities)  
                 setLoading(false)
             }
         }
 
         const handleGetActivities = async (athleteId, accessToken, refreshToken) => {
-            let activities = await getActivities(athleteId, accessToken, refreshToken, activityPage)
+            let newActivities = await getActivities(athleteId, accessToken, refreshToken, activityPage)
             setActivityPage(activityPage + 1);
-            setActivities(activities)  
+            setActivities(newActivities)  
             setLoading(false)
         }
 
@@ -73,13 +79,17 @@ const HomeMain = () => {
 
         // Delete a cookie
         // cookieCutter.set('myCookieName', '', { expires: new Date(0) })
-        
+
         if (athleteIdCookie && refreshTokenCookie && accessTokenCookie) {
             setAthleteId(parseInt(athleteIdCookie))
             setAccessToken(accessTokenCookie)
             setRefreshToken(refreshTokenCookie)
-            handleGetActivities(parseInt(athleteIdCookie), accessTokenCookie, refreshTokenCookie)
-        } else if (code) {
+            if (!activities) {
+                handleGetActivities(parseInt(athleteIdCookie), accessTokenCookie, refreshTokenCookie)
+            } else {
+                setLoading(false)
+            }
+        } else if (code && !activities) {
             getCredsAndActivities(code)
         } else {
             setLoading(false)
@@ -124,13 +134,13 @@ const HomeMain = () => {
                 <ActivityList activities={activities} setSelectedActivity={setSelectedActivity} selectedActivity={selectedActivity}></ActivityList>
             ) : (null) }
 
-            {selectedActivity ? (
+            {/* {selectedActivity ? (
                 <ActivityDetail 
                     activity={selectedActivity} 
                     setActivity={setSelectedActivity}
                     selectedActivity={selectedActivity}
                 ></ActivityDetail> 
-            ) : (null) }
+            ) : (null) } */}
         </div>
     )
 };

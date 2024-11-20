@@ -4,7 +4,7 @@ const ActivityList = ({activities, setSelectedActivity, selectedActivity}) => {
 
     return (
         <>
-            {(activities == null) || selectedActivity ? (null) : (
+            {(activities == null) ? (null) : (
                 activities.map((activity, index) => (
                     <div key={index}>
                         <ActivityListItem 
