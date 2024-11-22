@@ -84,7 +84,7 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
                     map.style.display = 'None';
                     setLoading(false);
                 }, 10)
-            }, 250)
+            }, 100)
         }
 
         let canvas = document.getElementsByTagName('canvas')[0];
