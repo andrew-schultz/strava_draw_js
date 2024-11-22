@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
-import Link from "next/link";
+import { useRouter } from 'next/router';
+// import Link from "next/link";
 import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 
@@ -13,7 +14,8 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [showText, setShowText] = useState(true);
     const [rawShowText, setRawShowText] = useState('2');
     const date = new Date(activity.start_date).toLocaleString()
-    const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
+    // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
+    const router = useRouter();
 
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
@@ -26,7 +28,7 @@ const ActivityDetail = ({activity, setActivity}) => {
     });
 
     const localSetActivity = () => {
-        setActivity(null)
+        router.back();
     }
 
     const removeBackground = async (canvas) => {
@@ -101,9 +103,7 @@ const ActivityDetail = ({activity, setActivity}) => {
         <div className="actvityListItem detail" >
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
-                    <Link href={redirectUri} className="link">
-                        <div className="mapButton" onClick={localSetActivity}>back</div>
-                    </Link>
+                    <div className="mapButton" onClick={localSetActivity}>back</div>
                     <div className="slidersContainer">
                         <div class="sliderContainer">
                             <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>

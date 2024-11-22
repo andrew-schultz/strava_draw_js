@@ -2,6 +2,7 @@ import { ActivitiesProvider } from "../providers/ActivitiesProvider";
 import type { Metadata } from 'next'
 import '../globals.css'
 import { Inter } from 'next/font/google'
+import AuthProvider from "../providers/AuthProvider";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,9 +14,11 @@ export const metadata: Metadata = {
 export default function App({ Component, pageProps}) {
     return (
         <div className={inter.className}>
-            <ActivitiesProvider>
-                <Component {...pageProps} />
-            </ActivitiesProvider>
+            <AuthProvider>
+                <ActivitiesProvider>
+                    <Component {...pageProps} />
+                </ActivitiesProvider>
+            </AuthProvider>
         </div>
     )
 }

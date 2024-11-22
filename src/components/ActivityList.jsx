@@ -1,6 +1,7 @@
 import ActivityListItem from "./ActivityListItem"
+import Spinner from "./Spinner"
 
-const ActivityList = ({activities, setSelectedActivity, selectedActivity}) => {
+const ActivityList = ({activities, setSelectedActivity, selectedActivity, loading}) => {
 
     return (
         <>
@@ -14,6 +15,16 @@ const ActivityList = ({activities, setSelectedActivity, selectedActivity}) => {
                     </div>
                 ))
             )}
+            {/* {(activities !== null && loading) ? (
+                <div key={'loadingActivityListItem'}>
+                    <div className="activityListItem">
+                        <div className="activityListItemText">
+                            <Spinner loading={loading}></Spinner>
+                        </div>
+                    </div>
+                </div>
+            ):
+            (null)} */}
         </>
     )
 }

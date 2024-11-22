@@ -1,8 +1,5 @@
 const clientId = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID;
 const clientSecret = process.env.NEXT_PUBLIC_STRAVA_CLIENT_SECRET;
-// const refreshToken = process.env.NEXT_PUBLIC_STRAVA_REFRESH_TOKEN;
-
-// const userId = 14120043; // 👈 Your strava user id, can be found by visiting your strava profile and checking the url
 const TOKEN_ENDPOINT = "https://www.strava.com/oauth/token";
 const ATHLETES_ENDPOINT = `https://www.strava.com/api/v3/athletes/`;
 
@@ -26,10 +23,11 @@ const getAccessToken = async (refreshToken) => {
   return response.json();
 };
 
-export const getActivities = async (athleteId, accessToken, refreshToken, page, retry=false) => {
+export const getActivities = async (athleteId, accessToken, refreshToken, page, setAccessToken, retry=false) => {
   let useThisAccessToken = accessToken;
   if (retry) {
     const { access_token } = await getAccessToken(refreshToken);
+    setAccessToken(access_token)
     useThisAccessToken = access_token;
   }
   let uri = `${ATHLETES_ENDPOINT}${athleteId}`
@@ -39,14 +37,14 @@ export const getActivities = async (athleteId, accessToken, refreshToken, page, 
     );
     const json = await response.json();  
     if (json.errors && !retry) {
-      getActivities(athleteId, accessToken, refreshToken, page, true)
+      return getActivities(athleteId, accessToken, refreshToken, page, setAccessToken, true)
     }
     else {
       return json;
     }
   } catch (error) {
     if (!retry) {
-      getActivities(athleteId, accessToken, refreshToken, page, true)
+      return getActivities(athleteId, accessToken, refreshToken, page, setAccessToken, true)
     }
   }
 };

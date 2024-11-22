@@ -14,6 +14,7 @@ export const ActivitiesProvider = ({ children }) => {
     const [mounted, setMounted] = useState(false);
     const [activities, setActivities] = useState();
     const [selectedActivity, setSelectedActivity] = useState();
+    const [activityPage, setActivityPage] = useState(1);
 
     useEffect(() => {
         setMounted(true);
@@ -22,8 +23,10 @@ export const ActivitiesProvider = ({ children }) => {
     const value = {
         activities,
         selectedActivity,
+        activityPage,
         setActivities,
         setSelectedActivity,
+        setActivityPage,
     };
 
     if (!mounted) {
