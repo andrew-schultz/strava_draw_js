@@ -125,6 +125,10 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             const totalElevationText = 'Elev. Gain';
             const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
+            const pace = `${(getPaceTime(activity.moving_time / (activity.distance / 1609.34).toFixed(2)))} /mi`;
+            const paceText = 'Pace';
+            const paceTextWidth = ctx.measureText(paceText).width;
+
             const movingTime = getMovingTime(activity);
             const movingTimeText = 'Duration';
             const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
@@ -136,7 +140,11 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
             
             // total_elevation_gain = third
-            ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
+            if (activity.type == 'Run') {
+                ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
+            } else {
+                ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
+            }
     
             // moving_time = third + third
             ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
@@ -146,8 +154,13 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             const distanceWidth = ctx.measureText(distance).width;
             ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
 
-            const totalElevationWidth = ctx.measureText(totalElevation).width;
-            ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
+            if (activity.type == 'Run') {
+                const paceWidth = ctx.measureText(pace).width;
+                ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
+            } else {
+                const totalElevationWidth = ctx.measureText(totalElevation).width;
+                ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
+            }
 
             const movingTimeWidth = ctx.measureText(movingTime).width;
             ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
@@ -155,13 +168,25 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
     }
 
     const getMovingTime = (activity) => {
-        let seconds = activity.moving_time % 60
+        let seconds = activity.moving_time % 60;
         let minutes = Math.round(activity.moving_time / 60);
         let hours = parseInt(minutes / 60);
         let time = `${minutes}m ${seconds}s`;
         if (minutes > 60) {
             minutes = minutes % 60;
             time = `${hours}h ${minutes}m`;
+        }
+        return time;
+    }
+
+    const getPaceTime = (rawPace) => {
+        let seconds = (rawPace % 60).toFixed(0);
+        let minutes = (rawPace / 60).toFixed(0) - 1;
+        let hours = parseInt(minutes / 60);
+        let time = `${minutes}:${seconds}`;
+        if (minutes > 60) {
+            minutes = minutes % 60;
+            time = `${hours}:${minutes}:${seconds}`;
         }
         return time;
     }
