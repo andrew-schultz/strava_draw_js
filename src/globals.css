@@ -52,6 +52,10 @@
     }
 }
 
+.bottom {
+  margin-top: 3px;
+}
+
 #genImage {
     position: absolute;
     z-index: 99;
@@ -85,6 +89,45 @@
     border: 1px solid black;
     padding: 5px;
     position: relative;
+}
+
+.textOptionsModalContainer {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  justify-content: center;
+  z-index: 101;
+  left: 0px;
+  top: 15%;
+}
+
+.textOptionsModalContent {
+  text-align: center;
+  align-items: center;
+  max-width: 80%;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  position: relative;
+}
+
+.textOptionLabel {
+  display: inline-block;
+  width: 50%;
+  text-align: end;
+  padding-right: 10px;
+}
+
+.textOptionInput {
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  width: 50%;
+}
+
+.textOptionInputActual {
+  margin-left: 10px;
+  width: 50px !important;
 }
 
 .closeModal {
@@ -139,10 +182,30 @@
     justify-content: space-between;
 }
 
+.buttonsContainer {
+  display: inline-block;
+}
+
+.buttonContainer {
+  margin-top: 4px;
+}
+
 .slidersContainer {
     display: inline-block;
     width: 50px;
     margin: 0 auto;
+}
+
+.slidersContainerTextOption {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.slidersContainerTextOptionInner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* .slidersContainer {
@@ -153,11 +216,18 @@
 /* } */
 
 /* .sliderContainer { */
+  /* display: flex; */
+  /* justify-content: space-between; */
   /* max-width: 50px; */
   /* display: inline-block; */
   /* margin-left: 5px; */
   /* margin-right: 5px; */
 /* } */
+
+.sliderInputContainer {
+  /* display: block; */
+  /* width: 200px; */
+}
 
 .slider {
     -webkit-appearance: none;

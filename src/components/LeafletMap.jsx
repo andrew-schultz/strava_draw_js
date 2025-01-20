@@ -9,8 +9,21 @@ import { useEffect, useState, useRef } from 'react';
 import Spinner from "./Spinner"
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { on } from "events";
 
-const MapComponent = ({polylines, lineColor, showText, activity}) => {
+const MapComponent = ({
+    polylines, 
+    lineColor, 
+    showText, 
+    activity,
+    showDistance,
+    showDuration,
+    showElevGain,
+    showPace,
+    showAvgPower,
+    showAvgSpeed,
+    showCalories,
+}) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - infoDiv.offsetHeight;
@@ -99,7 +112,135 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
 
     }, []);
 
+    const calculateTextPlacement = (
+        gridMatrix, 
+        distance, elevationGain, pace, duration, avgPower, avgSpeed, calories,
+        distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, caloriesText,
+        ctx,
+    ) => {
+        const onList = [];
+        const keys = [
+            {
+                name: 'distance', 
+                isOn: showDistance,
+                location: null,
+                val: distance,
+                valWidth: ctx.measureText(distance).width,
+                text: distanceText,
+                textWidth: ctx.measureText(distanceText).width,
+            },
+            {
+                name: 'elevation_gain', 
+                isOn: showElevGain,
+                location: null,
+                val: elevationGain,
+                valWidth: ctx.measureText(elevationGain).width,
+                text: totalElevationText,
+                textWidth: ctx.measureText(totalElevationText).width,
+            },
+            {
+                name: 'pace', 
+                isOn: showPace,
+                location: null,
+                val: pace,
+                valWidth: ctx.measureText(pace).width,
+                text: paceText,
+                textWidth: ctx.measureText(paceText).width,
+            },
+            {
+                name: 'duration', 
+                isOn: showDuration,
+                location: null,
+                val: duration,
+                valWidth: ctx.measureText(duration).width,
+                text: durationText,
+                textWidth: ctx.measureText(durationText).width,
+            },
+            {
+                name: 'avg_power', 
+                isOn: showAvgPower,
+                location: null,
+                val: avgPower,
+                valWidth: ctx.measureText(avgPower).width,
+                text: avgPowerText,
+                textWidth: ctx.measureText(avgPowerText).width,
+            },
+            {
+                name: 'avg_speed', 
+                isOn: showAvgSpeed,
+                location: null,
+                val: avgSpeed,
+                valWidth: ctx.measureText(avgSpeed).width,
+                text: avgSpeedText,
+                textWidth: ctx.measureText(avgSpeedText).width,
+            },
+            {
+                name: 'calories', 
+                isOn: showCalories,
+                location: null,
+                val: calories,
+                valWidth: ctx.measureText(calories).width,
+                text: caloriesText,
+                textWidth: ctx.measureText(caloriesText).width,
+            },
+        ]
+
+        let locCounter = 1;
+        keys.forEach((key, index) => {
+            console.log('index', index + 1)
+            if (key.isOn) {
+                // debugger
+                key.location = locCounter;
+                locCounter += 1;
+                onList.push(key)
+            }
+        })
+
+        if (onList.length == 1) {
+            onList[0].location = 2
+        }
+
+        if (onList.length == 2) {
+            onList[1].location = 3
+        }
+
+        if (onList.length == 4) {
+            onList[3].location = 5
+        }
+
+        if (onList.length == 5) {
+            onList[4].location = 6
+        }
+
+        if (onList.length == 7) {
+            console.log('panic')
+        }
+
+        const onGrid = {
+            1: onList[0] ? onList[0] : null,
+            2: onList[1] ? onList[1] : null,
+            3: onList[2] ? onList[2] : null,
+            4: onList[3] ? onList[3] : null,
+            5: onList[4] ? onList[4] : null,
+            6: onList[5] ? onList[5] : null,
+        }
+
+        return onGrid
+    }
+
     const generateText = async (bounds, canvas, lineColor) => {
+
+        // ok now we need to add labels and calculations for the new fields
+        // then we need to dynamically calculate how they should be shown
+        //      2 rows of 3 across maybe?
+        //      stravas is 3 rows of 2 across, so maybe we don't do that 
+        // if only 1 is enabled, put it in the middle
+        // if 2 are enabled, put them on the sides (nothing in the middle) but keep the 3 across grid
+        //      could also just split the full width in 2 (50/50)
+        // if 4 enabled, 3 across and then 1 in the middle on the second row
+        // if 5 enabled, 3 across the top and 2 on the sides on the second row (nothing in the middle)
+
+
         await findLowestPixel(lineColor).then((lowestPixel) => {
             const ctx = canvas.getContext("2d");
             ctx.font = "bold 16pt Arial";
@@ -117,53 +258,263 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             const halfCenter = half / 2;
 
             // get width of text
+            // calculate / convert human readable value
+            // distance
             const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
             const distanceText = 'Distance';
             const distanceTextWidth = ctx.measureText(distanceText).width;
 
+            // total elev / evel gain
             const totalElevation = `${Math.round(activity.total_elevation_gain * 3.281)} ft`;
             const totalElevationText = 'Elev. Gain';
             const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
+            // pace
             const pace = `${(getPaceTime(activity.moving_time / (activity.distance / 1609.34).toFixed(2)))} /mi`;
             const paceText = 'Pace';
             const paceTextWidth = ctx.measureText(paceText).width;
 
+            // moving time / duration
             const movingTime = getMovingTime(activity);
             const movingTimeText = 'Duration';
             const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
 
+            // avg power
+            const avgPower = getAvgPower(activity);
+            const avgPowerText = 'Avg Power';
+            const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
-            ctx.font = "bold 16pt Arial";
+            // avg speed
+            const avgSpeed = getAvgSpeed(activity);
+            const avgSpeedText = 'Avg Speed';
+            const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
+
+            // calories
+            const calories = getCalories(activity);
+            const caloriesText = 'Calories';
+            const caloriesTextWidth = ctx.measureText(caloriesText).width;
+
+
+            // get matrix positions
+            const gridMatrix = [
+                [
+                    [
+                        {
+                            x: thirdCenter - (distanceTextWidth / 2),
+                            y: centerY,
+                            location: 1,
+                        },
+                        {
+                            x: thirdCenter + third - (totalElevationTextWidth / 2),
+                            y: centerY,
+                            location: 2
+
+                        },
+                        {
+                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+                            y: centerY,
+                            location: 3
+                        },
+                    ],
+                    [
+                        {
+                            x: thirdCenter - (distanceTextWidth / 2),
+                            y: centerY + 35,
+                            location: 1
+                        },
+                        {
+                            x: thirdCenter + third - (totalElevationTextWidth / 2),
+                            y: centerY + 35,
+                            location: 2
+                        },
+                        {
+                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+                            y: centerY + 35,
+                            location: 3
+                        },
+                    ]
+                ],
+                [
+                    [
+                        {
+                            x: thirdCenter - (distanceTextWidth / 2),
+                            y: centerY + 35 + 35,
+                            location: 4
+                        },
+                        {
+                            x: thirdCenter + third - (totalElevationTextWidth / 2),
+                            y: centerY + 35 + 35,
+                            location: 5
+                        },
+                        {
+                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+                            y: centerY + 35 + 35,
+                            location: 6
+                        },
+                    ],
+                    [
+                        {
+                            x: thirdCenter - (distanceTextWidth / 2),
+                            y: centerY + 35 + 35 + 35,
+                            location: 4
+                        },
+                        {
+                            x: thirdCenter + third - (totalElevationTextWidth / 2),
+                            y: centerY + 35 + 35 + 35,
+                            location: 5
+                        },
+                        {
+                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+                            y: centerY + 35 + 35 + 35,
+                            location: 6
+                        },
+                    ]
+                ]
+            ]
+            const textMatrix = calculateTextPlacement(gridMatrix, distance, totalElevation, pace, movingTime, avgPower, avgSpeed, calories, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, caloriesText, ctx);
+            // set text font
+            // ctx.font = "bold 16pt Arial";
+
+            Object.keys(textMatrix).forEach((key) => {
+                const val = textMatrix[key]
+                if (val) {
+                    if (val.location == 1) {
+                        // grid 1
+                        // set text font
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter - (val.textWidth / 2), centerY);
+    
+                        // set value font
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter - (val.valWidth / 2), centerY + 35);
+                    }
+                    if (val.location == 2) {
+                        // grid 2
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter + third - (val.textWidth / 2), centerY);
+    
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter + third - (val.valWidth / 2), centerY + 35);
+                    }
+                    if (val.location == 3) {
+                        // grid 3
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter + third + third - (val.textWidth / 2), centerY);
+    
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter + third + third - (val.valWidth / 2), centerY + 35);
+                    }
+    
+                    if (val.location == 4) {
+                        // grid 4
+                        // set text font
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter - (val.textWidth / 2), centerY + 35 + 35);
+    
+                        // set value font
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter - (val.valWidth / 2), centerY + 35  + 35 + 35);
+                    }
+    
+                    if (val.location == 5) {
+                        // grid 5
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter + third - (val.textWidth / 2), centerY + 35 + 35);
+    
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter + third - (val.valWidth / 2), centerY + 35  + 35 + 35);
+                    }
+    
+                    if (val.location == 6) {
+                        // grid 6
+                        ctx.font = "bold 16pt Arial";
+                        ctx.fillText(val.text, thirdCenter + third + third - (val.textWidth / 2), centerY + 35 + 35);
+    
+                        ctx.font = "bold 20pt Arial";
+                        ctx.fillText(val.val, thirdCenter + third + third - (val.valWidth / 2), centerY + 35 + 35 + 35);
+                    }
+                }
+                
+            })
+            
+
             // set text start point at text width / 2
             // distance = 0
-            ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
+            // if (showDistance) {
+            //     ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
+            // }
+            // ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
             
-            // total_elevation_gain = third
-            if (activity.type == 'Run') {
-                ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
-            } else {
-                ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
-            }
-    
+            // -----------
+            // pace / total_elevation_gain = third
+
+            // if (showElevGain) {
+            //     ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
+            // }
+
+            // if (showPace) {
+            //     ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
+            // }
+
+            // if (activity.type == 'Run') {
+            //     ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
+            // } else {
+            //     ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
+            // }
+
+            // -----------
             // moving_time = third + third
-            ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
+
+            // if (showDuration) {
+            //     ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
+            // }
+            // ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
 
 
-            ctx.font = "bold 20pt Arial";
-            const distanceWidth = ctx.measureText(distance).width;
-            ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
+            // set value font
+            // ctx.font = "bold 20pt Arial";
 
-            if (activity.type == 'Run') {
-                const paceWidth = ctx.measureText(pace).width;
-                ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
-            } else {
-                const totalElevationWidth = ctx.measureText(totalElevation).width;
-                ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
-            }
+            // -----------
+            // Distance Value 
 
-            const movingTimeWidth = ctx.measureText(movingTime).width;
-            ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
+            // const distanceWidth = ctx.measureText(distance).width;
+            // ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
+
+            // if (showDistance) {
+            //     const distanceWidth = ctx.measureText(distance).width;
+            //     ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
+            // }
+
+            // -----------
+            // Pace / Elev Gain Value
+
+            // if (activity.type == 'Run') {
+            //     const paceWidth = ctx.measureText(pace).width;
+            //     ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
+            // } else {
+            //     const totalElevationWidth = ctx.measureText(totalElevation).width;
+            //     ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
+            // }
+
+            // if (showPace) {
+            //     const paceWidth = ctx.measureText(pace).width;
+            //     ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
+            // }
+
+            // if (showElevGain) {
+            //     const totalElevationWidth = ctx.measureText(totalElevation).width;
+            //     ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
+            // }
+
+            // -----------
+            // Moving Time (Duration) Value
+
+            // if (showDuration) {
+            //     const movingTimeWidth = ctx.measureText(movingTime).width;
+            //     ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
+            // }
+            // const movingTimeWidth = ctx.measureText(movingTime).width;
+            // ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
         });
     }
 
@@ -189,6 +540,18 @@ const MapComponent = ({polylines, lineColor, showText, activity}) => {
             time = `${hours}:${minutes}:${seconds}`;
         }
         return time;
+    }
+
+    const getAvgPower = () => {
+
+    }
+
+    const getAvgSpeed = () => {
+
+    }
+
+    const getCalories = () => {
+
     }
 
     const findLowestPixel = async (lineColor) => {

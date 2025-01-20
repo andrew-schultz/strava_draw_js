@@ -9,7 +9,7 @@ const HelpModal = () => {
 
     return (   
         <div>
-            <div className={`mapButton right ${showHelpModal ? ('selected') : null }`} onClick={toggleHelpModal}>help</div>
+            <div className={`mapButton bottom right ${showHelpModal ? ('selected') : null }`} onClick={toggleHelpModal}>help</div>
             {showHelpModal ? (
                 <div className='helpModalContainer'>
                     <div className='helpModalContent'>
