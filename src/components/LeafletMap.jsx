@@ -113,7 +113,6 @@ const MapComponent = ({
     }, []);
 
     const calculateTextPlacement = (
-        gridMatrix, 
         distance, elevationGain, pace, duration, avgPower, avgSpeed, calories,
         distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, caloriesText,
         ctx,
@@ -255,123 +254,123 @@ const MapComponent = ({
             
             // get half of the value of above, thats the half way point of the third
             const thirdCenter = third / 2;
-            const halfCenter = half / 2;
+            // const halfCenter = half / 2;
 
             // get width of text
             // calculate / convert human readable value
             // distance
             const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
             const distanceText = 'Distance';
-            const distanceTextWidth = ctx.measureText(distanceText).width;
+            // const distanceTextWidth = ctx.measureText(distanceText).width;
 
             // total elev / evel gain
             const totalElevation = `${Math.round(activity.total_elevation_gain * 3.281)} ft`;
             const totalElevationText = 'Elev. Gain';
-            const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
+            // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
             // pace
             const pace = `${(getPaceTime(activity.moving_time / (activity.distance / 1609.34).toFixed(2)))} /mi`;
             const paceText = 'Pace';
-            const paceTextWidth = ctx.measureText(paceText).width;
+            // const paceTextWidth = ctx.measureText(paceText).width;
 
             // moving time / duration
             const movingTime = getMovingTime(activity);
             const movingTimeText = 'Duration';
-            const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
+            // const movingTimeTextWidth = ctx.measureText(movingTimeText).width;
 
             // avg power
             const avgPower = getAvgPower(activity);
             const avgPowerText = 'Avg Power';
-            const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
+            // const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
             // avg speed
             const avgSpeed = getAvgSpeed(activity);
             const avgSpeedText = 'Avg Speed';
-            const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
+            // const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
 
             // calories
             const calories = getCalories(activity);
             const caloriesText = 'Calories';
-            const caloriesTextWidth = ctx.measureText(caloriesText).width;
+            // const caloriesTextWidth = ctx.measureText(caloriesText).width;
 
 
             // get matrix positions
-            const gridMatrix = [
-                [
-                    [
-                        {
-                            x: thirdCenter - (distanceTextWidth / 2),
-                            y: centerY,
-                            location: 1,
-                        },
-                        {
-                            x: thirdCenter + third - (totalElevationTextWidth / 2),
-                            y: centerY,
-                            location: 2
+            // const gridMatrix = [
+            //     [
+            //         [
+            //             {
+            //                 x: thirdCenter - (distanceTextWidth / 2),
+            //                 y: centerY,
+            //                 location: 1,
+            //             },
+            //             {
+            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
+            //                 y: centerY,
+            //                 location: 2
 
-                        },
-                        {
-                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-                            y: centerY,
-                            location: 3
-                        },
-                    ],
-                    [
-                        {
-                            x: thirdCenter - (distanceTextWidth / 2),
-                            y: centerY + 35,
-                            location: 1
-                        },
-                        {
-                            x: thirdCenter + third - (totalElevationTextWidth / 2),
-                            y: centerY + 35,
-                            location: 2
-                        },
-                        {
-                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-                            y: centerY + 35,
-                            location: 3
-                        },
-                    ]
-                ],
-                [
-                    [
-                        {
-                            x: thirdCenter - (distanceTextWidth / 2),
-                            y: centerY + 35 + 35,
-                            location: 4
-                        },
-                        {
-                            x: thirdCenter + third - (totalElevationTextWidth / 2),
-                            y: centerY + 35 + 35,
-                            location: 5
-                        },
-                        {
-                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-                            y: centerY + 35 + 35,
-                            location: 6
-                        },
-                    ],
-                    [
-                        {
-                            x: thirdCenter - (distanceTextWidth / 2),
-                            y: centerY + 35 + 35 + 35,
-                            location: 4
-                        },
-                        {
-                            x: thirdCenter + third - (totalElevationTextWidth / 2),
-                            y: centerY + 35 + 35 + 35,
-                            location: 5
-                        },
-                        {
-                            x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-                            y: centerY + 35 + 35 + 35,
-                            location: 6
-                        },
-                    ]
-                ]
-            ]
-            const textMatrix = calculateTextPlacement(gridMatrix, distance, totalElevation, pace, movingTime, avgPower, avgSpeed, calories, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, caloriesText, ctx);
+            //             },
+            //             {
+            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+            //                 y: centerY,
+            //                 location: 3
+            //             },
+            //         ],
+            //         [
+            //             {
+            //                 x: thirdCenter - (distanceTextWidth / 2),
+            //                 y: centerY + 35,
+            //                 location: 1
+            //             },
+            //             {
+            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
+            //                 y: centerY + 35,
+            //                 location: 2
+            //             },
+            //             {
+            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+            //                 y: centerY + 35,
+            //                 location: 3
+            //             },
+            //         ]
+            //     ],
+            //     [
+            //         [
+            //             {
+            //                 x: thirdCenter - (distanceTextWidth / 2),
+            //                 y: centerY + 35 + 35,
+            //                 location: 4
+            //             },
+            //             {
+            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
+            //                 y: centerY + 35 + 35,
+            //                 location: 5
+            //             },
+            //             {
+            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+            //                 y: centerY + 35 + 35,
+            //                 location: 6
+            //             },
+            //         ],
+            //         [
+            //             {
+            //                 x: thirdCenter - (distanceTextWidth / 2),
+            //                 y: centerY + 35 + 35 + 35,
+            //                 location: 4
+            //             },
+            //             {
+            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
+            //                 y: centerY + 35 + 35 + 35,
+            //                 location: 5
+            //             },
+            //             {
+            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
+            //                 y: centerY + 35 + 35 + 35,
+            //                 location: 6
+            //             },
+            //         ]
+            //     ]
+            // ]
+            const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, calories, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, caloriesText, ctx);
             // set text font
             // ctx.font = "bold 16pt Arial";
 
@@ -434,7 +433,6 @@ const MapComponent = ({
                         ctx.fillText(val.val, thirdCenter + third + third - (val.valWidth / 2), centerY + 35 + 35 + 35);
                     }
                 }
-                
             })
             
 
@@ -542,16 +540,16 @@ const MapComponent = ({
         return time;
     }
 
-    const getAvgPower = () => {
-
+    const getAvgPower = (activity) => {
+        return `${Math.round(activity.average_watts)} w`
     }
 
-    const getAvgSpeed = () => {
-
+    const getAvgSpeed = (activity) => {
+        return `${(activity.average_speed * 2.23694).toFixed(2)} mi/h`
     }
 
-    const getCalories = () => {
-
+    const getCalories = (activity) => {
+        return `${Math.round(activity.kilojoules * 0.2390057361)} Cal`
     }
 
     const findLowestPixel = async (lineColor) => {
