@@ -22,7 +22,7 @@ const MapComponent = ({
     showPace,
     showAvgPower,
     showAvgSpeed,
-    showCalories,
+    showWorkDone,
 }) => {
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
@@ -113,8 +113,8 @@ const MapComponent = ({
     }, []);
 
     const calculateTextPlacement = (
-        distance, elevationGain, pace, duration, avgPower, avgSpeed, calories,
-        distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, caloriesText,
+        distance, elevationGain, pace, duration, avgPower, avgSpeed, workDone,
+        distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, workDoneText,
         ctx,
     ) => {
         const onList = [];
@@ -174,21 +174,19 @@ const MapComponent = ({
                 textWidth: ctx.measureText(avgSpeedText).width,
             },
             {
-                name: 'calories', 
-                isOn: showCalories,
+                name: 'workDone', 
+                isOn: showWorkDone,
                 location: null,
-                val: calories,
-                valWidth: ctx.measureText(calories).width,
-                text: caloriesText,
-                textWidth: ctx.measureText(caloriesText).width,
+                val: workDone,
+                valWidth: ctx.measureText(workDone).width,
+                text: workDoneText,
+                textWidth: ctx.measureText(workDoneText).width,
             },
         ]
 
         let locCounter = 1;
         keys.forEach((key, index) => {
-            console.log('index', index + 1)
             if (key.isOn) {
-                // debugger
                 key.location = locCounter;
                 locCounter += 1;
                 onList.push(key)
@@ -288,10 +286,10 @@ const MapComponent = ({
             const avgSpeedText = 'Avg Speed';
             // const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
 
-            // calories
-            const calories = getCalories(activity);
-            const caloriesText = 'Calories';
-            // const caloriesTextWidth = ctx.measureText(caloriesText).width;
+            // work done
+            const workDone = getWorkDone(activity);
+            const workDoneText = 'Work Done';
+            // const workDoneTextWidth = ctx.measureText(workDoneText).width;
 
 
             // get matrix positions
@@ -370,7 +368,7 @@ const MapComponent = ({
             //         ]
             //     ]
             // ]
-            const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, calories, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, caloriesText, ctx);
+            const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx);
             // set text font
             // ctx.font = "bold 16pt Arial";
 
@@ -408,29 +406,29 @@ const MapComponent = ({
                         // grid 4
                         // set text font
                         ctx.font = "bold 16pt Arial";
-                        ctx.fillText(val.text, thirdCenter - (val.textWidth / 2), centerY + 35 + 35);
+                        ctx.fillText(val.text, thirdCenter - (val.textWidth / 2), centerY + 40 + 35);
     
                         // set value font
                         ctx.font = "bold 20pt Arial";
-                        ctx.fillText(val.val, thirdCenter - (val.valWidth / 2), centerY + 35  + 35 + 35);
+                        ctx.fillText(val.val, thirdCenter - (val.valWidth / 2), centerY + 40  + 35 + 35);
                     }
     
                     if (val.location == 5) {
                         // grid 5
                         ctx.font = "bold 16pt Arial";
-                        ctx.fillText(val.text, thirdCenter + third - (val.textWidth / 2), centerY + 35 + 35);
+                        ctx.fillText(val.text, thirdCenter + third - (val.textWidth / 2), centerY + 40 + 35);
     
                         ctx.font = "bold 20pt Arial";
-                        ctx.fillText(val.val, thirdCenter + third - (val.valWidth / 2), centerY + 35  + 35 + 35);
+                        ctx.fillText(val.val, thirdCenter + third - (val.valWidth / 2), centerY + 40  + 35 + 35);
                     }
     
                     if (val.location == 6) {
                         // grid 6
                         ctx.font = "bold 16pt Arial";
-                        ctx.fillText(val.text, thirdCenter + third + third - (val.textWidth / 2), centerY + 35 + 35);
+                        ctx.fillText(val.text, thirdCenter + third + third - (val.textWidth / 2), centerY + 40 + 35);
     
                         ctx.font = "bold 20pt Arial";
-                        ctx.fillText(val.val, thirdCenter + third + third - (val.valWidth / 2), centerY + 35 + 35 + 35);
+                        ctx.fillText(val.val, thirdCenter + third + third - (val.valWidth / 2), centerY + 40 + 35 + 35);
                     }
                 }
             })
@@ -548,8 +546,8 @@ const MapComponent = ({
         return `${(activity.average_speed * 2.23694).toFixed(2)} mi/h`
     }
 
-    const getCalories = (activity) => {
-        return `${Math.round(activity.kilojoules * 0.2390057361)} Cal`
+    const getWorkDone = (activity) => {
+        return `${Math.round(activity.kilojoules)} kJ`
     }
 
     const findLowestPixel = async (lineColor) => {

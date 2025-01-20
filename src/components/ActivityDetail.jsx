@@ -32,7 +32,7 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [showPace, setShowPace] = useState(activity.type == 'Run');
     const [showAvgPower, setShowAvgPower] = useState(false);
     const [showAvgSpeed, setShowAvgSpeed] = useState(false);
-    const [showCalories, setShowCalories] = useState(false);
+    const [showWorkDone, setShowWorkDone] = useState(false);
     // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const router = useRouter();
 
@@ -159,14 +159,15 @@ const ActivityDetail = ({activity, setActivity}) => {
                             handleShowAvgPower={setShowAvgPower}
                             showAvgSpeed={showAvgSpeed}
                             handleShowAvgSpeed={setShowAvgSpeed}
-                            showCalories={showCalories}
-                            handleShowCalories={setShowCalories}
+                            showWorkDone={showWorkDone}
+                            handleShowWorkDone={setShowWorkDone}
                             lineColor={lineColor}
                             rawLineColor={rawLineColor}
                             handleSetColor={handleSetColor}
                             showText={showText}
                             rawShowText={rawShowText}
                             handleShowText={handleShowText}
+                            activity={activity}
                         ></TextOptionsModal>
                         {/* <HelpModal></HelpModal> */}
                     </div>
@@ -190,7 +191,7 @@ const ActivityDetail = ({activity, setActivity}) => {
                     showPace={showPace}
                     showAvgPower={showAvgPower}
                     showAvgSpeed={showAvgSpeed}
-                    showCalories={showCalories}
+                    showWorkDone={showWorkDone}
                 >
                 </MapComponent>) : null}
         </div>

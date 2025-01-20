@@ -118,6 +118,10 @@
   padding-right: 10px;
 }
 
+.disabledLabel {
+  color: grey;
+}
+
 .textOptionInput {
   display: inline-block;
   display: flex;
@@ -247,6 +251,10 @@
 
     &.on {
       background: black;
+    }
+
+    &.disabled {
+      background: grey;
     }
 }
   

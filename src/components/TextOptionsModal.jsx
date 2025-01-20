@@ -14,14 +14,15 @@ const TextOptionsModal = ({
     handleShowAvgPower,
     showAvgSpeed,
     handleShowAvgSpeed,
-    showCalories,
-    handleShowCalories,
+    showWorkDone,
+    handleShowWorkDone,
     rawLineColor,
     lineColor,
     handleSetColor,
     rawShowText,
     showText,
     handleShowText,
+    activity,
 }) => {
     const [showTextOptionsModal, setShowTextOptionsModal] = useState(false);
     // const [internalTextOptions, setInternalTextOptions] = useState();
@@ -187,15 +188,16 @@ const TextOptionsModal = ({
                             </div>
                             <div className="slidersContainerTextOptionInner" key={`avgPowerSliderContainer1`}>
                                 <div className="textOptionLabel">
-                                    <p>{'Avg Power'}</p>
+                                    <p className={`${activity.average_watts ? 'active' : 'disabledLabel'}`}>{'Avg Power'}</p>
                                 </div>
                                 <div className="textOptionInput">
                                     <input 
                                         type="range"
                                         min="1"
                                         max="2"
+                                        disabled={activity.average_watts ? false : true}
                                         value={showAvgPower ? '2' : '1'}
-                                        className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')}`} 
+                                        className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
                                         id={`${'avgPower'}Selector`} 
                                         onChange={(e) => handleShowAvgPower(e.target.value == '1' ? false : true)}
                                     ></input>
@@ -217,19 +219,20 @@ const TextOptionsModal = ({
                                     ></input>
                                 </div>
                             </div>
-                            <div className="slidersContainerTextOptionInner" key={`caloriesSliderContainer1`}>
+                            <div className="slidersContainerTextOptionInner" key={`workDoneSliderContainer1`}>
                                 <div className="textOptionLabel">
-                                    <p>{'Calories'}</p>
+                                    <p className={`${activity.kilojoules ? 'active' : 'disabledLabel'}`}>{'Work Done'}</p>
                                 </div>
                                 <div className="textOptionInput">
                                     <input 
                                         type="range"
+                                        disabled={activity.kilojoules ? false : true}
                                         min="1"
                                         max="2"
-                                        value={showCalories ? '2' : '1'}
-                                        className={`textOptionInputActual slider ${showCalories ? ('on') : ('off')}`} 
-                                        id={`${'calories'}Selector`} 
-                                        onChange={(e) => handleShowCalories(e.target.value == '1' ? false : true)}
+                                        value={showWorkDone ? '2' : '1'}
+                                        className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
+                                        id={`${'workDone'}Selector`} 
+                                        onChange={(e) => handleShowWorkDone(e.target.value == '1' ? false : true)}
                                     ></input>
                                 </div>
                             </div>
