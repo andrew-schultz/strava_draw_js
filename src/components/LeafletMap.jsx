@@ -52,53 +52,109 @@ const MapComponent = ({
         let polylineBounds = initialPolylineBounds;
         // calc how close the north and south lat's are, if within a threshold then do not adjust bounds
         const northSouthDiff = initialPolylineBounds._northEast.lat - initialPolylineBounds._southWest.lat;
-        console.log(northSouthDiff)
+
         // would be good to eventually redo this calc including the text to check if its going off the page
-        //      should adjust if going off the page        
-        if (northSouthDiff > 0.1) {
-            let adjustedPolylineBounds = initialPolylineBounds.pad(0.08);
-            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.035, adjustedPolylineBounds._northEast.lng);
-            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.035, adjustedPolylineBounds._southWest.lng);
-            polylineBounds = L.latLngBounds(corner1, corner2);
-        }
-        else if (northSouthDiff > 0.06) {
+        //      should adjust if going off the page    
+            
+        // if (northSouthDiff > 0.1) {
+        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.08);
+        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.035, adjustedPolylineBounds._northEast.lng);
+        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.035, adjustedPolylineBounds._southWest.lng);
+        //     polylineBounds = L.latLngBounds(corner1, corner2);
+        // }
+        // else 
+        if (northSouthDiff > 0.06) {
             let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
             const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.025, adjustedPolylineBounds._northEast.lng);
             const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.025, adjustedPolylineBounds._southWest.lng);
             polylineBounds = L.latLngBounds(corner1, corner2);
         }
-        else if (northSouthDiff > 0.03) {
-            let adjustedPolylineBounds = initialPolylineBounds.pad(0.03);
-            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.010, adjustedPolylineBounds._northEast.lng);
-            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.010, adjustedPolylineBounds._southWest.lng);
-            polylineBounds = L.latLngBounds(corner1, corner2);
-        }
-        else if (northSouthDiff > 0.02) {
-            let adjustedPolylineBounds = initialPolylineBounds.pad(0.04);
-            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.015, adjustedPolylineBounds._northEast.lng);
-            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.015, adjustedPolylineBounds._southWest.lng);
-            polylineBounds = L.latLngBounds(corner1, corner2);
-        }
+        // else if (northSouthDiff > 0.03) {
+        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.03);
+        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.010, adjustedPolylineBounds._northEast.lng);
+        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.010, adjustedPolylineBounds._southWest.lng);
+        //     polylineBounds = L.latLngBounds(corner1, corner2);
+        // }
+        // else if (northSouthDiff > 0.02) {
+        //     let adjustedPolylin9eBounds = initialPolylineBounds.pad(0.04);
+        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.015, adjustedPolylineBounds._northEast.lng);
+        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.015, adjustedPolylineBounds._southWest.lng);
+        //     polylineBounds = L.latLngBounds(corner1, corner2);
+        // }
 
         mapRef.current.fitBounds(polylineBounds);
 
         const drawText = async (polylineBounds, canvas, lineColor) => {
-            // let rowsAbove = await findHighestPixel(lineColor);
-            // // let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
-            // console.log(polylineBounds)
-            // console.log(rowsAbove / 100000)
-            // let center = mapRef.current.getCenter()
-            // // debugger
-            // center.lat -= 0.02
-            // // debugger
-            // mapRef.current.panTo(center)
-            // // const corner1 = L.latLng(polylineBounds._northEast.lat - 0.025, polylineBounds._northEast.lng);
-            // const corner2 =  L.latLng(polylineBounds._southWest.lat - 0.025, polylineBounds._southWest.lng);
-            // polylineBounds = L.latLngBounds(corner1, corner2);
-            // console.log(polylineBounds)
-            // mapRef.current.fitBounds(polylineBounds);
+            const ctx = canvas.getContext('2d');
+            
+            // get the image data for exactly the map, returns top, left, right, and bottom pixels/coords
+            let bindingCoords = await findPixelBounds(lineColor);
+            
+            // getImageData(left x coord, top y coord, width, height)
+            let dimensions = mapRef.current.getSize();
+            const dimAspectRatio = dimensions.x / dimensions.y;
 
-            await generateText(polylineBounds, canvas, lineColor).then(()=> {
+            // calculate binding width / height based on returned coords
+            const bindingWidth = bindingCoords.right - bindingCoords.left;
+            const bindingHeight = bindingCoords.last - bindingCoords.first;
+
+            // get image data from map canvas
+            let mapImg = ctx.getImageData(bindingCoords.left, bindingCoords.first, bindingWidth, bindingHeight);
+            
+            // clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // calculate / adjust width / size until both just fit within bounds
+            let justFitWidth = bindingWidth;
+            let justFitHeight = bindingHeight;
+            let justFitVar = 1.0;
+
+            console.log(dimensions.y, dimensions.y * 0.75)
+            while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.75)) {
+                justFitWidth = bindingWidth * justFitVar;
+                justFitHeight = bindingHeight * justFitVar;
+                justFitVar -= 0.05;
+                console.log(justFitVar, justFitHeight, justFitWidth)
+            }
+
+            // calculate width/height with aspect ratio
+            // let newWidth = bindingWidth * dimAspectRatio;
+            // let newHeight = bindingHeight * dimAspectRatio;
+            let newWidth = justFitWidth;
+            let newHeight = justFitHeight;
+
+            // create an offscreen canvas to draw/hold the image on
+            const offscreenCanvas = new OffscreenCanvas(bindingWidth, bindingHeight);
+            const offCtx = offscreenCanvas.getContext('2d');
+            
+            let hadToAdjust = false;
+            let widthDif = (dimensions.x - newWidth) / 2;
+            // let heightDif = (dimensions.y - newHeight) / 2
+            
+            // if the new calculated height of the binding coords is greater than 75% of the map canvas height
+            // then update/increase the main canvas height & width
+            if (newHeight / dimensions.y > 0.75) {
+                hadToAdjust = true;
+                canvas.height = dimensions.y + 100;
+                canvas.width = dimensions.x + 100;
+                widthDif = (dimensions.x + 100 - newWidth) / 2;
+            }
+
+            // redraw the image data to the offscreen canvas
+            // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+            offCtx.putImageData(mapImg, 0, 0);
+
+            if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 0, justFitWidth, justFitHeight);
+            }
+            else if (hadToAdjust) {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 10, justFitWidth, justFitHeight);
+            }
+            else {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -25, justFitWidth, justFitHeight);
+            }
+
+            await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(()=> {
                 genImage();
             });
         }
@@ -112,7 +168,6 @@ const MapComponent = ({
     
                 // hide map
                 map.style.display = 'None';
-    
                 // Create an image element
                 const img = new Image();
                 img.width = dimensions.x;
@@ -129,20 +184,19 @@ const MapComponent = ({
                     var map = document.getElementById('map');
                     map.style.display = 'None';
                     setLoading(false);
-                }, 10)
-            }, 100)
+                }, 10);
+            }, 100);
         }
 
         let canvas = document.getElementsByTagName('canvas')[0];
         if (showText) {
             setTimeout(() => {
-                drawText(polylineBounds, canvas, lineColor) 
-            }, 100)
+                drawText(polylineBounds, canvas, lineColor);
+            }, 100);
         }
         else {
-            genImage()
+            genImage();
         }
-
     }, []);
 
     const calculateTextPlacement = (
@@ -215,35 +269,35 @@ const MapComponent = ({
                 text: workDoneText,
                 textWidth: ctx.measureText(workDoneText).width,
             },
-        ]
+        ];
 
         let locCounter = 1;
         keys.forEach((key, index) => {
             if (key.isOn) {
                 key.location = locCounter;
                 locCounter += 1;
-                onList.push(key)
+                onList.push(key);
             }
         })
 
         if (onList.length == 1) {
-            onList[0].location = 2
+            onList[0].location = 2;
         }
 
         if (onList.length == 2) {
-            onList[1].location = 3
+            onList[1].location = 3;
         }
 
         if (onList.length == 4) {
-            onList[3].location = 5
+            onList[3].location = 5;
         }
 
         if (onList.length == 5) {
-            onList[4].location = 6
+            onList[4].location = 6;
         }
 
         if (onList.length == 7) {
-            console.log('panic')
+            console.log('panic');
         }
 
         const onGrid = {
@@ -258,37 +312,33 @@ const MapComponent = ({
         return onGrid
     }
 
-    const generateText = async (bounds, canvas, lineColor) => {
-
-        // ok now we need to add labels and calculations for the new fields
-        // then we need to dynamically calculate how they should be shown
-        //      2 rows of 3 across maybe?
-        //      stravas is 3 rows of 2 across, so maybe we don't do that 
-        // if only 1 is enabled, put it in the middle
-        // if 2 are enabled, put them on the sides (nothing in the middle) but keep the 3 across grid
-        //      could also just split the full width in 2 (50/50)
-        // if 4 enabled, 3 across and then 1 in the middle on the second row
-        // if 5 enabled, 3 across the top and 2 on the sides on the second row (nothing in the middle)
-
-
+    const generateText = async (bounds, canvas, lineColor, hadToAdjust) => {
         await findLowestPixel(lineColor).then((lowestPixel) => {
             const ctx = canvas.getContext("2d");
             ctx.font = "bold 16pt Arial";
             ctx.fillStyle = lineColor;
 
+            // get width/height of map canvas
             let dimensions = mapRef.current.getSize();
-            const centerY = (lowestPixel / 2);
+            if (hadToAdjust) {
+                dimensions = {x: canvas.width, y: canvas.height};
+            }
 
             // get canvas width / 3
-            const third = dimensions.x / 3;
+            let centerY = (lowestPixel / 2);
+            let third = (dimensions.x) / 3;
+
+            if (hadToAdjust) {
+                centerY = lowestPixel + 50;
+            }
+            // const third = (dimensions.x + 100) / 3;
             const half = dimensions.x / 2;
             
             // get half of the value of above, thats the half way point of the third
             const thirdCenter = third / 2;
             // const halfCenter = half / 2;
 
-            // get width of text
-            // calculate / convert human readable value
+            // get width of text and calculate / convert human readable value
             // distance
             const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
             const distanceText = 'Distance';
@@ -324,86 +374,8 @@ const MapComponent = ({
             const workDoneText = 'Work Done';
             // const workDoneTextWidth = ctx.measureText(workDoneText).width;
 
-
             // get matrix positions
-            // const gridMatrix = [
-            //     [
-            //         [
-            //             {
-            //                 x: thirdCenter - (distanceTextWidth / 2),
-            //                 y: centerY,
-            //                 location: 1,
-            //             },
-            //             {
-            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
-            //                 y: centerY,
-            //                 location: 2
-
-            //             },
-            //             {
-            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-            //                 y: centerY,
-            //                 location: 3
-            //             },
-            //         ],
-            //         [
-            //             {
-            //                 x: thirdCenter - (distanceTextWidth / 2),
-            //                 y: centerY + 35,
-            //                 location: 1
-            //             },
-            //             {
-            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
-            //                 y: centerY + 35,
-            //                 location: 2
-            //             },
-            //             {
-            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-            //                 y: centerY + 35,
-            //                 location: 3
-            //             },
-            //         ]
-            //     ],
-            //     [
-            //         [
-            //             {
-            //                 x: thirdCenter - (distanceTextWidth / 2),
-            //                 y: centerY + 35 + 35,
-            //                 location: 4
-            //             },
-            //             {
-            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
-            //                 y: centerY + 35 + 35,
-            //                 location: 5
-            //             },
-            //             {
-            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-            //                 y: centerY + 35 + 35,
-            //                 location: 6
-            //             },
-            //         ],
-            //         [
-            //             {
-            //                 x: thirdCenter - (distanceTextWidth / 2),
-            //                 y: centerY + 35 + 35 + 35,
-            //                 location: 4
-            //             },
-            //             {
-            //                 x: thirdCenter + third - (totalElevationTextWidth / 2),
-            //                 y: centerY + 35 + 35 + 35,
-            //                 location: 5
-            //             },
-            //             {
-            //                 x: thirdCenter + third + third - (movingTimeTextWidth / 2),
-            //                 y: centerY + 35 + 35 + 35,
-            //                 location: 6
-            //             },
-            //         ]
-            //     ]
-            // ]
             const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx);
-            // set text font
-            // ctx.font = "bold 16pt Arial";
 
             Object.keys(textMatrix).forEach((key) => {
                 const val = textMatrix[key]
@@ -465,116 +437,7 @@ const MapComponent = ({
                     }
                 }
             })
-            
-            // if ((centerY + 40  + 35 + 35) > dimensions.y) {
-            //     // its gonna be bigger than the screen, incrementally downsize til it fits
-            //     // resizeMap(dimensions)
-            //     debugger
-            //     ctx.scale(0.75, 0.75);
-            // }
-            
-
-            // set text start point at text width / 2
-            // distance = 0
-            // if (showDistance) {
-            //     ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
-            // }
-            // ctx.fillText(distanceText, thirdCenter - (distanceTextWidth / 2), centerY);
-            
-            // -----------
-            // pace / total_elevation_gain = third
-
-            // if (showElevGain) {
-            //     ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
-            // }
-
-            // if (showPace) {
-            //     ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
-            // }
-
-            // if (activity.type == 'Run') {
-            //     ctx.fillText(paceText, thirdCenter + third - (paceTextWidth / 2), centerY);
-            // } else {
-            //     ctx.fillText(totalElevationText, thirdCenter + third - (totalElevationTextWidth / 2), centerY);
-            // }
-
-            // -----------
-            // moving_time = third + third
-
-            // if (showDuration) {
-            //     ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
-            // }
-            // ctx.fillText(movingTimeText, thirdCenter + third + third - (movingTimeTextWidth / 2), centerY);
-
-
-            // set value font
-            // ctx.font = "bold 20pt Arial";
-
-            // -----------
-            // Distance Value 
-
-            // const distanceWidth = ctx.measureText(distance).width;
-            // ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
-
-            // if (showDistance) {
-            //     const distanceWidth = ctx.measureText(distance).width;
-            //     ctx.fillText(distance, thirdCenter - (distanceWidth / 2), centerY + 35);
-            // }
-
-            // -----------
-            // Pace / Elev Gain Value
-
-            // if (activity.type == 'Run') {
-            //     const paceWidth = ctx.measureText(pace).width;
-            //     ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
-            // } else {
-            //     const totalElevationWidth = ctx.measureText(totalElevation).width;
-            //     ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
-            // }
-
-            // if (showPace) {
-            //     const paceWidth = ctx.measureText(pace).width;
-            //     ctx.fillText(pace, thirdCenter + third - (paceWidth / 2), centerY + 35);
-            // }
-
-            // if (showElevGain) {
-            //     const totalElevationWidth = ctx.measureText(totalElevation).width;
-            //     ctx.fillText(totalElevation, thirdCenter + third - (totalElevationWidth / 2), centerY + 35);
-            // }
-
-            // -----------
-            // Moving Time (Duration) Value
-
-            // if (showDuration) {
-            //     const movingTimeWidth = ctx.measureText(movingTime).width;
-            //     ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
-            // }
-            // const movingTimeWidth = ctx.measureText(movingTime).width;
-            // ctx.fillText(`${movingTime}`, thirdCenter + third + third - (movingTimeWidth / 2), centerY + 35);
         });
-    }
-
-    const resizeMap = () => {
-        
-        let tooBig = true
-        // get the bounds
-        // make it smaller
-        // check to see if it fits yet
-        let mapRefBounds = mapRef.current.getBounds()
-        let adjustedMapRefBounds = mapRefBounds.pad(0.03);
-        const corner1 = L.latLng(adjustedMapRefBounds._northEast.lat - 0.015, adjustedMapRefBounds._northEast.lng);
-        const corner2 =  L.latLng(adjustedMapRefBounds._southWest.lat - 0.015, adjustedMapRefBounds._southWest.lng);
-        mapRefBounds = L.latLngBounds(corner1, corner2);
-        mapRef.current.fitBounds(mapRefBounds);
-        let dimensions = mapRef.current.getSize();
-        // debugger
-        // findLowestPixel(lineColor).then(lowestPixel => {
-        //     if (((lowestPixel / 2) + 40  + 35 + 35) > dimensions.y) {
-        //         // debugger
-        //         // resizeMap(dimensions)
-        //     }
-        // })
-        
     }
 
     const getMovingTime = (activity) => {
@@ -602,15 +465,15 @@ const MapComponent = ({
     }
 
     const getAvgPower = (activity) => {
-        return `${Math.round(activity.average_watts)} w`
+        return `${Math.round(activity.average_watts)} w`;
     }
 
     const getAvgSpeed = (activity) => {
-        return `${(activity.average_speed * 2.23694).toFixed(2)} mi/h`
+        return `${(activity.average_speed * 2.23694).toFixed(2)} mi/h`;
     }
 
     const getWorkDone = (activity) => {
-        return `${Math.round(activity.kilojoules)} kJ`
+        return `${Math.round(activity.kilojoules)} kJ`;
     }
 
     const findLowestPixel = async (lineColor) => {
@@ -629,22 +492,24 @@ const MapComponent = ({
             
             if (r == color.r && g == color.g && b == color.b && a == color.a) { 
                 finalPixel = i;
-                // console.log(`i=${i}, r ${r}, g ${g}, b ${b}, a ${a}`)
             }
         }
 
-        const pixelLocation = finalPixel / 4
-        const rowsAbove = pixelLocation / canvas.width
+        const pixelLocation = finalPixel / 4;
+        const rowsAbove = pixelLocation / canvas.width;
         return Math.round(rowsAbove);
     }
 
-    const findHighestPixel = async (lineColor) => {
+    const findPixelBounds = async (lineColor) => {
         const canvas = document.getElementsByTagName('canvas')[0];
         const ctx = canvas.getContext("2d");
         const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
         const pix = imgd.data; // array of pixels
         let firstPixel = null;
+        let lastPixel = null;
+        let leftPixel = null;
+        let rightPixel = null;
 
         for (var i = 0, n = pix.length; i < n; i += 4) {
             var r = pix[i],
@@ -653,25 +518,34 @@ const MapComponent = ({
                 a = pix[i+3];
             
             if (r == color.r && g == color.g && b == color.b && a == color.a) { 
-                firstPixel = i;
-                console.log(`i=${i}, r ${r}, g ${g}, b ${b}, a ${a}`)
-            }
-            if (firstPixel) {
-                break;
+                const pixelX = (i/4) % canvas.width;
+                const pixelY = Math.floor((i / 4) / canvas.width);
+
+                lastPixel = pixelY;
+
+                if (!firstPixel || pixelY < firstPixel) {
+                    firstPixel = pixelY;
+                }
+
+                if (!leftPixel || pixelX < leftPixel) {
+                    leftPixel = pixelX;
+                }
+
+                if (!rightPixel || pixelX > rightPixel) {
+                    rightPixel = pixelX;
+                }
             }
         }
 
-        const pixelLocation = firstPixel / 4
-        const rowsAbove = pixelLocation / canvas.width
-        // debugger
-        return Math.round(rowsAbove);
+        const pixels = {first: firstPixel, right: rightPixel, left: leftPixel, last: lastPixel};
+        return pixels
     }
 
     const paintBackground = (x, y) => {
         const images = document.getElementById('images');
         const canvas = document.createElement('canvas');
         canvas.style.width = '100%';
-        canvas.style.height = '85vh';
+        canvas.style.height = '100vh';
         images.appendChild(canvas);
 
         const ctx = canvas.getContext("2d");
