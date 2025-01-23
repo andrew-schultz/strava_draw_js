@@ -92,7 +92,6 @@ const MapComponent = ({
             
             // getImageData(left x coord, top y coord, width, height)
             let dimensions = mapRef.current.getSize();
-            const dimAspectRatio = dimensions.x / dimensions.y;
 
             // calculate binding width / height based on returned coords
             const bindingWidth = bindingCoords.right - bindingCoords.left;
@@ -109,8 +108,8 @@ const MapComponent = ({
             let justFitHeight = bindingHeight;
             let justFitVar = 1.0;
 
-            console.log(dimensions.y, dimensions.y * 0.75)
-            while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.75)) {
+            console.log(dimensions.y, dimensions.y * 0.70)
+            while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.70)) {
                 justFitWidth = bindingWidth * justFitVar;
                 justFitHeight = bindingHeight * justFitVar;
                 justFitVar -= 0.05;
@@ -118,8 +117,6 @@ const MapComponent = ({
             }
 
             // calculate width/height with aspect ratio
-            // let newWidth = bindingWidth * dimAspectRatio;
-            // let newHeight = bindingHeight * dimAspectRatio;
             let newWidth = justFitWidth;
             let newHeight = justFitHeight;
 
@@ -133,12 +130,12 @@ const MapComponent = ({
             
             // if the new calculated height of the binding coords is greater than 75% of the map canvas height
             // then update/increase the main canvas height & width
-            if (newHeight / dimensions.y > 0.75) {
-                hadToAdjust = true;
-                canvas.height = dimensions.y + 100;
-                canvas.width = dimensions.x + 100;
-                widthDif = (dimensions.x + 100 - newWidth) / 2;
-            }
+            // if (newHeight / dimensions.y > 0.70) {
+            //     hadToAdjust = true;
+            //     canvas.height = dimensions.y + 100;
+            //     canvas.width = dimensions.x + 100;
+            //     widthDif = (dimensions.x + 100 - newWidth) / 2;
+            // }
 
             // redraw the image data to the offscreen canvas
             // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
@@ -151,7 +148,7 @@ const MapComponent = ({
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 10, justFitWidth, justFitHeight);
             }
             else {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -25, justFitWidth, justFitHeight);
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
             }
 
             await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(()=> {
