@@ -50,7 +50,7 @@ const HomeMain = () => {
             const athleteIdCookie = cookieCutter.get('athleteId')
             const refreshTokenCookie = cookieCutter.get('refreshToken')
             const accessTokenCookie = cookieCutter.get('accessToken')
-    
+
             const getCredsAndActivities = async (code) => {
                 let creds = await getAuthorization(code)
                 console.log(creds)

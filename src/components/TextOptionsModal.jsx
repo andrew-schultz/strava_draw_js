@@ -27,7 +27,15 @@ const TextOptionsModal = ({
     const [showTextOptionsModal, setShowTextOptionsModal] = useState(false);
 
     const toggleTextOptionsModal = () => {
-        setShowTextOptionsModal(!showTextOptionsModal) 
+        setShowTextOptionsModal(!showTextOptionsModal);
+        const body = document.getElementsByTagName('body')[0];
+        if (!showTextOptionsModal) {
+            // modal is open, disable scroll
+            body.classList.add('noscroll');
+        } else {
+            // modal is closed, enable scroll
+            body.classList.remove('noscroll');
+        }
     }
 
     return (   

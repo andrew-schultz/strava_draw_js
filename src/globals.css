@@ -1,3 +1,7 @@
+.noscroll {
+  overflow: hidden;
+}
+
 /* ---------------- */
 /* Auth             */
 /* ---------------- */
@@ -34,11 +38,6 @@
 
 
 /* ---------------- */
-
-
-
-
-
 .mapButton {
     border: 1px solid black;
     padding: 5px;
@@ -109,7 +108,7 @@
   justify-content: center;
   z-index: 101;
   left: 0px;
-  top: 15%;
+  top: 5%;
 }
 
 .textOptionsModalContent {
