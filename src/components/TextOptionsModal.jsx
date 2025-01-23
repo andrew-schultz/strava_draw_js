@@ -25,49 +25,26 @@ const TextOptionsModal = ({
     activity,
 }) => {
     const [showTextOptionsModal, setShowTextOptionsModal] = useState(false);
-    // const [internalTextOptions, setInternalTextOptions] = useState();
 
     const toggleTextOptionsModal = () => {
         setShowTextOptionsModal(!showTextOptionsModal) 
     }
 
-    // useEffect(() => {
-    //     // debugger
-
-    //     setInternalTextOptions(textOptions)
-    // }, [textOptions])
-
-    // useEffect(() => {
-    //     // debugger
-    // }, [internalTextOptions])
-    // // console.log(textOptions)
-
-    // const internalHandleToggleTextField = (e, key) => {
-    //     handleToggleTextField(e, key)
-    //     const rawVal = e.target.value;
-    //     // // setRawShowText(rawVal)
-    //     console.log('before', internalTextOptions)
-    //     if (rawVal === '1') {
-    //         internalTextOptions[key] = false
-    //         setInternalTextOptions(internalTextOptions)
-    //         console.log('after', internalTextOptions)
-
-    //     } else if (rawVal === '2') {
-    //         internalTextOptions[key] = true
-    //         setInternalTextOptions(internalTextOptions)
-    //         console.log('after', internalTextOptions)
-    //     }
-    // }
-
-
     return (   
         <div>
             <div className={`mapButton right ${showTextOptionsModal ? ('selected') : null }`} onClick={toggleTextOptionsModal}>Options</div>
             {showTextOptionsModal ? (
+                <div>
+                <div className='textOptionModalOuter'>
+                </div>
                 <div className='textOptionsModalContainer'>
+                    
                     <div className='textOptionsModalContent'>
                         <p className='closeModal' onClick={toggleTextOptionsModal}>x</p>
                         <div className="slidersContainerTextOption">
+                            <div className='textOptionsTitle'>
+                                <p>Options</p>
+                            </div>
                             <div className="slidersContainerTextOptionInner" key={`lineColorSliderContainer1`}>
                                 <div className="textOptionLabel">
                                     <p>{'Line Color'}</p>
@@ -100,28 +77,10 @@ const TextOptionsModal = ({
                                     ></input>
                                 </div>
                             </div>
-                            <br></br>
-                            {/* {Object.keys(internalTextOptions).map(key => {
-                                return (
-                                    <div className="slidersContainerTextOptionInner" key={`${key}SliderContainer`}>
-                                        <div className="textOptionLabel">
-                                            <p>{key}</p>
-                                        </div>
-                                        <div className="textOptionInput">
-                                            <p>{internalTextOptions[key] ? '2' : '1'}</p>
-                                            <input 
-                                                type="range"
-                                                min="1" 
-                                                max="2" 
-                                                value={internalTextOptions[key] ? '2' : '1'} 
-                                                className={`textOptionInputActual slider ${internalTextOptions[key] ? ('on') : ('off')}`} 
-                                                id={`${key}Selector`} 
-                                                onChange={(e) => internalHandleToggleTextField(e, key)}
-                                            ></input>
-                                        </div>
-                                    </div>
-                                )
-                            })} */}
+                            <div className='optionsDivider'></div>
+                            <div className='textOptionsTitle'>
+                                <p>Stat Options</p>
+                            </div>
                             <div className="slidersContainerTextOptionInner" key={`durationSliderContainer1`}>
                                 <div className="textOptionLabel">
                                     <p>{'Duration'}</p>
@@ -238,6 +197,7 @@ const TextOptionsModal = ({
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             ) : (null)}
         </div>
