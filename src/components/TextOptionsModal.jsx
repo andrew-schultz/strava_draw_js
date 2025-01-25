@@ -35,14 +35,13 @@ const TextOptionsModal = ({
 
     const toggleTextOptionsModal = () => {
         setShowTextOptionsModal(!showTextOptionsModal);
-        const body = document.getElementsByTagName('body')[0];
+        // const body = document.getElementsByTagName('body')[0];
         if (!showTextOptionsModal) {
             // modal is open, disable scroll
-            body.classList.add('noscroll');
+            // body.classList.add('noscroll');
         } else {
             // modal is closed, enable scroll
-            body.classList.remove('noscroll');
-            debugger
+            // body.classList.remove('noscroll');
             setDrawNow(true)
         }
     }
