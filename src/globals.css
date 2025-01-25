@@ -124,8 +124,19 @@
 .textOptionLabel {
   display: inline-block;
   width: 50%;
-  text-align: end;
+  text-align: end; 
   padding-right: 10px;
+}
+
+.textOptionLabelGrid {
+  display: inline-block;
+  width: 100%;
+  /* text-align: end; */
+  /* padding-right: 10px; */
+}
+
+.textOptionLabelGrid p {
+  margin-bottom: 2px;
 }
 
 .disabledLabel {
@@ -256,9 +267,26 @@
   flex-wrap: wrap;
 }
 
+.sliderContainerRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sliderContainerRowItem {
+  width: 50%;
+  text-align: center;
+}
+
 .slidersContainerTextOptionInner {
   width: 100%;
   display: flex;
+  justify-content: center;
+}
+
+.slidersContainerTextOptionInnerGrid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 }
 

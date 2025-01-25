@@ -46,6 +46,8 @@ const TextGrid = ({
     }
 
     const handleTouchStart = (event) => {
+        const body = document.getElementsByTagName('body')[0];
+        body.classList.add('noscroll');
         console.log('starting')
 
         const currentTime = new Date().getTime();
@@ -77,6 +79,8 @@ const TextGrid = ({
         ]
 
         const handleTouchMove = (event) => {
+            const body = document.getElementsByTagName('body')[0];
+            body.classList.add('noscroll');
             const touch = event.touches[0];
             gridElements.forEach((element) => {
                 let classList = element.el.classList;
@@ -100,6 +104,8 @@ const TextGrid = ({
         }
     
         const handleTouchEnd = (event) => {
+            const body = document.getElementsByTagName('body')[0];
+            body.classList.remove('noscroll');
             const touch = event.changedTouches[0];
             const originId = event.target.dataset.id
             gridElements.forEach((element) => {
