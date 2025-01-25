@@ -1,45 +1,59 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-// import Link from "next/link";
 import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 import TextOptionsModal from './TextOptionsModal';
+import { useTextGridProvider } from '../providers/TextGridProvider';
 
 var polyline = require('@mapbox/polyline');
 
 const ActivityDetail = ({activity, setActivity}) => {
-    // let textOptionObj = {
-    //     'distance': true,
-    //     'elevationGain': true,
-    //     'duration': true,
-    //     'pace': false, 
-    //     'averagePower': false,
-    //     'averageSpeed': false,
-    //     'calories': false,
-    // };
+    const gridBase = {
+        1: {
+            position: 1,
+            val: null,
+        },
+        2: {
+            position: 2,
+            val: null,
+        },
+        3: {
+            position: 3,
+            val: null,
+        },
+        4: {
+            position: 4,
+            val: null,
+        }, 
+        5: {
+            position: 5,
+            val: null,
+        },
+        6: {
+            position: 6,
+            val: null,
+        },
+    }
 
     const [polylines, setPolylines] = useState();
     const [lineColor, setLineColor] = useState('white');
     const [rawLineColor, setRawLine] = useState('1');
     const [showText, setShowText] = useState(true);
     const [rawShowText, setRawShowText] = useState('2');
-    // const [textOptions, setTextOptions] = useState(textOptionObj);
     const date = new Date(activity.start_date).toLocaleString();
-    const [showDistance, setShowDistance] = useState(true);
-    const [showElevGain, setShowElevGain] = useState(activity.type.includes('Ride'));
-    const [showDuration, setShowDuration] = useState(true);
-    const [showPace, setShowPace] = useState(activity.type == 'Run');
-    const [showAvgPower, setShowAvgPower] = useState(false);
-    const [showAvgSpeed, setShowAvgSpeed] = useState(false);
-    const [showWorkDone, setShowWorkDone] = useState(false);
-    // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
+
+    const {
+        drawNow,
+    } = useTextGridProvider();
+
     const router = useRouter();
 
+    // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
+    
     useEffect(() => {
         let polylines = activity.map.summary_polyline;
         let decoded_polylines = polyline.decode(polylines);
-        // setTextOptions(textOptionObj)
         setPolylines(decoded_polylines)
     }, [])
 
@@ -119,48 +133,13 @@ const ActivityDetail = ({activity, setActivity}) => {
         }
     }
 
-    // const handleToggleTextField = (e, field) => {
-    //     const rawVal = e.target.value;
-    //     const newTextOptions = textOptions;
-    //     if (rawVal === '1') {
-    //         newTextOptions[field] = false
-    //         setTextOptions(newTextOptions)
-    //     } else if (rawVal === '2') {
-    //         newTextOptions[field] = true
-    //         setTextOptions(newTextOptions)
-    //     }
-    //     console.log(newTextOptions)
-    // }
-
     return (
         <div className="actvityListItem detail" >
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
                     <div className="mapButton" onClick={localSetActivity}>back</div>
-                    {/* <div className="slidersContainer">
-                        <div class="sliderContainer">
-                            <input type="range" min="1" max="2" value={rawLineColor} className={'slider ' + lineColor} id="lineColorSelector" onChange={(e) => handleSetColor(e)}></input>
-                        </div>
-                        <div class="sliderContainer">
-                            <input type="range" min="1" max="2" value={rawShowText} className={`slider ${showText ? ('on') : ('off')}`} id="showTextSelector" onChange={(e) => handleShowText(e)}></input>
-                        </div>
-                    </div> */}
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
-                            showDistance={showDistance}
-                            handleShowDistance={setShowDistance}
-                            showDuration={showDuration}
-                            handleShowDuration={setShowDuration}
-                            showElevGain={showElevGain}
-                            handleShowElevGain={setShowElevGain}
-                            showPace={showPace}
-                            handleShowPace={setShowPace}
-                            showAvgPower={showAvgPower}
-                            handleShowAvgPower={setShowAvgPower}
-                            showAvgSpeed={showAvgSpeed}
-                            handleShowAvgSpeed={setShowAvgSpeed}
-                            showWorkDone={showWorkDone}
-                            handleShowWorkDone={setShowWorkDone}
                             lineColor={lineColor}
                             rawLineColor={rawLineColor}
                             handleSetColor={handleSetColor}
@@ -185,13 +164,6 @@ const ActivityDetail = ({activity, setActivity}) => {
                     lineColor={lineColor} 
                     showText={showText} 
                     activity={activity}
-                    showDistance={showDistance}
-                    showDuration={showDuration}
-                    showElevGain={showElevGain}
-                    showPace={showPace}
-                    showAvgPower={showAvgPower}
-                    showAvgSpeed={showAvgSpeed}
-                    showWorkDone={showWorkDone}
                 >
                 </MapComponent>) : null}
         </div>
