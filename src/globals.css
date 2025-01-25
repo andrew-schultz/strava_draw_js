@@ -146,10 +146,33 @@
 
 .closeModal {
     position: absolute;
-    right: 10px;
-    top: -15px;
+    right: 8px;
+    top: -10px;
     font-size: 18px;
-    font-weight: bold;
+    border: 1px solid black;
+    padding: 3px 5px;
+}
+
+.textOptionsOrderGridRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.textOptionGridItem {
+  width: 33%;
+  height: 100px;
+  border: 0.5px solid black;
+  z-index: 101;
+}
+
+.textOptionGridItem p {
+  z-index: 99;
+}
+
+
+.dragOver {
+  background-color: black;
+  opacity: 0.5;
 }
 
 .selected {
@@ -328,6 +351,7 @@
     height: 100vh;
     /* min-height: 800px; */
     background-color: white;
+    top: 0;
     position: absolute;
     z-index: 105;
     display: flex;

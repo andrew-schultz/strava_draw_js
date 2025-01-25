@@ -9,27 +9,61 @@ import { useEffect, useState, useRef } from 'react';
 import Spinner from "./Spinner"
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useTextGridProvider } from "../providers/TextGridProvider";
 
 const MapComponent = ({
     polylines, 
     lineColor, 
     showText, 
     activity,
-    showDistance,
-    showDuration,
-    showElevGain,
-    showPace,
-    showAvgPower,
-    showAvgSpeed,
-    showWorkDone,
 }) => {
+    const {
+        drawNow,
+        setDrawNow,
+        grid,
+        onList,
+        placementGrid,
+        showDistance,
+        showDuration,
+        showElevGain,
+        showPace,
+        showAvgPower,
+        showAvgSpeed,
+        showWorkDone,
+    } = useTextGridProvider();
+
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - infoDiv.offsetHeight;
 
     const [loading, setLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true)
+    }, []);
+
+    useEffect(() => {
+        if (mounted) {
+            drawMap()
+        }
+    }, [mounted])
+
+    useEffect(() => {
+        if (drawNow && mounted) {
+            drawMap()
+            setDrawNow(false)
+        } 
+        else if (drawNow) {
+            setTimeout(() => {
+                drawMap()
+                setDrawNow(false)
+            }, 100)
+        }
+    }, [drawNow])
+
+    const drawMap = () => {
+        console.log('drawing map')
         if (mapRef.current) return; // Map already initialized
 
         setLoading(true);
@@ -88,7 +122,7 @@ const MapComponent = ({
             const ctx = canvas.getContext('2d');
             
             // get the image data for exactly the map, returns top, left, right, and bottom pixels/coords
-            let bindingCoords = await findPixelBounds(lineColor);
+            let bindingCoords = await findPixelBounds(lineColor, canvas);
             
             // getImageData(left x coord, top y coord, width, height)
             let dimensions = mapRef.current.getSize();
@@ -152,15 +186,14 @@ const MapComponent = ({
             }
 
             await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(()=> {
-                genImage();
+                genImage(canvas);
             });
         }
 
-        const genImage = () => {
+        const genImage = (canvas) => {
             setTimeout(() => {
                 let dimensions = mapRef.current.getSize();
                 let map = document.getElementById('map');
-                let canvas = document.getElementsByTagName('canvas')[0];
                 let dataURL = canvas.toDataURL();
     
                 // hide map
@@ -185,25 +218,24 @@ const MapComponent = ({
             }, 100);
         }
 
-        let canvas = document.getElementsByTagName('canvas')[0];
+        const canvas = document.getElementsByTagName('canvas')[0];
         if (showText) {
             setTimeout(() => {
                 drawText(polylineBounds, canvas, lineColor);
             }, 100);
         }
         else {
-            genImage();
+            genImage(canvas);
         }
-    }, []);
+    }
 
     const calculateTextPlacement = (
         distance, elevationGain, pace, duration, avgPower, avgSpeed, workDone,
         distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, workDoneText,
         ctx,
     ) => {
-        const onList = [];
-        const keys = [
-            {
+        const keys = {
+            showDistance: {
                 name: 'distance', 
                 isOn: showDistance,
                 location: null,
@@ -212,7 +244,7 @@ const MapComponent = ({
                 text: distanceText,
                 textWidth: ctx.measureText(distanceText).width,
             },
-            {
+            showElevGain: {
                 name: 'elevation_gain', 
                 isOn: showElevGain,
                 location: null,
@@ -221,7 +253,7 @@ const MapComponent = ({
                 text: totalElevationText,
                 textWidth: ctx.measureText(totalElevationText).width,
             },
-            {
+            showPace: {
                 name: 'pace', 
                 isOn: showPace,
                 location: null,
@@ -230,7 +262,7 @@ const MapComponent = ({
                 text: paceText,
                 textWidth: ctx.measureText(paceText).width,
             },
-            {
+            showDuration: {
                 name: 'duration', 
                 isOn: showDuration,
                 location: null,
@@ -239,7 +271,7 @@ const MapComponent = ({
                 text: durationText,
                 textWidth: ctx.measureText(durationText).width,
             },
-            {
+            showAvgPower: {
                 name: 'avg_power', 
                 isOn: showAvgPower,
                 location: null,
@@ -248,7 +280,7 @@ const MapComponent = ({
                 text: avgPowerText,
                 textWidth: ctx.measureText(avgPowerText).width,
             },
-            {
+            showAvgSpeed: {
                 name: 'avg_speed', 
                 isOn: showAvgSpeed,
                 location: null,
@@ -257,7 +289,7 @@ const MapComponent = ({
                 text: avgSpeedText,
                 textWidth: ctx.measureText(avgSpeedText).width,
             },
-            {
+            showWorkDone: {
                 name: 'work_done', 
                 isOn: showWorkDone,
                 location: null,
@@ -266,51 +298,29 @@ const MapComponent = ({
                 text: workDoneText,
                 textWidth: ctx.measureText(workDoneText).width,
             },
-        ];
-
-        let locCounter = 1;
-        keys.forEach((key, index) => {
-            if (key.isOn) {
-                key.location = locCounter;
-                locCounter += 1;
-                onList.push(key);
-            }
-        })
-
-        if (onList.length == 1) {
-            onList[0].location = 2;
-        }
-
-        if (onList.length == 2) {
-            onList[1].location = 3;
-        }
-
-        if (onList.length == 4) {
-            onList[3].location = 5;
-        }
-
-        if (onList.length == 5) {
-            onList[4].location = 6;
-        }
-
-        if (onList.length == 7) {
-            console.log('panic');
-        }
+        };
 
         const onGrid = {
-            1: onList[0] ? onList[0] : null,
-            2: onList[1] ? onList[1] : null,
-            3: onList[2] ? onList[2] : null,
-            4: onList[3] ? onList[3] : null,
-            5: onList[4] ? onList[4] : null,
-            6: onList[5] ? onList[5] : null,
+            1: null,
+            2: null,
+            3: null,
+            4: null,
+            5: null,
+            6: null,
         }
+
+        Object.keys(placementGrid).forEach((id) => {
+            if (placementGrid[id].val) {
+                keys[placementGrid[id].val.field].location = id;
+                onGrid[id] = keys[placementGrid[id].val.field];
+            }
+        })
 
         return onGrid
     }
 
     const generateText = async (bounds, canvas, lineColor, hadToAdjust) => {
-        await findLowestPixel(lineColor).then((lowestPixel) => {
+        await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
             const ctx = canvas.getContext("2d");
             ctx.font = "bold 16pt Arial";
             ctx.fillStyle = lineColor;
@@ -473,8 +483,8 @@ const MapComponent = ({
         return `${Math.round(activity.kilojoules)} kJ`;
     }
 
-    const findLowestPixel = async (lineColor) => {
-        const canvas = document.getElementsByTagName('canvas')[0];
+    const findLowestPixel = async (lineColor, canvas) => {
+        // const canvas = document.getElementsByTagName('canvas')[0];
         const ctx = canvas.getContext("2d");
         const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
@@ -497,8 +507,8 @@ const MapComponent = ({
         return Math.round(rowsAbove);
     }
 
-    const findPixelBounds = async (lineColor) => {
-        const canvas = document.getElementsByTagName('canvas')[0];
+    const findPixelBounds = async (lineColor, canvas) => {
+        // const canvas = document.getElementsByTagName('canvas')[0];
         const ctx = canvas.getContext("2d");
         const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
