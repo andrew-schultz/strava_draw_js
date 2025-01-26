@@ -102,7 +102,7 @@ const TextOptionsModal = ({
                                             <div className="textOptionLabelGrid" >
                                                 <p>{'Duration'}</p>
                                             </div>
-                                            <div className="textOptionInput">
+                                            <div className="textOptionInputGrid">
                                                 <input 
                                                     type="range"
                                                     min="1"
@@ -120,7 +120,7 @@ const TextOptionsModal = ({
                                             <div className="textOptionLabelGrid">
                                                 <p>{'Distance'}</p>
                                             </div>
-                                            <div className="textOptionInput">
+                                            <div className="textOptionInputGrid">
                                                 <input 
                                                     type="range"
                                                     min="1"
@@ -140,7 +140,7 @@ const TextOptionsModal = ({
                                         <div className="textOptionLabelGrid">
                                             <p>{'Elev. Gain'}</p>
                                         </div>
-                                        <div className="textOptionInput">
+                                        <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 min="1"
@@ -156,7 +156,7 @@ const TextOptionsModal = ({
                                         <div className="textOptionLabelGrid">
                                             <p>{'Pace'}</p>
                                         </div>
-                                        <div className="textOptionInput">
+                                        <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 min="1"
@@ -175,7 +175,7 @@ const TextOptionsModal = ({
                                         <div className="textOptionLabelGrid">
                                             <p className={`${activity.average_watts ? 'active' : 'disabledLabel'}`}>{'Avg Power'}</p>
                                         </div>
-                                        <div className="textOptionInput">
+                                        <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 min="1"
@@ -192,7 +192,7 @@ const TextOptionsModal = ({
                                         <div className="textOptionLabelGrid">
                                             <p>{'Avg Speed'}</p>
                                         </div>
-                                        <div className="textOptionInput">
+                                        <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 min="1"
@@ -211,7 +211,7 @@ const TextOptionsModal = ({
                                         <div className="textOptionLabelGrid">
                                             <p className={`${activity.kilojoules ? 'active' : 'disabledLabel'}`}>{'Work Done'}</p>
                                         </div>
-                                        <div className="textOptionInput">
+                                        <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 disabled={activity.kilojoules ? false : true}
@@ -227,7 +227,7 @@ const TextOptionsModal = ({
                                 </div>
 
                             </div>
-                            <div className='optionsDivider'></div>
+                            {/* <div className='optionsDivider'></div> */}
                             <TextGrid
                                 showDuration={showDuration}
                                 showDistance={showDistance}
