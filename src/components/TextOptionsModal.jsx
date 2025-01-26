@@ -173,16 +173,18 @@ const TextOptionsModal = ({
                                 <div className='sliderContainerRow'>
                                     <div className="slidersContainerTextOptionInnerGrid" id="dragOptionAvgWatts"  key={`avgPowerSliderContainer1`}>
                                         <div className="textOptionLabelGrid">
-                                            <p className={`${activity.average_watts ? 'active' : 'disabledLabel'}`}>{'Avg Power'}</p>
+                                            {/* <p className={`${activity.average_watts ? 'active' : 'disabledLabel'}`}>{'Avg Power'}</p> */}
+                                            <p className='active'>{'Avg Power'}</p>
                                         </div>
                                         <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
                                                 min="1"
                                                 max="2"
-                                                disabled={activity.average_watts ? false : true}
+                                                // disabled={activity.average_watts ? false : true}
                                                 value={showAvgPower ? '2' : '1'}
-                                                className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
+                                                className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')}`}
+                                                // className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
                                                 id={`${'avgPower'}Selector`} 
                                                 onChange={(e) => setShowAvgPower(e.target.value == '1' ? false : true)}
                                             ></input>
@@ -209,16 +211,18 @@ const TextOptionsModal = ({
                                 <div className='sliderContainerRow'>
                                     <div className="slidersContainerTextOptionInnerGrid" id="dragOptionWorkDone"  key={`workDoneSliderContainer1`}>
                                         <div className="textOptionLabelGrid">
-                                            <p className={`${activity.kilojoules ? 'active' : 'disabledLabel'}`}>{'Work Done'}</p>
+                                            {/* <p className={`${activity.kilojoules ? 'active' : 'disabledLabel'}`}>{'Work Done'}</p> */}
+                                            <p className='active'>{'Work Done'}</p>
                                         </div>
                                         <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
-                                                disabled={activity.kilojoules ? false : true}
+                                                // disabled={activity.kilojoules ? false : true}
                                                 min="1"
                                                 max="2"
                                                 value={showWorkDone ? '2' : '1'}
-                                                className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
+                                                className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')}`} 
+                                                // className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
                                                 id={`${'workDone'}Selector`} 
                                                 onChange={(e) => setShowWorkDone(e.target.value == '1' ? false : true)}
                                             ></input>
