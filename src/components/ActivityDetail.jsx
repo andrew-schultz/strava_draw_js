@@ -43,10 +43,6 @@ const ActivityDetail = ({activity, setActivity}) => {
     const [rawShowText, setRawShowText] = useState('2');
     const date = new Date(activity.start_date).toLocaleString();
 
-    const {
-        drawNow,
-    } = useTextGridProvider();
-
     const router = useRouter();
 
     // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI

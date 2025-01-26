@@ -17,18 +17,19 @@ const TextGrid = ({
         swapGridSpot,
     } = useTextGridProvider();
 
-    useEffect(() => {
-        return () => {
-            // componentDidUnmount here
-        }
-    }, [])
+    // useEffect(() => {
+    //     return () => {
+    //         // componentDidUnmount here
+    //     }
+    // }, [])
 
-    useEffect(() => {
-        if (activity != currentActivity) {
-            currentActivity = activity;
-            resetGrid()
-        }
-    }, [activity]);
+    // useEffect(() => {
+    //     if (activity != currentActivity) {
+    //         debugger
+    //         currentActivity = activity;
+    //         resetGrid()
+    //     }
+    // }, [activity]);
 
     const dragStartHandler = (event) => {
         event.dataTransfer.setData("gridOption", event.target.id);
@@ -47,8 +48,8 @@ const TextGrid = ({
 
     const handleTouchStart = (event) => {
         // event.preventDefault();
-        const body = document.getElementsByTagName('body')[0];
-        body.classList.add('noscroll');
+        // const body = document.getElementsByTagName('body')[0];
+        // body.classList.add('noscroll');
         console.log('starting')
 
         const currentTime = new Date().getTime();
@@ -106,8 +107,8 @@ const TextGrid = ({
         }
     
         const handleTouchEnd = (event) => {
-            const body = document.getElementsByTagName('body')[0];
-            body.classList.remove('noscroll');
+            // const body = document.getElementsByTagName('body')[0];
+            // body.classList.remove('noscroll');
             const touch = event.changedTouches[0];
             const originId = event.target.dataset.id
             gridElements.forEach((element) => {

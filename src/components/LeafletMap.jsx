@@ -20,8 +20,6 @@ const MapComponent = ({
     const {
         drawNow,
         setDrawNow,
-        grid,
-        onList,
         placementGrid,
         showDistance,
         showDuration,
@@ -64,17 +62,23 @@ const MapComponent = ({
 
     const drawMap = () => {
         console.log('drawing map')
-        if (mapRef.current) return; // Map already initialized
+        // if (mapRef.current) return; // Map already initialized
+        if (mapRef.current) {
+            mapRef.current.eachLayer((layer) => {
+                layer.remove();
+            });
+        } else {
+            mapRef.current = L.map('map', {attributionControl: false, zoomControl: false, renderer: L.canvas() });
+            mapRef.current.touchZoom.disable();
+            mapRef.current.doubleClickZoom.disable();
+            mapRef.current.scrollWheelZoom.disable();
+            mapRef.current.boxZoom.disable();
+            mapRef.current.keyboard.disable();
+            mapRef.current.dragging.disable();
+        }
 
         setLoading(true);
-        mapRef.current = L.map('map', {attributionControl: false, zoomControl: false, renderer: L.canvas() });
-        mapRef.current.touchZoom.disable();
-        mapRef.current.doubleClickZoom.disable();
-        mapRef.current.scrollWheelZoom.disable();
-        mapRef.current.boxZoom.disable();
-        mapRef.current.keyboard.disable();
-        mapRef.current.dragging.disable();
-
+        
         var polyline = new L.Polyline(polylines, {
             color: lineColor,
             weight: 3,
@@ -161,15 +165,6 @@ const MapComponent = ({
             let hadToAdjust = false;
             let widthDif = (dimensions.x - newWidth) / 2;
             // let heightDif = (dimensions.y - newHeight) / 2
-            
-            // if the new calculated height of the binding coords is greater than 75% of the map canvas height
-            // then update/increase the main canvas height & width
-            // if (newHeight / dimensions.y > 0.70) {
-            //     hadToAdjust = true;
-            //     canvas.height = dimensions.y + 100;
-            //     canvas.width = dimensions.x + 100;
-            //     widthDif = (dimensions.x + 100 - newWidth) / 2;
-            // }
 
             // redraw the image data to the offscreen canvas
             // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
@@ -218,7 +213,14 @@ const MapComponent = ({
             }, 100);
         }
 
-        const canvas = document.getElementsByTagName('canvas')[0];
+        const canvases = document.getElementsByTagName('canvas');
+        let canvas;
+        if (canvases.length > 1) {
+            canvas = canvases[1]  
+        } else {
+            canvas = canvases[0]
+        }
+
         if (showText) {
             setTimeout(() => {
                 drawText(polylineBounds, canvas, lineColor);
