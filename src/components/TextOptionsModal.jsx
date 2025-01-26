@@ -76,7 +76,7 @@ const TextOptionsModal = ({
                                         ></input>
                                     </div>
                                 </div>
-                                <div className="slidersContainerTextOptionInner" key={`showTextSliderContainer1`}>
+                                {/* <div className="slidersContainerTextOptionInner" key={`showTextSliderContainer1`}>
                                     <div className="textOptionLabel">
                                         <p>{'Show Text'}</p>
                                     </div>
@@ -91,11 +91,11 @@ const TextOptionsModal = ({
                                             onChange={(e) => handleShowText(e)}
                                         ></input>
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className='optionsDivider'></div>
-                                <div className='textOptionsTitle'>
+                                {/* <div className='textOptionsTitle'>
                                     <p>Stat Options</p>
-                                </div>
+                                </div> */}
                                 <div className='sliderContainerRow'>
                                     <div className='sliderContainerRowItem'>
                                         <div className="slidersContainerTextOptionInnerGrid"  key={`durationSliderContainer1`}>

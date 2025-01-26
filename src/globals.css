@@ -187,6 +187,9 @@
   border: 0.5px solid black;
   z-index: 101;
   touch-action: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .textOptionGridItem p {
@@ -258,13 +261,14 @@
 }
 
 .textOptionsTitle {
-  font-size: 20px;
+  font-size: 24px;
   margin-bottom: 0px;
+  margin-top: 5px;
 }
 
 .textOptionsTitle p {
   margin-bottom: 0px;
-  text-decoration: underline;
+  /* text-decoration: underline; */
   font-weight: bold;
 }
 
