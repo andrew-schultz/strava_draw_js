@@ -263,7 +263,9 @@
 .textOptionsTitle {
   font-size: 24px;
   margin-bottom: 0px;
-  margin-top: 5px;
+  margin-top: 15px;
+  min-height: 10px;
+  min-width: 100%;
 }
 
 .textOptionsTitle p {

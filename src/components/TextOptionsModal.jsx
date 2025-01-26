@@ -58,7 +58,7 @@ const TextOptionsModal = ({
                             <p className='closeModal' onClick={toggleTextOptionsModal}>Apply</p>
                             <div className="slidersContainerTextOption">
                                 <div className='textOptionsTitle'>
-                                    <p>Options</p>
+                                    {/* <p>Options</p> */}
                                 </div>
                                 <div className="slidersContainerTextOptionInner" key={`lineColorSliderContainer1`} >
                                     <div className="textOptionLabel">
