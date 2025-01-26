@@ -4,15 +4,7 @@ import TextGrid from './TextGrid';
 import { useTextGridProvider } from '../providers/TextGridProvider';
 
 const TextOptionsModal = ({
-    rawLineColor,
-    lineColor,
-    handleSetColor,
-    rawShowText,
-    showText,
-    handleShowText,
     activity,
-    placementGrid,
-    setPlacementGrid,
 }) => {
     const [showTextOptionsModal, setShowTextOptionsModal] = useState(false);
     const {
@@ -31,6 +23,12 @@ const TextOptionsModal = ({
         setShowAvgPower,
         setShowAvgSpeed,
         setShowWorkDone,
+        rawLineColor,
+        lineColor,
+        handleSetColor,
+        rawShowText,
+        showText,
+        handleShowText,
     } = useTextGridProvider();
 
     const toggleTextOptionsModal = () => {
@@ -233,16 +231,7 @@ const TextOptionsModal = ({
                             </div>
                             {/* <div className='optionsDivider'></div> */}
                             <TextGrid
-                                showDuration={showDuration}
-                                showDistance={showDistance}
-                                showElevGain={showElevGain}
-                                showPace={showPace}
-                                showAvgPower={showAvgPower}
-                                showAvgSpeed={showAvgSpeed}
-                                showWorkDone={showWorkDone}
                                 activity={activity}
-                                placementGrid={placementGrid}
-                                setPlacementGrid={setPlacementGrid}
                             >
                             </TextGrid>
                         </div>

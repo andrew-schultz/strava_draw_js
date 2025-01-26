@@ -37,10 +37,6 @@ const ActivityDetail = ({activity, setActivity}) => {
     }
 
     const [polylines, setPolylines] = useState();
-    const [lineColor, setLineColor] = useState('white');
-    const [rawLineColor, setRawLine] = useState('1');
-    const [showText, setShowText] = useState(true);
-    const [rawShowText, setRawShowText] = useState('2');
     const date = new Date(activity.start_date).toLocaleString();
 
     const router = useRouter();
@@ -109,26 +105,7 @@ const ActivityDetail = ({activity, setActivity}) => {
         })
     }
 
-    const handleSetColor = (e) => {
-        const rawVal = e.target.value;
-        setRawLine(rawVal)
-        if (rawVal == '1') {
-            setLineColor('white')
-        } else if (rawVal == '2') {
-            setLineColor('black')
-        }
-    }
-
-    const handleShowText = (e) => {
-        const rawVal = e.target.value;
-        setRawShowText(rawVal)
-        if (rawVal == '1') {
-            setShowText(false)
-        } else if (rawVal == '2') {
-            setShowText(true)
-        }
-    }
-
+    
     return (
         <div className="actvityListItem detail" >
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
@@ -136,12 +113,6 @@ const ActivityDetail = ({activity, setActivity}) => {
                     <div className="mapButton" onClick={localSetActivity}>back</div>
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
-                            lineColor={lineColor}
-                            rawLineColor={rawLineColor}
-                            handleSetColor={handleSetColor}
-                            showText={showText}
-                            rawShowText={rawShowText}
-                            handleShowText={handleShowText}
                             activity={activity}
                         ></TextOptionsModal>
                         {/* <HelpModal></HelpModal> */}
@@ -157,8 +128,6 @@ const ActivityDetail = ({activity, setActivity}) => {
             {polylines ? (
                 <MapComponent 
                     polylines={polylines} 
-                    lineColor={lineColor} 
-                    showText={showText} 
                     activity={activity}
                 >
                 </MapComponent>) : null}

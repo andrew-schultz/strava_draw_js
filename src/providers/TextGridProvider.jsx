@@ -115,6 +115,10 @@ export const TextGridProvider = ({ children }) => {
     const [showAvgPower, setShowAvgPower] = useState(false);
     const [showAvgSpeed, setShowAvgSpeed] = useState(false);
     const [showWorkDone, setShowWorkDone] = useState(false);
+    const [lineColor, setLineColor] = useState('white');
+    const [rawLineColor, setRawLine] = useState('1');
+    const [showText, setShowText] = useState(true);
+    const [rawShowText, setRawShowText] = useState('2');
 
     useEffect(() => {
         setMounted(true);
@@ -147,6 +151,26 @@ export const TextGridProvider = ({ children }) => {
     useEffect(() => {
         onChangeOptionAssign('showWorkDone', showWorkDone);
     }, [showWorkDone])
+
+    const handleSetColor = (e) => {
+        const rawVal = e.target.value;
+        setRawLine(rawVal)
+        if (rawVal == '1') {
+            setLineColor('white')
+        } else if (rawVal == '2') {
+            setLineColor('black')
+        }
+    }
+
+    const handleShowText = (e) => {
+        const rawVal = e.target.value;
+        setRawShowText(rawVal)
+        if (rawVal == '1') {
+            setShowText(false)
+        } else if (rawVal == '2') {
+            setShowText(true)
+        }
+    }
 
     const onChangeOptionAssign = (key, on) => {
         if (on && onList[key].position == null) {
@@ -243,6 +267,10 @@ export const TextGridProvider = ({ children }) => {
         showAvgPower,
         showAvgSpeed,
         showWorkDone,
+        lineColor,
+        rawLineColor,
+        showText,
+        rawShowText,
         setGrid,
         setOnList,
         resetGrid,
@@ -258,6 +286,8 @@ export const TextGridProvider = ({ children }) => {
         setShowAvgPower,
         setShowAvgSpeed,
         setShowWorkDone,
+        handleSetColor,
+        handleShowText,
     };
 
     if (!mounted) {

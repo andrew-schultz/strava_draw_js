@@ -13,8 +13,6 @@ import { useTextGridProvider } from "../providers/TextGridProvider";
 
 const MapComponent = ({
     polylines, 
-    lineColor, 
-    showText, 
     activity,
 }) => {
     const {
@@ -28,6 +26,8 @@ const MapComponent = ({
         showAvgPower,
         showAvgSpeed,
         showWorkDone,
+        lineColor,
+        showText,
     } = useTextGridProvider();
 
     const mapRef = useRef(null);
