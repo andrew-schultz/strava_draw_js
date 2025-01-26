@@ -46,6 +46,7 @@ const TextGrid = ({
     }
 
     const handleTouchStart = (event) => {
+        // event.preventDefault();
         const body = document.getElementsByTagName('body')[0];
         body.classList.add('noscroll');
         console.log('starting')
@@ -79,6 +80,7 @@ const TextGrid = ({
         ]
 
         const handleTouchMove = (event) => {
+            // event.preventDefault();
             const body = document.getElementsByTagName('body')[0];
             body.classList.add('noscroll');
             const touch = event.touches[0];
@@ -128,6 +130,7 @@ const TextGrid = ({
             document.removeEventListener('touchend', handleTouchEnd);
         }
 
+        // document.addEventListener('touchmove', handleTouchMove, {passive: false});
         document.addEventListener('touchmove', handleTouchMove);
         document.addEventListener('touchend', handleTouchEnd);
     }
