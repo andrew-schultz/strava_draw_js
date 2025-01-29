@@ -8,7 +8,7 @@ const GridSpot = ({
     return (
         <div 
             draggable={(option && option.val ? option.val.on : false)}
-            className='textOptionGridItem' 
+            className={`textOptionGridItem position${position}`}
             id={`textOptionGridItem${position}`} 
             onDrop={dropHandler} 
             onDragOver={dragOverHandler}

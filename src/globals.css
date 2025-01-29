@@ -59,7 +59,7 @@ body {
   position: fixed;
   left: 5px;
   bottom: 10px;
-  z-index: 1200;
+  z-index: 102;
   background-color: white;
   /* margin-top: 3px; */
 }
@@ -130,6 +130,10 @@ body {
     opacity: 0.7;
     top: 0;
     left: 0;
+
+    &.top {
+      z-index: 103
+    }
 }
 
 .textOptionsModalContainer {
@@ -137,7 +141,7 @@ body {
   position: absolute;
   width: 100%;
   justify-content: center;
-  z-index: 101;
+  z-index: 105;
   left: 0px;
   top: 5%;
 }
@@ -214,6 +218,9 @@ body {
 
 .textOptionsOrderGrid {
   margin-top: 20px;
+  margin-left: 7.5px;
+  margin-right: 7.5px;
+  margin-bottom: 5px;
 }
 
 .textOptionsOrderGridRow {
@@ -224,12 +231,54 @@ body {
 .textOptionGridItem {
   width: 33%;
   height: 100px;
-  border: 0.5px solid black;
+  /* border: 1px solid black; */
   z-index: 101;
   touch-action: none;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &.position1 {
+    border-top: 2px solid black;
+    border-left: 2px solid Black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  &.position2 {
+    border-top: 2px solid black;
+    border-left: 1px solid Black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  &.position3 {
+    border-top: 2px solid black;
+    border-left: 1px solid Black;
+    border-right: 2px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  &.position4 {
+    border-top: 1px solid black;
+    border-left: 2px solid Black;
+    border-right: 1px solid black;
+    border-bottom: 2px solid black;
+  }
+
+  &.position5 {
+    border-top: 1px solid black;
+    border-left: 1px solid Black;
+    border-right: 1px solid black;
+    border-bottom: 2px solid black;
+  }
+
+  &.position6 {
+    border-top: 1px solid black;
+    border-left: 1px solid Black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+  }
 }
 
 .textOptionGridItem p {
@@ -303,6 +352,8 @@ body {
   display: inline-block;
   /* height: 1px; */
   border: .5px solid black;
+  margin-left: 11px;
+  margin-right: 11px;
 }
 
 .textOptionsTitle {

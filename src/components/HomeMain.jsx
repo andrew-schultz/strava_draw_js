@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from 'react';
-import { getActivities, getAuthorization } from "../services/strava";
+import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
 // import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
 import cookieCutter from "@boiseitguru/cookie-cutter";
@@ -51,10 +51,28 @@ const HomeMain = () => {
             const refreshTokenCookie = cookieCutter.get('refreshToken')
             const accessTokenCookie = cookieCutter.get('accessToken')
 
+            const handleGetAccessToken = async (refreshToken) =>  {
+                let creds = await getAccessToken(refreshToken)
+                if (creds.access_token) {
+                    cookieCutter.set('accessToken', creds.access_token)
+                    setAccessToken(creds.access_token)
+                }
+    
+                if (creds.refresh_token) {
+                    cookieCutter.set('refreshToken', creds.refresh_token)
+                    setRefreshToken(creds.refresh_token)
+                }
+
+                let newActivities = await getActivities(athleteIdCookie, creds.access_token, creds.refresh_token, activityPage, setAccessToken)
+                setActivityPage(activityPage + 1);
+                setActivities(newActivities)  
+                setLoading(false)
+            }
+
             const getCredsAndActivities = async (code) => {
                 let creds = await getAuthorization(code)
                 console.log(creds)
-                
+
                 if (creds.access_token) {
                     cookieCutter.set('accessToken', creds.access_token)
                     setAccessToken(creds.access_token)
@@ -94,6 +112,8 @@ const HomeMain = () => {
                 } else {
                     setLoading(false)
                 }
+            } else if (refreshTokenCookie && athleteIdCookie) {
+                handleGetAccessToken(refreshTokenCookie)
             } else if (code && !activities) {
                 getCredsAndActivities(code)
             } else {

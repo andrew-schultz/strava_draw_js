@@ -3,7 +3,7 @@ const clientSecret = process.env.NEXT_PUBLIC_STRAVA_CLIENT_SECRET;
 const TOKEN_ENDPOINT = "https://www.strava.com/oauth/token";
 const ATHLETES_ENDPOINT = `https://www.strava.com/api/v3/athletes/`;
 
-const getAccessToken = async (refreshToken) => {
+export const getAccessToken = async (refreshToken) => {
   const body = JSON.stringify({
     client_id: clientId,
     client_secret: clientSecret,
