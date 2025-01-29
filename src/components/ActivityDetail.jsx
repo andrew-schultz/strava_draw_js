@@ -126,11 +126,15 @@ const ActivityDetail = ({activity, setActivity}) => {
             </div>
             
             {polylines ? (
-                <MapComponent 
-                    polylines={polylines} 
-                    activity={activity}
-                >
-                </MapComponent>) : null}
+                <div>
+                    <MapComponent 
+                        polylines={polylines} 
+                        activity={activity}
+                    >
+                    </MapComponent>
+                    <HelpModal></HelpModal>
+                </div>) : null}
+
         </div>
     )
 };

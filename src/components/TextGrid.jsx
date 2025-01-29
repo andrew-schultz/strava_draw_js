@@ -83,7 +83,7 @@ const TextGrid = ({
         const handleTouchMove = (event) => {
             // event.preventDefault();
             const body = document.getElementsByTagName('body')[0];
-            body.classList.add('noscroll');
+            // body.classList.add('noscroll');
             const touch = event.touches[0];
             gridElements.forEach((element) => {
                 let classList = element.el.classList;
