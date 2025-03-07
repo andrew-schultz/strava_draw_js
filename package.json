@@ -2,6 +2,7 @@
   "dependencies": {
     "@boiseitguru/cookie-cutter": "^0.2.3",
     "@mapbox/polyline": "^1.2.1",
+    "crypto-js": "^4.2.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "leaflet-easyprint": "^2.1.9",

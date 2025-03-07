@@ -16,8 +16,14 @@ export const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState();
     const [refreshToken, setRefreshToken] = useState();
     const [athleteId, setAthleteId] = useState();
+    const [apiToken, setApiToken] = useState();
+    const [showAuthButton, setShowAuthButton] = useState(false);
 
     useEffect(() => {
+        const existingToken = localStorage.getItem('apiToken')
+        if (existingToken) {
+            setApiToken(existingToken);
+        }
         setMounted(true);
     }, []);
 
@@ -27,11 +33,15 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         accessToken,
+        apiToken,
         athleteId,
         refreshToken,
+        showAuthButton,
         setAccessToken,
+        setApiToken,
         setAthleteId,
         setRefreshToken,
+        setShowAuthButton,
     };
 
     if (!mounted) {
