@@ -15,9 +15,7 @@ import LogoutComponent from './LogoutComponent';
 
 
 const HomeMain = () => {
-    const [reachedBottom, setReachedBottom] = useState(false);
     const [loading, setLoading] = useState(true);
-
     const scrollRef = useRef(null);
 
     const {
@@ -42,29 +40,14 @@ const HomeMain = () => {
         setActivityPage,
         offset,
         setOffset,
+        moreToGet,
+        setMoreToGet,
+        reachedBottom,
+        setReachedBottom,
     } = useActivitiesProvider();
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
-    // const activitiesUrl = `${window.location.protocol}//${window.location.host}?activities`
-    
-    // useEffect(() => {
-    //     setAccessToken(accessToken)
-    // }, [accessToken])
-
-    // useEffect(() => {
-    //     const handleGetActivities = async () => {
-    //         const response = await getApiActivities(apiToken)
-    //         debugger
-    //         const activities = response.activity_data
-    //         const offset = response.next_query
-    //         setActivities(activities)
-    //         setOffset(offset)
-    //     }
-    //     if (apiToken) {
-    //         handleGetActivities()
-    //     }
-    // }, apiToken)
 
     useEffect(() => {
         if (!activities) {
@@ -79,6 +62,11 @@ const HomeMain = () => {
                 let response = await exchangeAuthCode(code, token, scope)
                 if (response['success']) {
                     setActivities(response['activities'])
+                    if (response['activities'].length == 100) {
+                        setOffset(offset + 100)
+                    } else  {
+                        setMoreToGet(false)
+                    }
                     setLoading(false)
                 }
                 else {
@@ -87,21 +75,24 @@ const HomeMain = () => {
             }
 
             const handleGetActivities = async () => {
-                let response = await getApiActivities(apiToken)
+                let response = await getApiActivities(apiToken, offset)
                 setActivities(response['activity_data'])
+                if (response['next_query']) {
+                    setOffset(offset + 100)
+                }
+                else {
+                    setMoreToGet(false)
+                }
                 setLoading(false)
             }
             
-            if (!code && apiToken && !activities) {
-                // get the activities
-                handleGetActivities()
-            }
-            else if (code && !activities && apiToken) {
-                // showAuthButton = true
-                // setLoading(false)
-                // getCredsAndActivities(code)
+            if (code && !activities && apiToken) {
                 handleExchangeAuthCode(code, apiToken, scope)
-            } else {
+            } 
+            else if (apiToken && !activities) {
+                handleGetActivities()
+            } 
+            else {
                 setLoading(false)
             }
         } else {
@@ -111,16 +102,21 @@ const HomeMain = () => {
     }, [])
 
     useEffect(() => {
-        if (reachedBottom) {
+        if (reachedBottom && moreToGet) {
             // Perform action when bottom is reached
             const getMoreActivities = async () => {
                 if (apiToken) {
-                    let newActivites = await getApiActivities(apiToken, offset);
+                    let response = await getApiActivities(apiToken, offset);
+                    let newActivites = response['activity_data']
+                    let nextQuery = response['next_query']
                     const allActivities = activities.concat(newActivites);
-                    setOffset(offset + 30)
-                    // setActivityPage(activityPage + 1);
-                    setActivities( allActivities);
-                    setReachedBottom(false); // Reset the flag
+                    setActivities(allActivities);
+                    setOffset(offset + 100)
+                    if (nextQuery) {
+                        setReachedBottom(false); // Reset the flag
+                    } else {
+                        setMoreToGet(false)
+                    }
                 }
             }
             getMoreActivities();
@@ -159,7 +155,7 @@ const HomeMain = () => {
                 <LogoutComponent></LogoutComponent>
             ): (null)}
 
-            { activities !== null ? (
+            { activities ? (
                 <ActivityList 
                     activities={activities}
                     loading={loading}

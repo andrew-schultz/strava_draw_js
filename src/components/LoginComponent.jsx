@@ -14,8 +14,14 @@ const LoginComponent = ({loading, setLoading}) => {
     const {
         apiToken,
         setApiToken,
+        setShowAuthButton,
     } = useAuthProvider();
-    const {setActivities} = useActivitiesProvider();
+    const {
+        setActivities, 
+        offset,
+        setOffset,
+        setMoreToGet
+    } = useActivitiesProvider();
 
     const handleLogin = async (e) => {
         setLoading(true)
@@ -29,8 +35,21 @@ const LoginComponent = ({loading, setLoading}) => {
         if (resp) {
             localStorage.setItem('apiToken', resp['token'])
             setApiToken(resp['token'])
-            let response = await getApiActivities(resp['token'])
-            setActivities(response['activity_data'])
+
+            if (resp['integration']) {
+                let response = await getApiActivities(resp['token'], offset)
+                setActivities(response['activity_data'])
+                let nextQuery = response['next_query']
+                if (nextQuery) {
+                    setOffset(offset + 100)
+                } else {
+                    setMoreToGet(false)
+                }
+            } else {
+                setActivities(null)
+                setShowAuthButton(true)
+            }
+                
             setLoading(false)
         }
     }

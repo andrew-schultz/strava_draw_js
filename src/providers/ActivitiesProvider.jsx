@@ -16,6 +16,8 @@ export const ActivitiesProvider = ({ children }) => {
     const [selectedActivity, setSelectedActivity] = useState();
     const [activityPage, setActivityPage] = useState(1);
     const [offset, setOffset] = useState(0);
+    const [moreToGet, setMoreToGet] = useState(true)
+    const [reachedBottom, setReachedBottom] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -26,10 +28,14 @@ export const ActivitiesProvider = ({ children }) => {
         selectedActivity,
         activityPage,
         offset,
+        moreToGet,
+        reachedBottom,
         setActivities,
         setSelectedActivity,
         setActivityPage,
         setOffset,
+        setMoreToGet,
+        setReachedBottom,
     };
 
     if (!mounted) {

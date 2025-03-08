@@ -147,7 +147,8 @@ export const getApiActivities = async (token, offset=0) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const response = await fetch(`http://localhost:8000/api/v1/activity/?offset=${offset}`, {
+    const url = offset > 0 ? `http://localhost:8000/api/v1/activity/?limit=100&offset=${offset}` : `http://localhost:8000/api/v1/activity/`
+    const response = await fetch(url, {
         method: "GET",
         headers: headers,
         credentials: 'include',

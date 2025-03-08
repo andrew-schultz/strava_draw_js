@@ -4,20 +4,23 @@ import { useActivitiesProvider } from '../providers/ActivitiesProvider';
 
 const LogoutComponent = () => {
     const {
-        apiToken,
         setApiToken,
     } = useAuthProvider();
     const {
         setActivities,
         setOffset,
+        setMoreToGet,
+        setReachedBottom,
     } = useActivitiesProvider();
 
     const handleLogOut = () => {
         cookieCutter.set('apiToken', null, { expires: new Date(0) })
         localStorage.removeItem('apiToken')
-        setActivities(null)
-        setOffset(null)
         setApiToken(null)
+        setActivities(null)
+        setOffset(0)
+        setMoreToGet(true)
+        setReachedBottom(false)
     }
 
     return (
