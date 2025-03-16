@@ -4,6 +4,9 @@ import crypto from 'crypto-js';
 
 const csrftoken = process.env.NEXT_PUBLIC_CSRF_TOKEN
 const signingKey = process.env.NEXT_PUBLIC_SIG_KEY
+// const apiURL = "http://localhost:8000/"
+const apiURL = "https://routeviewer.com/"
+
 
 const signRequest = (data) => {
     const timestamp = Math.floor(Date.now() / 1000);
@@ -18,7 +21,7 @@ const csrfAuth = async () => {
         'Accept': "application/json, text/plain, */*",
     }
 
-    const getResponse = await fetch("http://localhost:8000/api/v1/strava/auth/", {
+    const getResponse = await fetch(`${apiURL}api/v1/strava/auth/`, {
         method: "GET",
         headers: getHeaders,
     });
@@ -34,7 +37,7 @@ export const exchangeAuthCode = async (code, token, scope) => {
     //     'Accept': "application/json, text/plain, */*",
     // }
 
-    // const getResponse = await fetch("http://localhost:8000/api/v1/strava/auth/", {
+    // const getResponse = await fetch(`${apiURL}api/v1/strava/auth/`, {
     //     method: "GET",
     //     headers: getHeaders,
     // });
@@ -51,7 +54,7 @@ export const exchangeAuthCode = async (code, token, scope) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const response = await fetch("http://localhost:8000/api/v1/strava/auth/", {
+    const response = await fetch(`${apiURL}api/v1/strava/auth/`, {
         method: "POST",
         headers: headers,
         credentials: 'include',
@@ -81,7 +84,7 @@ export const signup = async (email, password, passwordConfirm) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const response = await fetch("http://localhost:8000/api/v1/auth/signup/", {
+    const response = await fetch(`${apiURL}api/v1/auth/signup/`, {
         method: "POST",
         headers: headers,
         credentials: 'include',
@@ -110,7 +113,7 @@ export const login = async (email, password) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const response = await fetch("http://localhost:8000/api/v1/auth/login/", {
+    const response = await fetch(`${apiURL}api/v1/auth/login/`, {
         method: "POST",
         headers: headers,
         credentials: 'include',
@@ -129,7 +132,7 @@ export const logout = async (token) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const response = await fetch("http://localhost:8000/api/v1/auth/logout/", {
+    const response = await fetch(`${apiURL}api/v1/auth/logout/`, {
         method: "GET",
         headers: headers,
         credentials: 'include',
@@ -147,7 +150,7 @@ export const getApiActivities = async (token, offset=0) => {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Origin": '*',
     }
-    const url = offset > 0 ? `http://localhost:8000/api/v1/activity/?limit=100&offset=${offset}` : `http://localhost:8000/api/v1/activity/`
+    const url = offset > 0 ? `${apiURL}api/v1/activity/?limit=100&offset=${offset}` : `${apiURL}api/v1/activity/`
     const response = await fetch(url, {
         method: "GET",
         headers: headers,
