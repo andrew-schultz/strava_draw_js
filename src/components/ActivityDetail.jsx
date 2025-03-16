@@ -44,7 +44,7 @@ const ActivityDetail = ({activity, setActivity}) => {
     // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     
     useEffect(() => {
-        let polylines = activity.map.summary_polyline;
+        let polylines = activity.polyline;
         let decoded_polylines = polyline.decode(polylines);
         setPolylines(decoded_polylines)
     }, [])
@@ -122,6 +122,7 @@ const ActivityDetail = ({activity, setActivity}) => {
                     <p className="activityListButtonP">Name: {activity.name}</p>
                     <p className="activityListButtonP">Date: {date}</p>
                     <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p>
+                    <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link">View on Strava</p></a>
                 </div>
             </div>
             

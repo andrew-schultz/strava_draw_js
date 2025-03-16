@@ -109,9 +109,9 @@ export const TextGridProvider = ({ children }) => {
     const [drawNow, setDrawNow] = useState(false);
     const [placementGrid, setPlacementGrid] = useState(gridBase);
     const [showDistance, setShowDistance] = useState(true);
-    const [showElevGain, setShowElevGain] = useState(selectedActivity ? selectedActivity.type.includes('Ride') : true);
+    const [showElevGain, setShowElevGain] = useState(selectedActivity ? selectedActivity.activity_type.includes('Ride') : true);
     const [showDuration, setShowDuration] = useState(true);
-    const [showPace, setShowPace] = useState(selectedActivity ? selectedActivity.type == 'Run' : false);
+    const [showPace, setShowPace] = useState(selectedActivity ? selectedActivity.activity_type == 'Run' : false);
     const [showAvgPower, setShowAvgPower] = useState(false);
     const [showAvgSpeed, setShowAvgSpeed] = useState(false);
     const [showWorkDone, setShowWorkDone] = useState(false);

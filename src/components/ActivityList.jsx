@@ -1,4 +1,5 @@
 import ActivityListItem from "./ActivityListItem"
+import LogoutComponent from "./LogoutComponent"
 import Spinner from "./Spinner"
 
 const ActivityList = ({activities, setSelectedActivity, selectedActivity, loading}) => {

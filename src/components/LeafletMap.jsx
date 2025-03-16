@@ -354,12 +354,12 @@ const MapComponent = ({
             // const distanceTextWidth = ctx.measureText(distanceText).width;
 
             // total elev / evel gain
-            const totalElevation = `${Math.round(activity.total_elevation_gain * 3.281)} ft`;
+            const totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
             const totalElevationText = 'Elev. Gain';
             // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
             // pace
-            const pace = `${(getPaceTime(activity.moving_time / (activity.distance / 1609.34).toFixed(2)))} /mi`;
+            const pace = `${(getPaceTime(activity.duration / (activity.distance / 1609.34).toFixed(2)))} /mi`;
             const paceText = 'Pace';
             // const paceTextWidth = ctx.measureText(paceText).width;
 
@@ -450,8 +450,8 @@ const MapComponent = ({
     }
 
     const getMovingTime = (activity) => {
-        let seconds = activity.moving_time % 60;
-        let minutes = Math.round(activity.moving_time / 60);
+        let seconds = activity.duration % 60;
+        let minutes = Math.round(activity.duration / 60);
         let hours = parseInt(minutes / 60);
         let time = `${minutes}m ${seconds}s`;
         if (minutes > 60) {
@@ -474,15 +474,15 @@ const MapComponent = ({
     }
 
     const getAvgPower = (activity) => {
-        return `${Math.round(activity.average_watts)} w`;
+        return `${Math.round(activity.avg_watts)} w`;
     }
 
     const getAvgSpeed = (activity) => {
-        return `${(activity.average_speed * 2.23694).toFixed(2)} mi/h`;
+        return `${(activity.avg_speed * 2.23694).toFixed(2)} mi/h`;
     }
 
     const getWorkDone = (activity) => {
-        return `${Math.round(activity.kilojoules)} kJ`;
+        return `${Math.round(activity.work_done)} kJ`;
     }
 
     const findLowestPixel = async (lineColor, canvas) => {

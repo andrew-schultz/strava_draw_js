@@ -1,28 +1,34 @@
 "use client"
 
 import { useEffect, useState, useRef } from 'react';
-import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
+import Image from 'next/image'
+import { exchangeAuthCode, getApiActivities } from '../services/api';
+// import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
 // import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
 import cookieCutter from "@boiseitguru/cookie-cutter";
 import Spinner from "./Spinner"
 import { useActivitiesProvider } from '../providers/ActivitiesProvider'
 import { useAuthProvider } from '../providers/AuthProvider';
+import LoginComponent from './LoginComponent';
+import LogoutComponent from './LogoutComponent';
 
 
 const HomeMain = () => {
-    const [reachedBottom, setReachedBottom] = useState(false);
     const [loading, setLoading] = useState(true);
-
     const scrollRef = useRef(null);
 
     const {
         accessToken,
+        apiToken,
         athleteId,
         refreshToken,
         setAccessToken,
+        setApiToken,
         setAthleteId,
         setRefreshToken,
+        showAuthButton,
+        setShowAuthButton,
      } = useAuthProvider();
 
     const {
@@ -32,91 +38,61 @@ const HomeMain = () => {
         setSelectedActivity,
         activityPage,
         setActivityPage,
+        offset,
+        setOffset,
+        moreToGet,
+        setMoreToGet,
+        reachedBottom,
+        setReachedBottom,
     } = useActivitiesProvider();
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
-    // const activitiesUrl = `${window.location.protocol}//${window.location.host}?activities`
-    
-    useEffect(() => {
-        setAccessToken(accessToken)
-    }, [accessToken])
 
     useEffect(() => {
         if (!activities) {
             setLoading(true)
             let params = new URLSearchParams(document.location.search);
             let code = params.get('code')
-            const athleteIdCookie = cookieCutter.get('athleteId')
-            const refreshTokenCookie = cookieCutter.get('refreshToken')
-            const accessTokenCookie = cookieCutter.get('accessToken')
+            let scope = params.get('scope')
+            const apiToken = localStorage.getItem('apiToken')
+            cookieCutter.set('apiToken', apiToken)
 
-            const handleGetAccessToken = async (refreshToken) =>  {
-                let creds = await getAccessToken(refreshToken)
-                if (creds.access_token) {
-                    cookieCutter.set('accessToken', creds.access_token)
-                    setAccessToken(creds.access_token)
-                }
-    
-                if (creds.refresh_token) {
-                    cookieCutter.set('refreshToken', creds.refresh_token)
-                    setRefreshToken(creds.refresh_token)
-                }
-
-                let newActivities = await getActivities(athleteIdCookie, creds.access_token, creds.refresh_token, activityPage, setAccessToken)
-                setActivityPage(activityPage + 1);
-                setActivities(newActivities)  
-                setLoading(false)
-            }
-
-            const getCredsAndActivities = async (code) => {
-                let creds = await getAuthorization(code)
-                console.log(creds)
-
-                if (creds.access_token) {
-                    cookieCutter.set('accessToken', creds.access_token)
-                    setAccessToken(creds.access_token)
-                }
-    
-                if (creds.refresh_token) {
-                    cookieCutter.set('refreshToken', creds.refresh_token)
-                    setRefreshToken(creds.refresh_token)
-                }
-    
-                if (creds.athlete.id) {
-                    cookieCutter.set('athleteId', parseInt(creds.athlete.id))
-                    setAthleteId(creds.athlete.id)
-                }
-                
-                if (creds.athlete.id && creds.access_token && creds.refresh_token) {
-                    let newActivities = await getActivities(creds.athlete.id, creds.access_token, creds.refresh_token, activityPage, setAccessToken)
-                    setActivityPage(activityPage + 1);
-                    setActivities(newActivities)  
+            const handleExchangeAuthCode = async (code, token, scope) => {
+                let response = await exchangeAuthCode(code, token, scope)
+                if (response['success']) {
+                    setActivities(response['activities'])
+                    if (response['activities'].length == 100) {
+                        setOffset(offset + 100)
+                    } else  {
+                        setMoreToGet(false)
+                    }
                     setLoading(false)
                 }
+                else {
+                    // show an error about authorizing strava
+                }
             }
 
-            const handleGetActivities = async (athleteId, accessToken, refreshToken) => {
-                let newActivities = await getActivities(athleteId, accessToken, refreshToken, activityPage, setAccessToken)
-                setActivityPage(activityPage + 1);
-                setActivities(newActivities)  
+            const handleGetActivities = async () => {
+                let response = await getApiActivities(apiToken, offset)
+                setActivities(response['activity_data'])
+                if (response['next_query']) {
+                    setOffset(offset + 100)
+                }
+                else {
+                    setMoreToGet(false)
+                }
                 setLoading(false)
             }
-    
-            if (athleteIdCookie && refreshTokenCookie && accessTokenCookie) {
-                setAthleteId(parseInt(athleteIdCookie))
-                setAccessToken(accessTokenCookie)
-                setRefreshToken(refreshTokenCookie)
-                if (!activities) {
-                    handleGetActivities(parseInt(athleteIdCookie), accessTokenCookie, refreshTokenCookie)
-                } else {
-                    setLoading(false)
-                }
-            } else if (refreshTokenCookie && athleteIdCookie) {
-                handleGetAccessToken(refreshTokenCookie)
-            } else if (code && !activities) {
-                getCredsAndActivities(code)
-            } else {
+            
+            if (code && !activities && apiToken) {
+                handleExchangeAuthCode(code, apiToken, scope)
+            } 
+            else if (apiToken && !activities) {
+                handleGetActivities()
+            } 
+            else {
                 setLoading(false)
             }
         } else {
@@ -126,14 +102,22 @@ const HomeMain = () => {
     }, [])
 
     useEffect(() => {
-        if (reachedBottom) {
+        if (reachedBottom && moreToGet) {
             // Perform action when bottom is reached
             const getMoreActivities = async () => {
-                let newActivites = await getActivities(athleteId, accessToken, refreshToken, activityPage);
-                const allActivities = activities.concat(newActivites);
-                setActivityPage(activityPage + 1);
-                setActivities( allActivities);
-                setReachedBottom(false); // Reset the flag
+                if (apiToken) {
+                    let response = await getApiActivities(apiToken, offset);
+                    let newActivites = response['activity_data']
+                    let nextQuery = response['next_query']
+                    const allActivities = activities.concat(newActivites);
+                    setActivities(allActivities);
+                    setOffset(offset + 100)
+                    if (nextQuery) {
+                        setReachedBottom(false); // Reset the flag
+                    } else {
+                        setMoreToGet(false)
+                    }
+                }
             }
             getMoreActivities();
         }
@@ -147,26 +131,43 @@ const HomeMain = () => {
         }
     };
 
+    const handleAuthUrlClick = () => {
+        window.location.href = authUrl
+    }
+
     return (
         <div className='scrollableElement' ref={scrollRef} onScroll={handleScrollEvent}>
             <Spinner loading={loading} setLoading={setLoading}></Spinner>
-            {accessToken == null ? (
-            <div className='authButtonContainer'>
-                <a className='authLink' href={authUrl}>
-                    <div className='authButton'>
-                        GET AUTH
-                    </div>
-                </a>
-            </div>) : (null) } 
+            {apiToken == null ? (
+                <LoginComponent loading={loading} setLoading={setLoading}></LoginComponent>
+            ) : (null) } 
 
-            { activities !== null ? (
+            {showAuthButton == true? (
+                <div className='authButtonContainer'>
+                    <p className='authButtonP'>
+                        You're almost there!<br/>Link your accounts to view your routes
+                    </p>
+                    <div className='authButton connect' onClick={handleAuthUrlClick}></div>
+                </div>
+            ) : (null) } 
+
+            {apiToken ? (
+                <LogoutComponent></LogoutComponent>
+            ): (null)}
+
+            { activities ? (
                 <ActivityList 
                     activities={activities}
                     loading={loading}
                     setSelectedActivity={setSelectedActivity} 
                     selectedActivity={selectedActivity}
                 ></ActivityList>
-            ) : (null) }
+            ) : (
+                <div className='stravaLogoLandingContainer'>
+                    <img className='stravaLogoLanding' src={`/powered_by_strava_logo.png`}></img>
+                </div>
+            ) }
+            
         </div>
     )
 };
