@@ -76,7 +76,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
                 </div>
             </div>
             <div >
-                <p onClick={handleToggleSignup}>click to login</p>
+                <p className="cursor" onClick={handleToggleSignup}>click to login</p>
             </div>
         </div>
     )

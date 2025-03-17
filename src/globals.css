@@ -6,6 +6,10 @@ body {
   overflow: hidden;
 }
 
+.cursor {
+  cursor: pointer;
+}
+
 /* ---------------- */
 /* Auth             */
 /* ---------------- */
@@ -28,6 +32,7 @@ body {
     border: 1px solid black;
     padding: 5px;
     color: black;
+    cursor: pointer;
 }
 
 .authButtonP {
@@ -104,6 +109,7 @@ body {
   right: 5px;
   border: 1px solid black;
   background: white;
+  cursor: pointer;
 }
 
 .logoutText {
@@ -267,6 +273,7 @@ body {
 .textOptionInputActual {
   /* margin-left: 10px; */
   width: 50px !important;
+  cursor: pointer;
 }
 
 .closeModal {
@@ -276,6 +283,7 @@ body {
     font-size: 18px;
     border: 1px solid black;
     padding: 3px 5px;
+    cursor: pointer;
 }
 
 .closeModalHelp {
@@ -285,6 +293,7 @@ body {
   font-size: 18px;
   border: 1px solid black;
   padding: 3px 5px;
+  cursor: pointer;
 }
 
 .textOptionsOrderGrid {
@@ -308,6 +317,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   &.position1 {
     border-top: 2px solid black;

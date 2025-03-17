@@ -85,7 +85,7 @@ const LoginComponent = ({loading, setLoading}) => {
                         </div>
                     </div>
                     <div >
-                        <p onClick={handleToggleSignup}>click to sign up</p>
+                        <p className='cursor' onClick={handleToggleSignup}>click to sign up</p>
                     </div>
                 </div>
             ) : null}
