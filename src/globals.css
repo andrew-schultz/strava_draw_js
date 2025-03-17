@@ -53,6 +53,7 @@ body {
 
 .stravaLogoLanding {
   width: 40%;
+  max-width: 175px;
 }
 
 
@@ -86,6 +87,7 @@ body {
   font-size: 18px;
   /* margin: 5px; */
   padding: 5px;
+  max-width: 300px;
 }
 
 .loginButtonContainer {

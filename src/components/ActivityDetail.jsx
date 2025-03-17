@@ -55,8 +55,8 @@ const ActivityDetail = ({activity, setActivity}) => {
     });
 
     const localSetActivity = () => {
-        setActivity(null)
-        cookieCutter.set('selectedActivity', null, { expires: new Date(0) })
+        // setActivity(null)
+        // cookieCutter.set('selectedActivity', null, { expires: new Date(0) })
         router.back();
     }
 

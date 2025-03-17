@@ -4,6 +4,8 @@ const GridSpot = ({
     dropHandler,
     dragOverHandler,
     handleTouchStart,
+    onDragStart,
+    onDragLeave,
 }) => {
     return (
         <div 
@@ -13,6 +15,8 @@ const GridSpot = ({
             onDrop={dropHandler} 
             onDragOver={dragOverHandler}
             onTouchStart={handleTouchStart}
+            onDragStart={onDragStart}
+            onDragLeave={onDragLeave}
             data-id={position}
         >
             <p data-id={position}>{option && option.val ? option.val.displayName : null}</p>

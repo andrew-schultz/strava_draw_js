@@ -32,18 +32,36 @@ const TextGrid = ({
     // }, [activity]);
 
     const dragStartHandler = (event) => {
-        event.dataTransfer.setData("gridOption", event.target.id);
+        event.dataTransfer.setData("gridOption", event.target.dataset.id);
         event.dataTransfer.effectAllowed = "move";
     }
 
     const dropHandler = (event) => {
         event.preventDefault();
         const data = event.dataTransfer.getData("gridOption");
+        const destinationId = event.target.dataset.id
+        swapGridSpot(data, destinationId)
+        const element = event.target;
+        element.classList.remove('dragOver')
     }
 
     const dragOverHandler = (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
+
+        const element = event.target;
+        let classList = element.classList;
+        if ('dragOver' in classList) {
+            // good
+        } else {
+            element.classList.add('dragOver')
+        }
+    }
+
+    const dragOverLeaveHandler = (event) => {
+        event.preventDefault();
+        const element = event.target;
+        element.classList.remove('dragOver')
     }
 
     const handleTouchStart = (event) => {
@@ -145,6 +163,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
                 <GridSpot
                     position={2}
@@ -152,6 +172,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
                 <GridSpot
                     position={3}
@@ -159,6 +181,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
             </div>
             <div className='textOptionsOrderGridRow'>
@@ -168,6 +192,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
                 <GridSpot
                     position={5}
@@ -175,6 +201,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
                 <GridSpot
                     position={6}
@@ -182,6 +210,8 @@ const TextGrid = ({
                     dropHandler={dropHandler} 
                     dragOverHandler={dragOverHandler}
                     handleTouchStart={handleTouchStart}
+                    onDragStart={dragStartHandler}
+                    onDragLeave={dragOverLeaveHandler}
                 ></GridSpot>
             </div>
         </div>    
