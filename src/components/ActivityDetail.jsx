@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 import TextOptionsModal from './TextOptionsModal';
 import { useTextGridProvider } from '../providers/TextGridProvider';
+import cookieCutter from "@boiseitguru/cookie-cutter";
 
 var polyline = require('@mapbox/polyline');
 
@@ -54,6 +55,8 @@ const ActivityDetail = ({activity, setActivity}) => {
     });
 
     const localSetActivity = () => {
+        setActivity(null)
+        cookieCutter.set('selectedActivity', null, { expires: new Date(0) })
         router.back();
     }
 

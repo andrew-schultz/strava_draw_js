@@ -6,6 +6,7 @@ import {
     createContext,
     Dispatch
 } from "react";
+import cookieCutter from "@boiseitguru/cookie-cutter";
 
 
 const ActivitiesContext = createContext(null);
@@ -21,7 +22,17 @@ export const ActivitiesProvider = ({ children }) => {
 
     useEffect(() => {
         setMounted(true);
+        const sA = cookieCutter.get('selectedActivity')
+        if (typeof sA !== 'undefined') {
+            setSelectedActivity(JSON.parse(sA))
+        }
     }, []);
+
+    useEffect(() => {
+        if (typeof selectedActivity !== 'undefined') {
+            cookieCutter.set('selectedActivity', JSON.stringify(selectedActivity));
+        }
+    }, [selectedActivity])
 
     const value = {
         activities,
