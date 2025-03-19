@@ -29,17 +29,23 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
         const resp = await signup(email, password, passwordConfirm)
                 
         if (resp) {
-            localStorage.setItem('apiToken', resp['token'])
-            setApiToken(resp['token'])
+            if (resp['detail']) {
+                // show errors
+                // setErrorMessage(resp['errors']['detail'])
+                setErrorMessage("There's an issue with your email or password")
+            } else {
+                localStorage.setItem('apiToken', resp['token'])
+                setApiToken(resp['token'])
 
-            if (resp['integration']) {
-                // get the activities
-            }
-            else {
-                // throw it to strava
-                // window.location.href = authUrl;
-                setShowAuthButton(true)
-                setLoading(false)
+                if (resp['integration']) {
+                    // get the activities
+                }
+                else {
+                    // throw it to strava
+                    // window.location.href = authUrl;
+                    setShowAuthButton(true)
+                    setLoading(false)
+                }
             }
         }
     }
