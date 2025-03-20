@@ -4,8 +4,9 @@ import crypto from 'crypto-js';
 
 const csrftoken = process.env.NEXT_PUBLIC_CSRF_TOKEN
 const signingKey = process.env.NEXT_PUBLIC_SIG_KEY
+const apiURL = process.env.NEXT_PUBLIC_API_URL || "https://routeviewer.com"
 // const apiURL = "http://localhost:8000/"
-const apiURL = "https://routeviewer.com/"
+// const apiURL = "https://routeviewer.com/"
 
 
 const signRequest = (data) => {

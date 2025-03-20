@@ -35,15 +35,16 @@ const LoginComponent = ({loading, setLoading}) => {
         const resp = await login(email, password)
         
         if (resp) {
-            localStorage.setItem('apiToken', resp['token'])
-            setApiToken(resp['token'])
-
             if (resp['detail']) {
                 // show errors
-                // setErrorMessage(resp['errors']['detail'])
-                setErrorMessage("There's an issue with your email or password")
+                setErrorMessage(resp['detail'])
+                // setErrorMessage("There's an issue with your email or password")
             }
             else {
+                if (resp['token']) {
+                    localStorage.setItem('apiToken', resp['token'])
+                    setApiToken(resp['token'])
+                }
                 if (resp['integration']) {
                     let response = await getApiActivities(resp['token'], offset)
                     if (response['activity_data']) {

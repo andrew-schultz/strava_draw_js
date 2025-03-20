@@ -7,6 +7,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [passwordConfirm, setPasswordConfirm] = useState()
+    const [errorMessage, setErrorMessage] = useState()
 
     const {
         apiToken,
@@ -32,7 +33,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
             if (resp['detail']) {
                 // show errors
                 // setErrorMessage(resp['errors']['detail'])
-                setErrorMessage("There's an issue with your email or password")
+                setErrorMessage(resp['detail'])
                 setShowAuthButton(false)
             } else {
                 localStorage.setItem('apiToken', resp['token'])
@@ -75,13 +76,16 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
             <div className='loginInputContainer'>
                 <input className='loginInput' placeholder="confirm password" name='passwordConfirm' type='password' onChange={handleSetPasswordConfirm}></input>
             </div>
+            <div className='formSubmitError'>
+                <p className='formSubmitErrorText'>{errorMessage}</p>
+            </div>
             <div className='loginButtonContainer'>
                 <div className='authButton' onClick={handleSignup}>
                     Sign Up
                 </div>
             </div>
             <div >
-                <p className="cursor" onClick={handleToggleSignup}>click to login</p>
+                <p className="cursor" onClick={handleToggleSignup}>click to log in</p>
             </div>
         </div>
     )
