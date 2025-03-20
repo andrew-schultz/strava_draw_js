@@ -33,6 +33,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
                 // show errors
                 // setErrorMessage(resp['errors']['detail'])
                 setErrorMessage("There's an issue with your email or password")
+                setShowAuthButton(false)
             } else {
                 localStorage.setItem('apiToken', resp['token'])
                 setApiToken(resp['token'])
@@ -41,13 +42,11 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
                     // get the activities
                 }
                 else {
-                    // throw it to strava
-                    // window.location.href = authUrl;
                     setShowAuthButton(true)
-                    setLoading(false)
                 }
             }
         }
+        setLoading(false)
     }
 
     const handleSetEmail = (e) => {
