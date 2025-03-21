@@ -101,6 +101,9 @@ const LoginComponent = ({loading, setLoading}) => {
 
     const handleToggleSignup = () => {
         const val = !toggleSignup
+        setShowEmailError(false)
+        setShowPasswordError(false)
+        setErrorMessage(null)
         setToggleSignup(val)
     }
 

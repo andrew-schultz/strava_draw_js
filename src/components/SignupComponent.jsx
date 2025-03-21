@@ -112,6 +112,14 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
         setPasswordConfirm(val)
     }
 
+    const localHandleToggleSignup = (e) => {
+        setShowEmailError(false)
+        setShowPasswordError(false)
+        setShowPasswordConfirmError(false)
+        setErrorMessage(null)
+        handleToggleSignup()
+    }
+
     return (
         <div id='SignupContainer' className='loginContainer'>
             {/* <div className='loginInputContainer'>
