@@ -83,6 +83,7 @@ body {
   display: flex;
   justify-content: center;
   padding-bottom: 5px;
+  flex-wrap: wrap;
 }
 
 .loginInput {
@@ -124,6 +125,20 @@ body {
 .formSubmitErrorText {
   text-align: center;
   color: red;
+  margin-top: 0px;
+  margin-bottom: 1px;
+}
+
+.loginInputError {
+  width: 100%;
+
+}
+
+.formInputError {
+  text-align: center;
+  color: red;
+  margin-top: 1px;
+  margin-bottom: 0px;
 }
 
 
