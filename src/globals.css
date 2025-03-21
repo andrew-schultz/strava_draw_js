@@ -170,6 +170,11 @@ body {
     z-index: 99;
 }
 
+.emptyActivityDisplay {
+  text-align: center;
+  margin-top: 25vh;
+}
+
 .right {
     /* float: right; */
 }

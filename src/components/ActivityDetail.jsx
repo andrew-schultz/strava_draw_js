@@ -45,9 +45,11 @@ const ActivityDetail = ({activity, setActivity}) => {
     // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     
     useEffect(() => {
-        let polylines = activity.polyline;
-        let decoded_polylines = polyline.decode(polylines);
-        setPolylines(decoded_polylines)
+        if (activity.polyline) {
+            let polylines = activity.polyline;
+            let decoded_polylines = polyline.decode(polylines);
+            setPolylines(decoded_polylines)
+        }
     }, [])
 
     const MapComponent = dynamic(() => import('./LeafletMap'), {
@@ -137,7 +139,11 @@ const ActivityDetail = ({activity, setActivity}) => {
                     >
                     </MapComponent>
                     <HelpModal></HelpModal>
-                </div>) : null}
+                </div>) : (
+                <div className="emptyActivityDisplay">
+                    No Map To Display For This Activity
+                </div>
+            )}
 
         </div>
     )
