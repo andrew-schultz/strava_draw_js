@@ -109,6 +109,9 @@ const LoginComponent = ({loading, setLoading}) => {
 
     return (
         <div>
+            <div className='titleBox'>
+                <p className='titleBoxText'>RouteViewer</p>
+            </div>
             { !toggleSignup ? (
                 <div className='loginContainer'>
                     <TextInput

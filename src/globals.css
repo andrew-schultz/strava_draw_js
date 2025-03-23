@@ -70,8 +70,25 @@ body {
   overflow-y: scroll;
 }
 
-.loginContainer {
+.homeBackground {
+  background-image: url('../public/routeviewer_home_background.png');
+  background-size: cover;
+}
+
+.titleBox {
   margin-top: 30vh;
+  width: 100%;
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.titleBoxText {
+  margin-bottom: 20px;
+}
+
+.loginContainer {
+  /* margin-top: 30vh; */
   display: flex;
   justify-content: center;
   align-content: center;
@@ -609,13 +626,21 @@ body {
     width: 100%;
     height: 100vh;
     /* min-height: 800px; */
-    background-color: white;
+    /* background-color: white; */
     top: 0;
     position: absolute;
     z-index: 105;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &.map {
+      background-color: white;
+    }
+
+    &.home {
+
+    }
 }
 
 /* ---------------- */

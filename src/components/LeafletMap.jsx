@@ -4,9 +4,12 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+// import "tilelayer-canvas";
+// import TilelayerCanvas from "./TilelayerCanvas";
+
 
 import { useEffect, useState, useRef } from 'react';
-import Spinner from "./Spinner"
+import Spinner from "./Spinner";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTextGridProvider } from "../providers/TextGridProvider";
@@ -60,6 +63,12 @@ const MapComponent = ({
         }
     }, [drawNow])
 
+    // tile layer options
+    // 'https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png' -- requires an access token
+    // 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
+    // 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    // 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+
     const drawMap = () => {
         console.log('drawing map')
         // if (mapRef.current) return; // Map already initialized
@@ -69,6 +78,8 @@ const MapComponent = ({
             });
         } else {
             mapRef.current = L.map('map', {attributionControl: false, zoomControl: false, renderer: L.canvas() });
+            L.tileLayer('map').addTo(mapRef.current)
+            // L.tileLayer.canvas('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(mapRef.current)
             mapRef.current.touchZoom.disable();
             mapRef.current.doubleClickZoom.disable();
             mapRef.current.scrollWheelZoom.disable();
@@ -137,7 +148,7 @@ const MapComponent = ({
 
             // get image data from map canvas
             let mapImg = ctx.getImageData(bindingCoords.left, bindingCoords.first, bindingWidth, bindingHeight);
-            
+
             // clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -180,7 +191,10 @@ const MapComponent = ({
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
             }
 
-            await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(()=> {
+            // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
+            //     genImage(canvas);
+            // });
+            await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(() => {
                 genImage(canvas);
             });
         }
@@ -216,7 +230,8 @@ const MapComponent = ({
         const canvases = document.getElementsByTagName('canvas');
         let canvas;
         if (canvases.length > 1) {
-            canvas = canvases[1]  
+            // canvas = canvases[1]  
+            canvas = canvases[canvases.length - 1]
         } else {
             canvas = canvases[0]
         }
@@ -550,6 +565,34 @@ const MapComponent = ({
         return pixels
     }
 
+    const removeBackground = async (canvas) => {
+        var ctx = canvas.getContext("2d")
+
+        var imgd = ctx.getImageData(0, 0, canvas.width, canvas.height),
+            pix = imgd.data,
+            newColor = {r:0, g:0, b:0, a:255};
+
+        for (var i = 0, n = pix.length; i < n; i += 4) {
+            var r = pix[i],
+                g = pix[i+1],
+                b = pix[i+2];
+
+            // If its white then change it
+            if (r >= 50 && g >= 50 && b >= 50) { 
+                // Change the white to whatever.
+                pix[i] = newColor.r;
+                pix[i+1] = newColor.g;
+                pix[i+2] = newColor.b;
+                pix[i+3] = newColor.a;
+            }
+        }
+
+        ctx.putImageData(imgd, 0, 0);
+        // debugger
+        // return imgd
+        return ctx
+    }
+
     const paintBackground = (x, y) => {
         const images = document.getElementById('images');
         const canvas = document.createElement('canvas');
@@ -564,10 +607,10 @@ const MapComponent = ({
 
     return (
         <div>
-            <Spinner loading={loading} setLoading={setLoading}></Spinner>
+            <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
             <div id="images"></div>
             <div id="map" style={{ height: `${mapHeight}px` }} />
-        </div>
+\        </div>
     )
 }
 

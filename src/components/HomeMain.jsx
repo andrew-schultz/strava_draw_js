@@ -136,8 +136,8 @@ const HomeMain = () => {
     }
 
     return (
-        <div className='scrollableElement' ref={scrollRef} onScroll={handleScrollEvent}>
-            <Spinner loading={loading} setLoading={setLoading}></Spinner>
+        <div className={`scrollableElement ${apiToken == null ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
+            <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'}></Spinner>
             {apiToken == null ? (
                 <LoginComponent loading={loading} setLoading={setLoading}></LoginComponent>
             ) : (null) } 
