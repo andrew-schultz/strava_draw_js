@@ -187,6 +187,10 @@ body {
   }
 }
 
+.buttonShadowFloatOptions {
+  box-shadow: 0px 0px 8px 1px #1a1a1a;
+}
+
 .shadowOff {
   box-shadow: none !important;
   background-color: white;
@@ -272,10 +276,11 @@ body {
     border: 1px solid black;
     padding: 5px;
     position: relative;
+    border-radius: 20px;
 }
 
 .helpModalContentMain {
-  padding-top: 5px;
+  padding-top: 0px;
   padding-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -326,8 +331,9 @@ body {
   max-width: 80%;
   background-color: white;
   border: 1px solid black;
-  padding: 5px;
+  padding: 10px;
   position: relative;
+  border-radius: 20px;
 }
 
 .textOptionLabel {
@@ -519,8 +525,8 @@ body {
   /* box-shadow: 0px 0px 5px #000; */
 
   box-shadow: 0px 1px 5px #707070;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
   /* position: absolute; */
   /* width: 100%; */
   background-color: white;

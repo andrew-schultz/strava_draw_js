@@ -52,7 +52,7 @@ const TextOptionsModal = ({
                     <div className='textOptionModalOuter top'>
                     </div>
                     <div className='textOptionsModalContainer'>
-                        <div className='textOptionsModalContent'>
+                        <div className='textOptionsModalContent buttonShadowFloatOptions'>
                             <p className='closeModal' onClick={toggleTextOptionsModal}>Apply</p>
                             <div className="slidersContainerTextOption">
                                 <div className='textOptionsTitle'>
