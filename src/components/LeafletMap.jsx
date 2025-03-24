@@ -610,7 +610,7 @@ const MapComponent = ({
             <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
             <div id="images"></div>
             <div id="map" style={{ height: `${mapHeight}px` }} />
-\        </div>
+        </div>
     )
 }
 

@@ -24,7 +24,7 @@ const LogoutComponent = () => {
     }
 
     return (
-        <div className='logoutContainer' onClick={handleLogOut}>
+        <div className='logoutContainer buttonShadowFloat' onClick={handleLogOut}>
             <p className='logoutText'>Log Out</p>
         </div>
     )

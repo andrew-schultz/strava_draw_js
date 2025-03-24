@@ -46,7 +46,7 @@ const TextOptionsModal = ({
 
     return (   
         <div>
-            <div className={`mapButton right ${showTextOptionsModal ? ('selected') : null }`} onClick={toggleTextOptionsModal}>Options</div>
+            <div className={`mapButton buttonShadow right ${showTextOptionsModal ? ('selected') : null }`} onClick={toggleTextOptionsModal}>Options</div>
             {showTextOptionsModal ? (
                 <div>
                     <div className='textOptionModalOuter top'>

@@ -9,12 +9,12 @@ const HelpModal = () => {
 
     return (   
         <div>
-            <div className={`mapButton bottom right ${showHelpModal ? ('selected') : null }`} onClick={toggleHelpModal}>help</div>
+            <div className={`mapButton buttonShadowFloat bottom right ${showHelpModal ? ('selected') : null }`} onClick={toggleHelpModal}>Help</div>
             {showHelpModal ? (
                 <div>
                     <div className='helpModalContainer'>
                         <div className='helpModalContent'>
-                            <p className='closeModal' onClick={toggleHelpModal}>x</p>
+                            <p className='closeModalHelp' onClick={toggleHelpModal}>X</p>
                             <div className='helpModalContentMain'>
                                 <p>Long press / right click the image to save. Only the map lines and stat text will be saved on a transparent background.</p>
                                 <p className='helpModalContentP'>Under the <span className='helpModalContentPSpan'>Options:</span></p>

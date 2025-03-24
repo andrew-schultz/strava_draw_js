@@ -112,10 +112,10 @@ const ActivityDetail = ({activity, setActivity}) => {
 
     
     return (
-        <div className="actvityListItem detail" >
+        <div className={`actvityListItem detail ${polylines ? 'grayBackground' : ''}`}>
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
-                    <div className="mapButton" onClick={localSetActivity}>back</div>
+                    <div className="mapButton buttonShadow" onClick={localSetActivity}>Back</div>
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
                             activity={activity}
@@ -126,8 +126,16 @@ const ActivityDetail = ({activity, setActivity}) => {
                 <div className="activityListItemTextBox">
                     <p className="activityListButtonP">Name: {activity.name}</p>
                     <p className="activityListButtonP">Date: {date}</p>
-                    <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p>
-                    <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link">View on Strava</p></a>
+                    <p className="activityListButtonP last">
+                        <span className='spanLeft'>Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</span>
+                        <span className='spanRight'>
+                            <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
+                                <p className="activityListButtonP link">View on Strava</p>
+                            </a>
+                        </span>
+                    </p>
+                    {/* <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p> */}
+                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link">View on Strava</p></a> */}
                 </div>
             </div>
             
