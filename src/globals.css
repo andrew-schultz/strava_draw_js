@@ -180,15 +180,25 @@ body {
 .buttonShadowFloat {
   box-shadow: 1px 1px 4px #7d7d7d;
   /* box-shadow: 1px 1px 4px #7d7d7d, inset 0px 0px 2px #000; */
+  :active {
+    box-shadow: none !important;
+    /* color: white; */
+    background-color: #c2c2c2;
+  }
+}
 
+.shadowOff {
+  box-shadow: none !important;
+  background-color: white;
+}
 
   /* &:active {
     box-shadow: inset 1px 2px 3px #7d7d7d;
   } */
-  &:active {
-    /* color: white; */
-    background-color: #c2c2c2;
-  }
+.buttonShadowFloat :active {
+  box-shadow: none !important;
+  /* color: white; */
+  background-color: #c2c2c2;
 }
 
 /* ---------------- */
@@ -265,7 +275,7 @@ body {
 }
 
 .helpModalContentMain {
-  padding-top: 20px;
+  padding-top: 5px;
   padding-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -472,7 +482,7 @@ body {
 }
 
 .selected {
-    background-color: grey;
+    /* background-color: grey; */
 }
 
 .link {

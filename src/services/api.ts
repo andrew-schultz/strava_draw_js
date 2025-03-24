@@ -18,8 +18,22 @@ const signRequest = (data) => {
 }
 
 const csrfAuth = async () => {
+    // const getHeaders = {
+    //     'Accept': "application/json, text/plain, */*",
+    // }
+    const data = {
+        csrf: true,
+    }
+    const [signature, timestamp] = signRequest(data)
+
     const getHeaders = {
         'Accept': "application/json, text/plain, */*",
+        // 'X-Signature': signature,
+        // 'X-Timestamp': timestamp,
+        'Authorization': signature,
+        "Content-Type": "application/json",
+        // "Access-Control-Allow-Headers": '*',
+        // "Access-Control-Allow-Origin": '*',
     }
 
     const getResponse = await fetch(`${apiURL}api/v1/strava/auth/`, {
