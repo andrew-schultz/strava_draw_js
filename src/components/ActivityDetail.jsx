@@ -163,7 +163,7 @@ const ActivityDetail = ({activity, setActivity}) => {
                     No Map To Display For This Activity
                 </div>
             )}
-            <a className="activityListButtonPLink2" href={`https://www.strava.com/activities/${activity.external_id}`}>
+            <a className="activityListButtonPLink2" target="_blank" href={`https://www.strava.com/activities/${activity.external_id}`}>
                 <p className="activityListButtonP link">View on Strava</p>
             </a>
         </div>
