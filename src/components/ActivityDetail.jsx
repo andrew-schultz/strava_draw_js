@@ -117,9 +117,9 @@ const ActivityDetail = ({activity, setActivity}) => {
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
                     <div className="mapButton buttonShadow" onClick={localSetActivity}>Back</div>
-                    <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
+                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
                         <p className="activityListButtonP link">View on Strava</p>
-                    </a>
+                    </a> */}
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
                             activity={activity}
@@ -128,7 +128,7 @@ const ActivityDetail = ({activity, setActivity}) => {
                     </div>
                 </div>
                 <div className="activityListItemTextBox">
-                    <p className="activityListButtonP name">{activity.name}</p>
+                    <p className="activityListButtonP nameBig">{activity.name}</p>
                     <p className="activityListButtonP date last">{date}</p>
                         {/* <span className='spanLeft'>{date}</span>
                         <span className='spanRight'>
@@ -163,7 +163,9 @@ const ActivityDetail = ({activity, setActivity}) => {
                     No Map To Display For This Activity
                 </div>
             )}
-
+            <a className="activityListButtonPLink2" href={`https://www.strava.com/activities/${activity.external_id}`}>
+                <p className="activityListButtonP link">View on Strava</p>
+            </a>
         </div>
     )
 };
