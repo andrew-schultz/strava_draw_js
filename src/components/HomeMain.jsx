@@ -126,7 +126,7 @@ const HomeMain = () => {
 
     const handleScrollEvent = (e) => {
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-        if ((scrollTop + clientHeight >= scrollHeight - 100) && !reachedBottom && !selectedActivity) {
+        if ((scrollTop + clientHeight >= scrollHeight - 200) && !reachedBottom && !selectedActivity) {
             setReachedBottom(true);
         }
     };

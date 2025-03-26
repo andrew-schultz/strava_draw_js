@@ -17,6 +17,7 @@ export default function Activity() {
     return (
         <>
             <ActivityDetail 
+                className='grayBackground'
                 activity={selectedActivity} 
                 setActivity={setSelectedActivity}
             ></ActivityDetail>

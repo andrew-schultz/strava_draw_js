@@ -6,6 +6,7 @@ import HelpModal from "./HelpModal";
 import TextOptionsModal from './TextOptionsModal';
 import { useTextGridProvider } from '../providers/TextGridProvider';
 import cookieCutter from "@boiseitguru/cookie-cutter";
+import { formatStrDate } from '../services/utils';
 
 var polyline = require('@mapbox/polyline');
 
@@ -38,7 +39,7 @@ const ActivityDetail = ({activity, setActivity}) => {
     }
 
     const [polylines, setPolylines] = useState();
-    const date = new Date(activity.start_date).toLocaleString();
+    const date = formatStrDate(activity.start_date);
 
     const router = useRouter();
 
@@ -112,10 +113,13 @@ const ActivityDetail = ({activity, setActivity}) => {
 
     
     return (
-        <div className={`actvityListItem detail ${polylines ? 'grayBackground' : ''}`}>
+        <div className={`activityDetail detail ${polylines ? 'grayBackground' : ''}`}>
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
                     <div className="mapButton buttonShadow" onClick={localSetActivity}>Back</div>
+                    <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
+                        <p className="activityListButtonP link">View on Strava</p>
+                    </a>
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
                             activity={activity}
@@ -124,18 +128,25 @@ const ActivityDetail = ({activity, setActivity}) => {
                     </div>
                 </div>
                 <div className="activityListItemTextBox">
-                    <p className="activityListButtonP">Name: {activity.name}</p>
-                    <p className="activityListButtonP">Date: {date}</p>
-                    <p className="activityListButtonP last">
+                    <p className="activityListButtonP name">{activity.name}</p>
+                    <p className="activityListButtonP date last">{date}</p>
+                        {/* <span className='spanLeft'>{date}</span>
+                        <span className='spanRight'>
+                            <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
+                                <p className="activityListButtonP link">View on Strava</p>
+                            </a>
+                        </span>
+                    </p> */}
+                    {/* <p className="activityListButtonP last">
                         <span className='spanLeft'>Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</span>
                         <span className='spanRight'>
                             <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
                                 <p className="activityListButtonP link">View on Strava</p>
                             </a>
                         </span>
-                    </p>
+                    </p> */}
                     {/* <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p> */}
-                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link">View on Strava</p></a> */}
+                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link last">View on Strava</p></a> */}
                 </div>
             </div>
             
