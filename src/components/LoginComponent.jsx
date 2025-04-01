@@ -8,7 +8,7 @@ import TextInput from './TextInput';
 import { validateEmail } from '../services/utils';
 
 
-const LoginComponent = ({loading, setLoading}) => {
+const LoginComponent = ({loading, setLoading, setOptionText}) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [toggleSignup, setToggleSignup] = useState(false)
@@ -146,7 +146,7 @@ const LoginComponent = ({loading, setLoading}) => {
            
             { toggleSignup ? (
                 <div>
-                    <SignupComponent loading={loading} setLoading={setLoading} handleToggleSignup={handleToggleSignup}></SignupComponent>
+                    <SignupComponent loading={loading} setLoading={setLoading} handleToggleSignup={handleToggleSignup} setOptionText={setOptionText}></SignupComponent>
                 </div>
             ) : null}
         </div>

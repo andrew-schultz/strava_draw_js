@@ -174,3 +174,22 @@ export const getApiActivities = async (token, offset=0) => {
     
     return response.json();
 }
+
+export const getFirstApiActivities = async (token, offset=0) => {
+    const csrfTokenCookie = await csrfAuth();
+    const headers = {
+        'Accept': "application/json, text/plain, */*",
+        'X-CSRFToken': csrfTokenCookie,
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": '*',
+    }
+    const url = `${apiURL}api/v1/activity/first/`
+    const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+        credentials: 'include',
+    });
+    
+    return response.json();
+}

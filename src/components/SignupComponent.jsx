@@ -5,7 +5,7 @@ import { validateEmail } from '../services/utils';
 import TextInput from './TextInput';
 
 
-const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
+const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText}) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [passwordConfirm, setPasswordConfirm] = useState()
@@ -30,6 +30,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup}) => {
 
     const handleSignup = async (e) => {
         setLoading(true)
+        setOptionText('Setting up your account...')
         const data = {
             'email': email,
             'password': password,

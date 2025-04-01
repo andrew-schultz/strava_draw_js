@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image'
-import { exchangeAuthCode, getApiActivities } from '../services/api';
+import { exchangeAuthCode, getApiActivities, getFirstApiActivities } from '../services/api';
 // import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
 // import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
@@ -16,6 +16,7 @@ import LogoutComponent from './LogoutComponent';
 
 const HomeMain = () => {
     const [loading, setLoading] = useState(true);
+    const [optionText, setOptionText] = useState(null);
     const scrollRef = useRef(null);
 
     const {
@@ -59,8 +60,13 @@ const HomeMain = () => {
             cookieCutter.set('apiToken', apiToken)
 
             const handleExchangeAuthCode = async (code, token, scope) => {
+                setOptionText('Syncing your account with Strava...')
                 let response = await exchangeAuthCode(code, token, scope)
                 if (response['success']) {
+                    // flip a flag so we can show text to indicate that activities are being fetched, wait a sec, etc etc
+                    // then we need to get the activities
+                    setOptionText('Fetching your activities, this may take a sec...')
+                    let response = await getFirstApiActivities(apiToken, offset)
                     setActivities(response['activities'])
                     if (response['activities'].length == 100) {
                         setOffset(offset + 100)
@@ -136,10 +142,10 @@ const HomeMain = () => {
     }
 
     return (
-        <div className={`scrollableElement ${apiToken == null ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
-            <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'}></Spinner>
+        <div className={`scrollableElement ${(apiToken == null && !activities) || (apiToken && showAuthButton) ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
+            <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'} optionText={optionText}></Spinner>
             {apiToken == null ? (
-                <LoginComponent loading={loading} setLoading={setLoading}></LoginComponent>
+                <LoginComponent loading={loading} setLoading={setLoading} setOptionText={setOptionText}></LoginComponent>
             ) : (null) } 
 
             {showAuthButton == true? (

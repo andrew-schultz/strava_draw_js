@@ -805,6 +805,7 @@ body {
     position: absolute;
     z-index: 105;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
@@ -815,6 +816,16 @@ body {
     &.home {
 
     }
+}
+
+.spinnerSubContainer {
+  text-align: center;
+}
+
+.spinnerOptionText {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 /* ---------------- */
