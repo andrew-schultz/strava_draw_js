@@ -9,3 +9,10 @@ export const formatStrDate = (rawDate) => {
   const formatDate = date.replace(',', ' at')
   return formatDate
 };
+
+export const cookieExpireTime = () => {
+  let now = new Date();
+  let timeToExpire = now.getTime() + (60 * 60 * 1000); // Cookie expires in 1 hour
+  now.setTime(timeToExpire);
+  return now.toUTCString()
+};

@@ -20,26 +20,36 @@ export const AuthProvider = ({ children }) => {
     const [showAuthButton, setShowAuthButton] = useState(false);
 
     useEffect(() => {
-        const existingTokenLS = localStorage.getItem('apiToken')
-        const existingTokenCookie = cookieCutter.get('apiToken');
-        if (existingTokenLS) {
-            cookieCutter.set('apiToken', existingTokenLS);
-            setApiToken(existingTokenLS);
+        const existingToken = localStorage.getItem('apiToken')
+        // const existingTokenCookie = cookieCutter.get('apiToken');
+
+        // let now = new Date();
+        // let timeToExpire = now.getTime() + (60 * 60 * 1000); // Cookie expires in 1 hour
+        // now.setTime(timeToExpire);
+
+        if (existingToken) {
+            // cookieCutter.set('apiToken', existingTokenLS, { expires: now.toUTCString() });
+            setApiToken(existingToken)
         }
-        else if (existingTokenCookie) {
-            localStorage.setItem('apiToken', existingTokenCookie)
-            setApiToken(existingTokenCookie)
-        }
+        // else if (existingTokenCookie && existingTokenCookie != null) {
+        //     // localStorage.setItem('apiToken', existingTokenCookie)
+        //     setApiToken(existingTokenCookie)
+        // }
         setMounted(true);
     }, []);
 
-    useEffect(() => {
-        cookieCutter.set('accessToken', accessToken);
-    }, [accessToken]);
-
     // useEffect(() => {
-    //     cookieCutter.set('apiToken', apiToken);
-    // }, [apiToken]);
+    //     cookieCutter.set('accessToken', accessToken);
+    // }, [accessToken]);
+
+    useEffect(() => {
+        if (apiToken) {
+            let now = new Date();
+            let timeToExpire = now.getTime() + (60 * 60 * 1000); // Cookie expires in 1 hour
+            now.setTime(timeToExpire);
+            cookieCutter.set('apiToken', apiToken, { 'expires': now.toUTCString() });
+        }
+    }, [apiToken]);
 
     const value = {
         accessToken,

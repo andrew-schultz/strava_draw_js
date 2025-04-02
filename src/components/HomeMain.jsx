@@ -18,6 +18,8 @@ const HomeMain = () => {
     const [loading, setLoading] = useState(true);
     const [optionText, setOptionText] = useState(null);
     const scrollRef = useRef(null);
+    const [scope, setScope] = useState();
+    const [code, setCode] = useState();
 
     const {
         accessToken,
@@ -49,26 +51,35 @@ const HomeMain = () => {
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
-
     useEffect(() => {
         if (!activities) {
             setLoading(true)
             let params = new URLSearchParams(document.location.search);
-            let code = params.get('code')
-            let scope = params.get('scope')
-            const apiTokenCookie = cookieCutter.get('apiToken', apiToken)
+            if(params.get('code')) {
+                setCode(params.get('code'))
+                // params.delete('code')
+                // window.location.search = params
+            }
+            if (params.get('scope')) {
+                setScope(params.get('scope'))
+                // params.delete('scope')
+                // window.location.search = params
+            }
+
+            const apiTokenCookie = cookieCutter.get('apiToken')
             const apiTokenLS = localStorage.getItem('apiToken')
             // if (apiToken) {
             //     cookieCutter.set('apiToken', apiToken)
             // }
-            if (apiTokenLS) {
-                setApiToken(apiTokenLS)
-            }
-            else if (apiTokenCookie) {
-                setApiToken(apiTokenCookie)
-            }
-            const localApiToken = apiTokenLS || apiTokenCookie || null
-
+            // if (apiTokenLS) {
+            //     console.log('apiTokenLS', apiTokenLS)
+            //     setApiToken(apiTokenLS)
+            // }
+            // else if (apiTokenCookie) {
+            //     console.log('apitokencookie', apiTokenCookie)
+            //     setApiToken(apiTokenCookie)
+            // }
+            
             const handleExchangeAuthCode = async (code, token, scope) => {
                 setOptionText('Syncing your account with Strava...')
                 let response = await exchangeAuthCode(code, token, scope)
@@ -76,7 +87,7 @@ const HomeMain = () => {
                     // flip a flag so we can show text to indicate that activities are being fetched, wait a sec, etc etc
                     // then we need to get the activities
                     setOptionText('Fetching your activities, this may take a sec...')
-                    let response = await getFirstApiActivities(localApiToken, offset)
+                    let response = await getFirstApiActivities(token, offset)
                     if (response['activities']) {
                         setActivities(response["activities"])
                         if (response['activities'].length == 100) {
@@ -90,9 +101,9 @@ const HomeMain = () => {
                 }
             }
 
-            const handleGetActivities = async () => {
+            const handleGetActivities = async (token) => {
                 console.log('try activities')
-                let response = await getApiActivities(localApiToken, offset)
+                let response = await getApiActivities(token, offset)
                 if (response['count'] && response['count'] > 0) {
                     setActivities(response['activity_data'])
 
@@ -107,8 +118,8 @@ const HomeMain = () => {
                 else {
                     console.log('try auth')
                     // if therses a code, mind as well try to exchange it
-                    if (code && localApiToken && !activities) {
-                        let res = await handleExchangeAuthCode(code, localApiToken, scope)
+                    if (code && token && !activities) {
+                        let res = await handleExchangeAuthCode(code, token, scope)
                         // setLoading(false)
                     } else {
                         setLoading(false)
@@ -118,9 +129,12 @@ const HomeMain = () => {
                 }
                 
             }
+
+            const storedApiToken = apiTokenLS || apiTokenCookie ? (apiTokenLS ? apiTokenLS : false) || (apiTokenCookie ? apiTokenCookie : false) : false
+            const localApiToken = apiToken ? apiToken : storedApiToken
             
             if (!activities && localApiToken) {
-                handleGetActivities()
+                handleGetActivities(localApiToken)
             } 
             else if (code && localApiToken && !activities) {
                 handleExchangeAuthCode(code, localApiToken, scope)
@@ -173,14 +187,9 @@ const HomeMain = () => {
 
     return (
         <div className={`scrollableElement ${(apiToken == null && !activities) || (apiToken && showAuthButton) ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
-            <div>
-                <p>cookies</p>
-                <div>{apiToken}</div>
-                <div>{}</div>
-            </div>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'} optionText={optionText}></Spinner>
             {apiToken == null ? (
-                <LoginComponent loading={loading} setLoading={setLoading} setOptionText={setOptionText}></LoginComponent>
+                <LoginComponent loading={loading} setLoading={setLoading} setOptionText={setOptionText} code={code} scope={scope}></LoginComponent>
             ) : (null) } 
 
             {showAuthButton == true? (

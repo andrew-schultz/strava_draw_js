@@ -59,8 +59,14 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
                             // gotta be a better way to show a validation error than to add a conditional for each one again
                         } else {
                             localStorage.setItem('apiToken', resp['token'])
-                            cookieCutter.set('accessToken', apiToken);
-                            cookieCutter.set('apiToken', apiToken)
+
+                            let now = new Date();
+                            let timeToExpire = now.getTime() + (60 * 60 * 1000); // Cookie expires in 1 hour
+                            now.setTime(timeToExpire);
+
+                            cookieCutter.set('selectedActivity', null);
+                            cookieCutter.set('accessToken', resp['token'], { expires: now.toUTCString() });
+                            cookieCutter.set('apiToken', resp['token'], { expires: now.toUTCString() });
                             setApiToken(resp['token'])
 
                             if (resp['integration']) {

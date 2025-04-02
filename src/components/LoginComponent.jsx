@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { useAuthProvider } from '../providers/AuthProvider';
 import SignupComponent from './SignupComponent';
 import { useActivitiesProvider } from '../providers/ActivitiesProvider';
-import { getApiActivities } from '../services/api';
+import { exchangeAuthCode, getApiActivities, getFirstApiActivities } from '../services/api';
 import TextInput from './TextInput';
 import { validateEmail } from '../services/utils';
 
 
-const LoginComponent = ({loading, setLoading, setOptionText}) => {
+const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [toggleSignup, setToggleSignup] = useState(false)
@@ -27,7 +27,7 @@ const LoginComponent = ({loading, setLoading, setOptionText}) => {
         setActivities, 
         offset,
         setOffset,
-        setMoreToGet
+        setMoreToGet,
     } = useActivitiesProvider();
 
     const handleLogin = async (e) => {
@@ -62,8 +62,28 @@ const LoginComponent = ({loading, setLoading, setOptionText}) => {
                                 }
                             }
                         } else {
-                            setActivities(null)
-                            setMoreToGet(false)
+                            if (code) {
+                                setOptionText('Syncing your account with Strava...')
+                                let response = await exchangeAuthCode(code, resp['token'], scope)
+                                if (response['success']) {
+                                    // flip a flag so we can show text to indicate that activities are being fetched, wait a sec, etc etc
+                                    // then we need to get the activities
+                                    setOptionText('Fetching your activities, this may take a sec...')
+                                    let response = await getFirstApiActivities(resp['token'], offset)
+                                    if (response['activities']) {
+                                        setActivities(response["activities"])
+                                        if (response['activities'].length == 100) {
+                                            setOffset(offset + 100)
+                                        } else  {
+                                            setMoreToGet(false)
+                                        }
+                                    }
+                                    setLoading(false)
+                                }
+                            } else {
+                                setActivities(null)
+                                setMoreToGet(false)
+                            }
                             // setShowAuthButton(true)
                         }
                     }
@@ -114,6 +134,11 @@ const LoginComponent = ({loading, setLoading, setOptionText}) => {
             </div>
             { !toggleSignup ? (
                 <div className='loginContainer'>
+                    {code ? (
+                        <div>
+                            <p className='loginScopeAuthText'>Please re-enter your credentials to complete the sync with Strava</p>
+                        </div>
+                    ) : null}
                     <TextInput
                         typeOption={'email'}
                         nameOption={'email'}
@@ -135,12 +160,14 @@ const LoginComponent = ({loading, setLoading, setOptionText}) => {
                     </div>
                     <div className='loginButtonContainer'>
                         <div className='authButton' onClick={handleLogin}>
-                            Login
+                            {scope ? 'Complete Sync' : 'Login'}
                         </div>
                     </div>
-                    <div >
-                        <p className='cursor' onClick={handleToggleSignup}>click to sign up</p>
-                    </div>
+                    { !code ? (
+                        <div>
+                            <p className='cursor' onClick={handleToggleSignup}>click to sign up</p>
+                        </div>
+                    ): null}
                 </div>
             ) : null}
            
