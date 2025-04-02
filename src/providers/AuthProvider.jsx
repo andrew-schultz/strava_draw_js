@@ -20,9 +20,15 @@ export const AuthProvider = ({ children }) => {
     const [showAuthButton, setShowAuthButton] = useState(false);
 
     useEffect(() => {
-        const existingToken = localStorage.getItem('apiToken')
-        if (existingToken) {
-            setApiToken(existingToken);
+        const existingTokenLS = localStorage.getItem('apiToken')
+        const existingTokenCookie = cookieCutter.get('apiToken');
+        if (existingTokenLS) {
+            cookieCutter.set('apiToken', existingTokenLS);
+            setApiToken(existingTokenLS);
+        }
+        else if (existingTokenCookie) {
+            localStorage.setItem('apiToken', existingTokenCookie)
+            setApiToken(existingTokenCookie)
         }
         setMounted(true);
     }, []);
@@ -31,9 +37,9 @@ export const AuthProvider = ({ children }) => {
         cookieCutter.set('accessToken', accessToken);
     }, [accessToken]);
 
-    useEffect(() => {
-        cookieCutter.set('apiToken', apiToken);
-    }, [apiToken]);
+    // useEffect(() => {
+    //     cookieCutter.set('apiToken', apiToken);
+    // }, [apiToken]);
 
     const value = {
         accessToken,

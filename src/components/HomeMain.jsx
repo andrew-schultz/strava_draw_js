@@ -56,8 +56,18 @@ const HomeMain = () => {
             let params = new URLSearchParams(document.location.search);
             let code = params.get('code')
             let scope = params.get('scope')
-            const apiToken = localStorage.getItem('apiToken')
-            cookieCutter.set('apiToken', apiToken)
+            const apiTokenCookie = cookieCutter.get('apiToken', apiToken)
+            const apiTokenLS = localStorage.getItem('apiToken')
+            // if (apiToken) {
+            //     cookieCutter.set('apiToken', apiToken)
+            // }
+            if (apiTokenLS) {
+                setApiToken(apiTokenLS)
+            }
+            else if (apiTokenCookie) {
+                setApiToken(apiTokenCookie)
+            }
+            const localApiToken = apiTokenLS || apiTokenCookie || null
 
             const handleExchangeAuthCode = async (code, token, scope) => {
                 setOptionText('Syncing your account with Strava...')
@@ -66,7 +76,7 @@ const HomeMain = () => {
                     // flip a flag so we can show text to indicate that activities are being fetched, wait a sec, etc etc
                     // then we need to get the activities
                     setOptionText('Fetching your activities, this may take a sec...')
-                    let response = await getFirstApiActivities(apiToken, offset)
+                    let response = await getFirstApiActivities(localApiToken, offset)
                     if (response['activities']) {
                         setActivities(response["activities"])
                         if (response['activities'].length == 100) {
@@ -82,7 +92,7 @@ const HomeMain = () => {
 
             const handleGetActivities = async () => {
                 console.log('try activities')
-                let response = await getApiActivities(apiToken, offset)
+                let response = await getApiActivities(localApiToken, offset)
                 if (response['count'] && response['count'] > 0) {
                     setActivities(response['activity_data'])
 
@@ -97,22 +107,27 @@ const HomeMain = () => {
                 else {
                     console.log('try auth')
                     // if therses a code, mind as well try to exchange it
-                    if (code && apiToken && !activities) {
-                        let res = await handleExchangeAuthCode(code, apiToken, scope)
+                    if (code && localApiToken && !activities) {
+                        let res = await handleExchangeAuthCode(code, localApiToken, scope)
+                        // setLoading(false)
+                    } else {
                         setLoading(false)
-                    } 
-                    setLoading(false)
+                    }
+                    
                     // show an error about authorizing strava
                 }
                 
             }
             
-            if (!activities && apiToken) {
+            if (!activities && localApiToken) {
                 handleGetActivities()
             } 
-            else if (code && apiToken && !activities) {
-                handleExchangeAuthCode(code, apiToken, scope)
+            else if (code && localApiToken && !activities) {
+                handleExchangeAuthCode(code, localApiToken, scope)
             } 
+            // else if (code && !localApiToken) {
+
+            // }
             else {
                 setLoading(false)
             }
@@ -158,6 +173,11 @@ const HomeMain = () => {
 
     return (
         <div className={`scrollableElement ${(apiToken == null && !activities) || (apiToken && showAuthButton) ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
+            <div>
+                <p>cookies</p>
+                <div>{apiToken}</div>
+                <div>{}</div>
+            </div>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'} optionText={optionText}></Spinner>
             {apiToken == null ? (
                 <LoginComponent loading={loading} setLoading={setLoading} setOptionText={setOptionText}></LoginComponent>

@@ -149,6 +149,7 @@ body {
   padding: 5px 10px;
   background: white;
   cursor: pointer;
+  z-index: 108;
 }
 
 .logoutText {
