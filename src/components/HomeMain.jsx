@@ -67,36 +67,51 @@ const HomeMain = () => {
                     // then we need to get the activities
                     setOptionText('Fetching your activities, this may take a sec...')
                     let response = await getFirstApiActivities(apiToken, offset)
-                    setActivities(response['activities'])
-                    if (response['activities'].length == 100) {
-                        setOffset(offset + 100)
-                    } else  {
-                        setMoreToGet(false)
+                    if (response['activities']) {
+                        setActivities(response["activities"])
+                        if (response['activities'].length == 100) {
+                            setOffset(offset + 100)
+                        } else  {
+                            setMoreToGet(false)
+                        }
                     }
+                    
                     setLoading(false)
-                }
-                else {
-                    // show an error about authorizing strava
                 }
             }
 
             const handleGetActivities = async () => {
+                console.log('try activities')
                 let response = await getApiActivities(apiToken, offset)
-                setActivities(response['activity_data'])
-                if (response['next_query']) {
-                    setOffset(offset + 100)
-                }
+                if (response['count'] && response['count'] > 0) {
+                    setActivities(response['activity_data'])
+
+                    if (response['next_query']) {
+                        setOffset(offset + 100)
+                    }
+                    else {
+                        setMoreToGet(false)
+                    }
+                    setLoading(false)
+                } 
                 else {
-                    setMoreToGet(false)
+                    console.log('try auth')
+                    // if therses a code, mind as well try to exchange it
+                    if (code && apiToken && !activities) {
+                        let res = await handleExchangeAuthCode(code, apiToken, scope)
+                        setLoading(false)
+                    } 
+                    setLoading(false)
+                    // show an error about authorizing strava
                 }
-                setLoading(false)
+                
             }
             
-            if (code && !activities && apiToken) {
-                handleExchangeAuthCode(code, apiToken, scope)
-            } 
-            else if (apiToken && !activities) {
+            if (!activities && apiToken) {
                 handleGetActivities()
+            } 
+            else if (code && apiToken && !activities) {
+                handleExchangeAuthCode(code, apiToken, scope)
             } 
             else {
                 setLoading(false)

@@ -31,6 +31,10 @@ export const AuthProvider = ({ children }) => {
         cookieCutter.set('accessToken', accessToken);
     }, [accessToken]);
 
+    useEffect(() => {
+        cookieCutter.set('apiToken', apiToken);
+    }, [apiToken]);
+
     const value = {
         accessToken,
         apiToken,

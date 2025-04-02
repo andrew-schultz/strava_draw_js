@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuthProvider } from '../providers/AuthProvider';
 import { validateEmail } from '../services/utils';
 import TextInput from './TextInput';
+import cookieCutter from "@boiseitguru/cookie-cutter";
 
 
 const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText}) => {
@@ -58,6 +59,8 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
                             // gotta be a better way to show a validation error than to add a conditional for each one again
                         } else {
                             localStorage.setItem('apiToken', resp['token'])
+                            cookieCutter.set('accessToken', apiToken);
+                            cookieCutter.set('apiToken', apiToken)
                             setApiToken(resp['token'])
 
                             if (resp['integration']) {
