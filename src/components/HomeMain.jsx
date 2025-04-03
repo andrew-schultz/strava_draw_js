@@ -55,13 +55,17 @@ const HomeMain = () => {
         if (!activities) {
             setLoading(true)
             let params = new URLSearchParams(document.location.search);
+            let localCode
+            let localScope
             if(params.get('code')) {
                 setCode(params.get('code'))
+                localCode = params.get('code')
                 // params.delete('code')
                 // window.location.search = params
             }
             if (params.get('scope')) {
                 setScope(params.get('scope'))
+                localScope = params.get('scope')
                 // params.delete('scope')
                 // window.location.search = params
             }
@@ -116,10 +120,9 @@ const HomeMain = () => {
                     setLoading(false)
                 } 
                 else {
-                    console.log('try auth')
                     // if therses a code, mind as well try to exchange it
-                    if (code && token && !activities) {
-                        let res = await handleExchangeAuthCode(code, token, scope)
+                    if (localCode && token) {
+                        let res = await handleExchangeAuthCode(localCode, token, localScope)
                         // setLoading(false)
                     } else {
                         setLoading(false)
@@ -132,12 +135,12 @@ const HomeMain = () => {
 
             const storedApiToken = apiTokenLS || apiTokenCookie ? (apiTokenLS ? apiTokenLS : false) || (apiTokenCookie ? apiTokenCookie : false) : false
             const localApiToken = apiToken ? apiToken : storedApiToken
-            
+
             if (!activities && localApiToken) {
                 handleGetActivities(localApiToken)
             } 
-            else if (code && localApiToken && !activities) {
-                handleExchangeAuthCode(code, localApiToken, scope)
+            else if (localCode && localApiToken && !activities) {
+                handleExchangeAuthCode(localCode, localApiToken, localScope)
             } 
             // else if (code && !localApiToken) {
 
