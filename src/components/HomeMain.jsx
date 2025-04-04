@@ -36,6 +36,8 @@ const HomeMain = () => {
         setMoreToGet,
         reachedBottom,
         setReachedBottom,
+        homeScrollPosition,
+        setHomeScrollPosition,
     } = useActivitiesProvider();
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
@@ -88,6 +90,7 @@ const HomeMain = () => {
                         } else  {
                             setMoreToGet(false)
                         }
+                        window.scrollTo(0, 0)
                     }
                     
                     setLoading(false)
@@ -107,6 +110,7 @@ const HomeMain = () => {
                         setMoreToGet(false)
                     }
                     setLoading(false)
+                    window.scrollTo(0, 0)
                 } 
                 else {
                     // if therses a code, mind as well try to exchange it
@@ -140,7 +144,11 @@ const HomeMain = () => {
         } else {
             setSelectedActivity(null)
             setLoading(false)
-        }    
+        }
+        // if (homeScrollPosition > 0) {
+        //     debugger
+        //     scrollRef.scrollTo(0, homeScrollPosition)
+        // }
     }, [])
 
     useEffect(() => {

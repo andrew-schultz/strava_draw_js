@@ -79,7 +79,7 @@ body {
 }
 
 .titleBox {
-  margin-top: 30vh;
+  padding-top: 30vh;
   width: 100%;
   font-size: 40px;
   font-weight: bold;
