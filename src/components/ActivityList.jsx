@@ -16,16 +16,6 @@ const ActivityList = ({activities, setSelectedActivity, selectedActivity, loadin
                     </div>
                 ))
             )}
-            {/* {(activities !== null && loading) ? (
-                <div key={'loadingActivityListItem'}>
-                    <div className="activityListItem">
-                        <div className="activityListItemText">
-                            <Spinner loading={loading}></Spinner>
-                        </div>
-                    </div>
-                </div>
-            ):
-            (null)} */}
         </>
     )
 }

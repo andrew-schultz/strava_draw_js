@@ -20,9 +20,7 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
 
 
     const {
-        apiToken,
         setApiToken,
-        showAuthButton,
         setShowAuthButton,
     } = useAuthProvider();
 
@@ -122,42 +120,16 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
         setPasswordConfirm(val)
     }
 
-    const localHandleToggleSignup = (e) => {
-        setShowEmailError(false)
-        setShowPasswordError(false)
-        setShowPasswordConfirmError(false)
-        setErrorMessage(null)
-        handleToggleSignup()
-    }
-
     return (
         <div id='SignupContainer' className='loginContainer'>
-            {/* <div className='loginInputContainer'>
-                <input 
-                    className='loginInput' 
-                    placeholder="email" 
-                    name='email' 
-                    type='email'
-                    fieldError={'Invalid email'}
-                    showFieldError={showEmailError} 
-                    onChange={handleSetEmail}
-                ></input>
-            </div>
-            <div className='loginInputContainer'>
-                <input className='loginInput' 
-                    placeholder="password" name='password' type='password' onChange={handleSetPassword}></input>
-            </div>
-            <div className='loginInputContainer'>
-                <input className='loginInput' 
-                    placeholder="confirm password" name='passwordConfirm' type='password' onChange={handleSetPasswordConfirm}></input>
-            </div> */}
             <TextInput
                 typeOption={'email'}
                 nameOption={'email'}
                 placeholderOption={'email'}
                 fieldError={'Invalid email'}
                 showFieldError={showEmailError}
-                onChangeHandlerFunc={handleSetEmail}>
+                onChangeHandlerFunc={handleSetEmail}
+                labelText={'Email'}>
             </TextInput>
             <TextInput 
                 typeOption={'password'}
@@ -165,7 +137,8 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
                 placeholderOption={'password'}
                 fieldError={'Password must be at least 4 characters'}
                 showFieldError={showPasswordError}
-                onChangeHandlerFunc={handleSetPassword}>
+                onChangeHandlerFunc={handleSetPassword}
+                labelText={'Password'}>
             </TextInput>
             <TextInput 
                 typeOption={'password'}
@@ -173,7 +146,8 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
                 placeholderOption={'confirm password'}
                 fieldError={'Password must be at least 4 characters'}
                 showFieldError={showPasswordConfirmError}
-                onChangeHandlerFunc={handleSetPasswordConfirm}>
+                onChangeHandlerFunc={handleSetPasswordConfirm}
+                labelText={'Confirm Password'}>
             </TextInput>
             <div className='formSubmitError'>
                 <p className='formSubmitErrorText'>{errorMessage}</p>

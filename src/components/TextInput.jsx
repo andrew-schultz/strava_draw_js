@@ -7,6 +7,7 @@ const TextInput = ({
     fieldError,
     showFieldError,
     onChangeHandlerFunc,
+    labelText,
 })=> {
     const [errorMessage, setErrorMessage] = useState()
     const localHandleSetPassword = async (e) => {
@@ -18,14 +19,19 @@ const TextInput = ({
             }
         }
     }
-    // debugger
+
     return (
         <div className='loginInputContainer'>
-            <input className='loginInput' placeholder={placeholderOption} name={nameOption} type={typeOption} onChange={localHandleSetPassword}></input>
-            {showFieldError ? ( 
-            <div className='loginInputError'>
-                <p className='formInputError'>{fieldError}</p>
-            </div>) : null}
+            <div className='loginInputSubContainer'>
+                <div className='loginInputLabel'>
+                    <p className='loginInputLabelP'>{labelText}</p>
+                </div>
+                <input className='loginInput' placeholder={placeholderOption} name={nameOption} type={typeOption} onChange={localHandleSetPassword}></input>
+                {showFieldError ? ( 
+                <div className='loginInputError'>
+                    <p className='formInputError'>{fieldError}</p>
+                </div>) : null}
+            </div>
         </div>
     )
 }

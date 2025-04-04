@@ -42,8 +42,6 @@ const ActivityDetail = ({activity, setActivity}) => {
     const date = formatStrDate(activity.start_date);
 
     const router = useRouter();
-
-    // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     
     useEffect(() => {
         if (activity.polyline) {

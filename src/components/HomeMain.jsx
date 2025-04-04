@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState, useRef } from 'react';
-import Image from 'next/image'
 import { exchangeAuthCode, getApiActivities, getFirstApiActivities } from '../services/api';
 // import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
 // import ActivityDetail from "./ActivityDetail"
@@ -22,16 +21,8 @@ const HomeMain = () => {
     const [code, setCode] = useState();
 
     const {
-        accessToken,
         apiToken,
-        athleteId,
-        refreshToken,
-        setAccessToken,
-        setApiToken,
-        setAthleteId,
-        setRefreshToken,
         showAuthButton,
-        setShowAuthButton,
      } = useAuthProvider();
 
     const {
@@ -39,8 +30,6 @@ const HomeMain = () => {
         selectedActivity,
         setActivities,
         setSelectedActivity,
-        activityPage,
-        setActivityPage,
         offset,
         setOffset,
         moreToGet,

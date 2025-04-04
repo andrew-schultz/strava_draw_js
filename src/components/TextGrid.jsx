@@ -1,5 +1,3 @@
-
-import { useEffect, useState } from 'react';
 import GridSpot from './GridSpot';
 import { useTextGridProvider } from '../providers/TextGridProvider'
 
@@ -9,27 +7,11 @@ const TextGrid = ({
 }) => {
     let lastTapTime = 0;
     let gridElements = [];
-    let currentActivity;
 
     const {
         grid,
-        resetGrid,
         swapGridSpot,
     } = useTextGridProvider();
-
-    // useEffect(() => {
-    //     return () => {
-    //         // componentDidUnmount here
-    //     }
-    // }, [])
-
-    // useEffect(() => {
-    //     if (activity != currentActivity) {
-    //         debugger
-    //         currentActivity = activity;
-    //         resetGrid()
-    //     }
-    // }, [activity]);
 
     const dragStartHandler = (event) => {
         event.dataTransfer.setData("gridOption", event.target.dataset.id);

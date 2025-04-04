@@ -19,9 +19,7 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
     const [showPasswordError, setShowPasswordError] = useState(false)
 
     const {
-        apiToken,
         setApiToken,
-        setShowAuthButton,
     } = useAuthProvider();
     const {
         setActivities, 
@@ -145,7 +143,8 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                         placeholderOption={'email'}
                         fieldError={'Invalid email'}
                         showFieldError={showEmailError}
-                        onChangeHandlerFunc={handleSetEmail}>
+                        onChangeHandlerFunc={handleSetEmail}
+                        labelText={'Email'}>
                     </TextInput>
                     <TextInput 
                         typeOption={'password'}
@@ -153,7 +152,8 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                         placeholderOption={'password'}
                         fieldError={'Password must be at least 4 characters'}
                         showFieldError={showPasswordError}
-                        onChangeHandlerFunc={handleSetPassword}>
+                        onChangeHandlerFunc={handleSetPassword}
+                        labelText={'Password'}>
                     </TextInput>
                     <div className='formSubmitError'>
                         <p className='formSubmitErrorText'>{errorMessage}</p>
