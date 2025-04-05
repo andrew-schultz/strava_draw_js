@@ -58,6 +58,8 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                                 } else {
                                     setMoreToGet(false)
                                 }
+                                const scrollEl = document.getElementById('mainScrollable')
+                                scrollEl.scrollTo(0, 0)
                             }
                         } else {
                             if (code) {
@@ -76,6 +78,8 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                                             setMoreToGet(false)
                                         }
                                     }
+                                    const scrollEl = document.getElementById('mainScrollable')
+                                    scrollEl.scrollTo(0, 0)
                                     setLoading(false)
                                 }
                             } else {

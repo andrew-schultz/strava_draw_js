@@ -15,9 +15,10 @@ body {
 /* Auth             */
 /* ---------------- */
 .authButtonContainer {
-    position: absolute;
-    top: 40%;
-    transform: translate(0, -60%);
+    /* position: absolute; */
+    /* top: 40%; */
+    /* transform: translate(0, -60%); */
+    transform: translate(0, -50%);
     display: flex;
     justify-content: center;
     width: 100%;
@@ -76,10 +77,13 @@ body {
 .homeBackground {
   background-image: url('../public/routeviewer_home_background_v2.png');
   background-size: cover;
+  display: flex;
+  align-items: center;
+  overflow-y: hidden !important;
 }
 
 .titleBox {
-  padding-top: 30vh;
+  /* padding-top: 30vh; */
   width: 100%;
   font-size: 40px;
   font-weight: bold;
@@ -87,6 +91,7 @@ body {
 }
 
 .titleBoxText {
+  margin-top: 0px;
   margin-bottom: 18px;
 }
 
@@ -125,6 +130,7 @@ body {
 .loginInputLabelP {
   margin-top: 2px;
   margin-bottom: 3px;
+  font-weight: 500;
 }
 
 .loginInput {

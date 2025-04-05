@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { exchangeAuthCode, getApiActivities, getFirstApiActivities } from '../services/api';
+import { setDivToViewportSize } from '../services/utils';
 // import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
 // import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
@@ -19,6 +20,8 @@ const HomeMain = () => {
     const scrollRef = useRef(null);
     const [scope, setScope] = useState();
     const [code, setCode] = useState();
+    // const [mounted, setMounted] = useState(false);
+    // const [scrollFixed, setScrollFixed] = useState(false);
 
     const {
         apiToken,
@@ -42,6 +45,13 @@ const HomeMain = () => {
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
     const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
+    
+    // Update size on window resize
+    window.addEventListener('resize', function() {
+        const d = document.getElementById('mainScrollable')
+        setDivToViewportSize(d);
+    });
+    
     useEffect(() => {
         if (!activities) {
             setLoading(true)
@@ -63,17 +73,6 @@ const HomeMain = () => {
 
             const apiTokenCookie = cookieCutter.get('apiToken')
             const apiTokenLS = localStorage.getItem('apiToken')
-            // if (apiToken) {
-            //     cookieCutter.set('apiToken', apiToken)
-            // }
-            // if (apiTokenLS) {
-            //     console.log('apiTokenLS', apiTokenLS)
-            //     setApiToken(apiTokenLS)
-            // }
-            // else if (apiTokenCookie) {
-            //     console.log('apitokencookie', apiTokenCookie)
-            //     setApiToken(apiTokenCookie)
-            // }
             
             const handleExchangeAuthCode = async (code, token, scope) => {
                 setOptionText('Syncing your account with Strava...')
@@ -88,9 +87,9 @@ const HomeMain = () => {
                         if (response['activities'].length == 100) {
                             setOffset(offset + 100)
                         } else  {
-                            setMoreToGet(false)
+                            setOffset(offset + response['activities'].length)
+                            // setMoreToGet(false)
                         }
-                        window.scrollTo(0, 0)
                     }
                     
                     setLoading(false)
@@ -110,7 +109,6 @@ const HomeMain = () => {
                         setMoreToGet(false)
                     }
                     setLoading(false)
-                    window.scrollTo(0, 0)
                 } 
                 else {
                     // if therses a code, mind as well try to exchange it
@@ -145,11 +143,24 @@ const HomeMain = () => {
             setSelectedActivity(null)
             setLoading(false)
         }
-        // if (homeScrollPosition > 0) {
-        //     debugger
-        //     scrollRef.scrollTo(0, homeScrollPosition)
-        // }
+        // setMounted(true)
+
+        const d = document.getElementById('mainScrollable')
+        setDivToViewportSize(d);
     }, [])
+
+    // useEffect(() => {
+    //     if (mounted && !loading) {
+    //         const scrollEl = document.getElementById('mainScrollable')
+    //         console.log('homescroll', homeScrollPosition)
+    //         console.log('top', scrollEl.scrollTop)
+    //         if (scrollEl.scrollTop != homeScrollPosition) {
+    //             scrollEl.scrollTo(0, 0)
+    //             console.log('scrollllllllltop')
+    //             setScrollFixed(true)
+    //         }
+    //     }
+    // }, [mounted, loading])
 
     useEffect(() => {
         if (reachedBottom && moreToGet) {
@@ -186,7 +197,7 @@ const HomeMain = () => {
     }
 
     return (
-        <div className={`scrollableElement ${(apiToken == null && !activities) || (apiToken && showAuthButton) ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
+        <div id='mainScrollable' className={`scrollableElement ${(apiToken == null && !activities) || (apiToken && showAuthButton) ? 'homeBackground': null}`} ref={scrollRef} onScroll={handleScrollEvent}>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'homeBackground'} optionText={optionText}></Spinner>
             {apiToken == null ? (
                 <LoginComponent loading={loading} setLoading={setLoading} setOptionText={setOptionText} code={code} scope={scope}></LoginComponent>

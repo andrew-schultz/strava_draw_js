@@ -16,3 +16,17 @@ export const cookieExpireTime = () => {
   now.setTime(timeToExpire);
   return now.toUTCString()
 };
+
+export const setDivToViewportSize = (divElement) => {
+  if (!divElement) {
+    console.error("Div element is null or undefined.");
+    return;
+  }
+
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+  divElement.style.width = `${viewportWidth}px`;
+  divElement.style.height = `${viewportHeight}px`;
+  console.log('resized')
+}

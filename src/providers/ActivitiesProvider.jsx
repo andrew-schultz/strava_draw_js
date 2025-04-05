@@ -19,7 +19,7 @@ export const ActivitiesProvider = ({ children }) => {
     const [offset, setOffset] = useState(0);
     const [moreToGet, setMoreToGet] = useState(true);
     const [reachedBottom, setReachedBottom] = useState(false);
-    const [homeScrollPosition, setHomeScrollPosition] = useState(500);
+    const [homeScrollPosition, setHomeScrollPosition] = useState(0);
 
     useEffect(() => {
         setMounted(true);
