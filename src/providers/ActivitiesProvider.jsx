@@ -20,6 +20,7 @@ export const ActivitiesProvider = ({ children }) => {
     const [moreToGet, setMoreToGet] = useState(true);
     const [reachedBottom, setReachedBottom] = useState(false);
     const [homeScrollPosition, setHomeScrollPosition] = useState(0);
+    const [homeScrollId, setHomeScrollId] = useState(0);
 
     useEffect(() => {
         setMounted(true);
@@ -43,6 +44,7 @@ export const ActivitiesProvider = ({ children }) => {
         moreToGet,
         reachedBottom,
         homeScrollPosition,
+        homeScrollId,
         setActivities,
         setSelectedActivity,
         setActivityPage,
@@ -50,6 +52,7 @@ export const ActivitiesProvider = ({ children }) => {
         setMoreToGet,
         setReachedBottom,
         setHomeScrollPosition,
+        setHomeScrollId,
     };
 
     if (!mounted) {

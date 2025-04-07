@@ -41,6 +41,7 @@ const HomeMain = () => {
         setReachedBottom,
         homeScrollPosition,
         setHomeScrollPosition,
+        homeScrollId,
     } = useActivitiesProvider();
 
     const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
@@ -140,6 +141,15 @@ const HomeMain = () => {
                 setLoading(false)
             }
         } else {
+            // debugger
+            const scrollNow = activities.filter(activity => activity.external_id == homeScrollId)
+            if (homeScrollId && scrollNow) {
+                const scrollEl = document.getElementById('mainScrollable')
+                scrollEl.scrollTo(0, homeScrollPosition)
+            } else {
+                setHomeScrollPosition(0)
+                setHomeScrollId(0)
+            }
             setSelectedActivity(null)
             setLoading(false)
         }

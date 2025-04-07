@@ -206,6 +206,19 @@ body {
   margin-bottom: 0px;
 }
 
+.homeFloatingButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border-radius: 15px;
+  padding: 5px 10px;
+  text-align: center;
+  background-color: white;
+}
+
+.homeButtonText {
+  margin: 0px;
+}
 
 .buttonShadow {
   /* box-shadow: -3px -3px 5px 0 rgba(255, 255, 255, 0.8) inset, 3px 3px 5px 0 rgba(0, 0, 0, 0.19) inset !important; */

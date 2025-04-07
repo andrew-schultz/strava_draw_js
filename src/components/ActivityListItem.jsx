@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { formatStrDate } from "../services/utils";
+import { useActivitiesProvider } from "../providers/ActivitiesProvider";
 
 const ActivityListItem = ({activity, setActivity}) => {
+    const {
+        setHomeScrollPosition,
+        setHomeScrollId,
+    } = useActivitiesProvider()
 
-    const localSetActivity = () => {
+    const localSetActivity = (e) => {
+        const scrollPosition = e.target.offsetTop + 150 > 0 ? e.target.offsetTop : 0;
+        setHomeScrollPosition(scrollPosition)
+        setHomeScrollId(activity.external_id)
         setActivity(activity);
     };
 
