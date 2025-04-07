@@ -10,8 +10,8 @@ const ActivityList = ({activities, setSelectedActivity, selectedActivity, loadin
         scrollEl.scrollTo({ top: 0, left: 0, behavior: 'smooth', })
     }
     return (
-        <>
-            <HomeFloatingButton textVal={'Back to Top'} buttonClickHandler={backToTopHandler}></HomeFloatingButton>
+        <div>
+            <HomeFloatingButton textVal={'Back to Top'} buttonClickHandler={backToTopHandler} buttonClasses={'verticalStack'}></HomeFloatingButton>
             {(activities == null) ? (null) : (
                 activities.map((activity, index) => (
                     <div key={index}>
@@ -22,7 +22,7 @@ const ActivityList = ({activities, setSelectedActivity, selectedActivity, loadin
                     </div>
                 ))
             )}
-        </>
+        </div>
     )
 }
 

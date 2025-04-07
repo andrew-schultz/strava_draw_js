@@ -1,8 +1,10 @@
 
-const HomeFloatingButton = ({textVal, buttonClickHandler}) => {
+const HomeFloatingButton = ({textVal, buttonClickHandler, buttonClasses}) => {
     return (
-        <div className='homeFloatingButton buttonShadowFloat' onClick={buttonClickHandler}>
-            <p className='homeButtonText'>{textVal}</p>
+        <div className={`homeFloatingButton buttonShadowFloat ${buttonClasses}`} onClick={buttonClickHandler}>
+            <div className={`homeFloatingButtonInner`}>
+                <p className={`homeButtonText ${buttonClasses}`}>{textVal}</p>
+            </div>
         </div>
     )
 }
