@@ -288,6 +288,7 @@ export const TextGridProvider = ({ children }) => {
         setShowWorkDone,
         handleSetColor,
         handleShowText,
+        setLineColor,
     };
 
     if (!mounted) {

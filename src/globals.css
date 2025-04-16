@@ -220,6 +220,7 @@ body {
   padding: 10px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   &:active {
     background-color: #c2c2c2;

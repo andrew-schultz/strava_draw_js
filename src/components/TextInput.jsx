@@ -8,7 +8,7 @@ const TextInput = ({
     showFieldError,
     onChangeHandlerFunc,
     labelText,
-})=> {
+}) => {
     const [errorMessage, setErrorMessage] = useState()
     const localHandleSetPassword = async (e) => {
         const response = await onChangeHandlerFunc(e)

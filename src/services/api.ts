@@ -193,3 +193,22 @@ export const getFirstApiActivities = async (token, offset=0) => {
     
     return response.json();
 }
+
+export const getApiActivityStreams = async (token, activity_id, stream_types) => {
+    const csrfTokenCookie = await csrfAuth();
+    const headers = {
+        'Accept': "application/json, text/plain, */*",
+        'X-CSRFToken': csrfTokenCookie,
+        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        // "Access-Control-Allow-Origin": '*',
+    }
+    const url = `${apiURL}api/v1/activity_stream/${activity_id}/?stream_types=${stream_types}`
+    const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+        credentials: 'include',
+    });
+    
+    return response.json();
+}

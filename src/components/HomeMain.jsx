@@ -12,6 +12,7 @@ import { useActivitiesProvider } from '../providers/ActivitiesProvider'
 import { useAuthProvider } from '../providers/AuthProvider';
 import LoginComponent from './LoginComponent';
 import LogoutComponent from './LogoutComponent';
+// import { useTextGridProvider } from '../providers/TextGridProvider';
 
 
 const HomeMain = () => {
@@ -26,7 +27,7 @@ const HomeMain = () => {
     const {
         apiToken,
         showAuthButton,
-     } = useAuthProvider();
+    } = useAuthProvider();
 
     const {
         activities,

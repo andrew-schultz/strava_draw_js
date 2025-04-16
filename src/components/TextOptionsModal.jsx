@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import TextGrid from './TextGrid';
 import { useTextGridProvider } from '../providers/TextGridProvider';
+import { useActivitiesProvider } from '../providers/ActivitiesProvider';
 
 const TextOptionsModal = ({
     activity,
@@ -29,7 +30,29 @@ const TextOptionsModal = ({
         rawShowText,
         showText,
         handleShowText,
+        setLineColor,
     } = useTextGridProvider();
+
+    const {
+        layout,
+        setLayout,
+    } = useActivitiesProvider();
+
+    const [localLayout, setLocalLayout] = useState(layout)
+
+    const handleSetLayout = (val) => {
+        setLocalLayout(val)
+    }
+
+    const handleLocalSetColor = (e) => {
+        const rawVal = e.target.value;
+        setLocalRawLine(rawVal)
+        if (rawVal == '1') {
+            setLocalLineColor('white')
+        } else if (rawVal == '2') {
+            setLocalLineColor('black')
+        }
+    }
 
     const toggleTextOptionsModal = () => {
         setShowTextOptionsModal(!showTextOptionsModal);
@@ -40,6 +63,7 @@ const TextOptionsModal = ({
         } else {
             // modal is closed, enable scroll
             // body.classList.remove('noscroll');
+            setLayout(localLayout)
             setDrawNow(true)
         }
     }
@@ -71,6 +95,22 @@ const TextOptionsModal = ({
                                             className={`textOptionInputActual slider ${lineColor == 'black' ? ('on') : ('off')}`} 
                                             id="lineColorSelector" 
                                             onChange={(e) => handleSetColor(e)}
+                                        ></input>
+                                    </div>
+                                </div>
+                                <div className="slidersContainerTextOptionInner" key={`layoutSliderContainer1`} >
+                                    <div className="textOptionLabel">
+                                        <p>{'Layout'}</p>
+                                    </div>
+                                    <div className="textOptionInput">
+                                        <input 
+                                            type="range" 
+                                            min="1" 
+                                            max="2" 
+                                            value={localLayout} 
+                                            className={`textOptionInputActual slider ${localLayout == '2' ? ('on') : ('off')}`} 
+                                            id="lineColorSelector" 
+                                            onChange={(e) => handleSetLayout(e.target.value)}
                                         ></input>
                                     </div>
                                 </div>
@@ -209,18 +249,15 @@ const TextOptionsModal = ({
                                 <div className='sliderContainerRow'>
                                     <div className="slidersContainerTextOptionInnerGrid" id="dragOptionWorkDone"  key={`workDoneSliderContainer1`}>
                                         <div className="textOptionLabelGrid">
-                                            {/* <p className={`${activity.kilojoules ? 'active' : 'disabledLabel'}`}>{'Work Done'}</p> */}
                                             <p className='active'>{'Work Done'}</p>
                                         </div>
                                         <div className="textOptionInputGrid">
                                             <input 
                                                 type="range"
-                                                // disabled={activity.kilojoules ? false : true}
                                                 min="1"
                                                 max="2"
                                                 value={showWorkDone ? '2' : '1'}
                                                 className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')}`} 
-                                                // className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
                                                 id={`${'workDone'}Selector`} 
                                                 onChange={(e) => setShowWorkDone(e.target.value == '1' ? false : true)}
                                             ></input>

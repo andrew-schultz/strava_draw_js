@@ -1,16 +1,39 @@
 "use client";
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 import TextOptionsModal from './TextOptionsModal';
 import { useTextGridProvider } from '../providers/TextGridProvider';
-import cookieCutter from "@boiseitguru/cookie-cutter";
+// import cookieCutter from "@boiseitguru/cookie-cutter";
 import { formatStrDate } from '../services/utils';
+import { getApiActivityStreams } from '../services/api';
+import { useAuthProvider } from '../providers/AuthProvider';
+import { useActivitiesProvider } from '../providers/ActivitiesProvider';
+import Spinner from './Spinner';
+import MapWrapper from './MapWrapper';
+// import AreaPlot from './AreaPlot';
+// import LinePlot from './LinePlot';
+// import BarPlot from './BarPlot';
 
 var polyline = require('@mapbox/polyline');
 
-const ActivityDetail = ({activity, setActivity}) => {
+// const ActivityDetail = ({activity, setActivity, layout, setLayout}) => {
+const ActivityDetail = ({activity, setActivity, }) => {
+
+    // const [layout, setLayout] = useState('1')
+    const {
+        apiToken,
+    } = useAuthProvider();
+
+    const {
+        activityStreams,
+        setActivityStreams,
+        layout,
+        loading,
+        setLoading,
+    } = useActivitiesProvider()
+
     const gridBase = {
         1: {
             position: 1,
@@ -39,11 +62,24 @@ const ActivityDetail = ({activity, setActivity}) => {
     }
 
     const [polylines, setPolylines] = useState();
-    const date = formatStrDate(activity.start_date);
+    const date = activity && activity.start_date ? formatStrDate(activity.start_date) : null;
 
     const router = useRouter();
     
-    useEffect(() => {
+    useEffect(() =>  {
+        setLoading(true)
+        // debugger
+        const handleGetActivityStreams = async () => {
+            const activityStreams = await getApiActivityStreams(apiToken, activity['external_id'], 'altitude')
+            const localActivityStreams = {}
+            activityStreams.forEach(stream => {
+                localActivityStreams[stream['stream_type']] = stream
+            });
+            setActivityStreams(localActivityStreams)
+            setLoading(false)
+        }
+        handleGetActivityStreams()
+        // setActivityStreams(activityStreams)
         if (activity.polyline) {
             let polylines = activity.polyline;
             let decoded_polylines = polyline.decode(polylines);
@@ -51,11 +87,9 @@ const ActivityDetail = ({activity, setActivity}) => {
         }
     }, [])
 
-    const MapComponent = dynamic(() => import('./LeafletMap'), {
-        ssr: false,
-    });
-
     const localSetActivity = () => {
+        setActivityStreams()
+        // setActivity()
         // setActivity(null)
         // cookieCutter.set('selectedActivity', null, { expires: new Date(0) })
         router.back();
@@ -148,19 +182,18 @@ const ActivityDetail = ({activity, setActivity}) => {
                 </div>
             </div>
             
-            {polylines ? (
-                <div>
-                    <MapComponent 
-                        polylines={polylines} 
-                        activity={activity}
-                    >
-                    </MapComponent>
-                    <HelpModal></HelpModal>
-                </div>) : (
+            {/* {loading ? ( */}
+            <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
+            {/* // ) : ( null )} */}
+            {polylines && !loading ? (
+                <MapWrapper polylines={polylines} activity={activity} activityStreams={activityStreams} layout={layout}></MapWrapper>
+            ) : (
                 <div className="emptyActivityDisplay">
                     No Map To Display For This Activity
                 </div>
             )}
+            
+            <HelpModal></HelpModal>
             <a className="activityListButtonPLink2" target="_blank" href={`https://www.strava.com/activities/${activity.external_id}`}>
                 <p className="activityListButtonP link">View on Strava</p>
             </a>

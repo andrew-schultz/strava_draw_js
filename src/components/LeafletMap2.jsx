@@ -7,17 +7,21 @@ import "leaflet-defaulticon-compatibility";
 // import "tilelayer-canvas";
 // import TilelayerCanvas from "./TilelayerCanvas";
 
+import * as d3 from "d3";
 
 import { useEffect, useState, useRef } from 'react';
 import Spinner from "./Spinner";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTextGridProvider } from "../providers/TextGridProvider";
-import { generateText, findPixelBounds, paintBackground } from "../services/mapUtils";
+import { generateText2, findPixelBounds, paintBackground } from "../services/mapUtils";
 
-const MapComponent = ({
+
+const MapComponent2 = ({
     polylines, 
     activity,
+    data,
+    xData,
 }) => {
     const {
         drawNow,
@@ -38,6 +42,8 @@ const MapComponent = ({
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - infoDiv.offsetHeight;
 
+    const [xModifier, setXModifier] = useState(0.70);
+    const [yModifier, setYModifier] = useState(0.85);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -153,18 +159,23 @@ const MapComponent = ({
             // clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // // draw border in canvas
+            // drawCanvasBorder(dimensions.x, dimensions.y, ctx);
+
             // calculate / adjust width / size until both just fit within bounds
             let justFitWidth = bindingWidth;
             let justFitHeight = bindingHeight;
             let justFitVar = 1.0;
 
-            console.log(dimensions.y, dimensions.y * 0.70)
-            while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.70)) {
+            // width and height modifiers are .05 less than the modifiers used to draw the border lines
+            while (justFitWidth > (dimensions.x * (xModifier - 0.05)) || justFitHeight > (dimensions.y * (yModifier - 0.05))) {
                 justFitWidth = bindingWidth * justFitVar;
                 justFitHeight = bindingHeight * justFitVar;
-                justFitVar -= 0.05;
-                console.log(justFitVar, justFitHeight, justFitWidth)
+                justFitVar -= 0.02;
             }
+
+            // draw border in canvas
+            drawCanvasBorder(dimensions.x, dimensions.y, ctx);
 
             // calculate width/height with aspect ratio
             let newWidth = justFitWidth;
@@ -175,29 +186,111 @@ const MapComponent = ({
             const offCtx = offscreenCanvas.getContext('2d');
             
             let hadToAdjust = false;
-            let widthDif = (dimensions.x - newWidth) / 2;
+            // let widthDif = ()
+            let widthDif = ((dimensions.x * xModifier) - newWidth) / 2;
+            let heightDif = ((dimensions.y * yModifier) - newHeight) /2;
             // let heightDif = (dimensions.y - newHeight) / 2
 
             // redraw the image data to the offscreen canvas
             // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
-            offCtx.putImageData(mapImg, 0, 0);
+            offCtx.putImageData(mapImg, 0,0);
+
+            // // create an offscreen canvas to draw/hold the image on
+            const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
+
+            const offCtxGraph = offscreenCanvasG.getContext('2d');
+
+            // generate the graph image
+            const graphImage = await genGraph(dimensions.x, dimensions.y, lineColor)
+            offCtxGraph.drawImage(graphImage, 0, 0)
+            // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
+            ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
 
             if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 0, justFitWidth, justFitHeight);
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             }
             else if (hadToAdjust) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 10, justFitWidth, justFitHeight);
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             }
             else {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             }
 
             // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
             //     genImage(canvas);
             // });
-            await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
-                genImage(canvas);
+            await generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
+                genImage(canvas)
             });
+        }
+
+        const genGraph = async (justWidth, justHeight) => {
+            // const marginTop = 20,
+            // marginRight = 20,
+            // marginBottom = 30,
+            // marginLeft = 40,
+            const width = justWidth;
+            const height = justHeight * (1 - yModifier - 0.01);
+
+            // meters to miles 
+            // 1 meter = 0.0006213712 miles
+
+            const formattedData = []
+            data.forEach(d => {
+                // meter to feet
+                // 1 meter = 3.280839895 feet
+                const fD = d * 3.280839895
+                formattedData.push(fD)
+            })
+
+            // const yExtent = d3.extent(formattedData)
+            // yExtent[0] -= 10
+            // // yExtent[1] = 300
+            
+            // if (yExtent[1] < yExtent[0] + 200) {
+            //     yExtent[1] = yExtent[0] + 200
+            // }
+            // debugger
+            // make the scales for the x and y axis
+            const x = d3.scaleLinear([0, data.length - 1], [0, width]);
+            // const y = d3.scaleLinear(yExtent, [height, 0]);
+            const y = d3.scaleLinear(d3.extent(formattedData), [height, 0]);
+        
+            const line = d3.line((d, i) => x(i), y);
+        
+            // Declare the area generator.
+            const area = d3.area()
+                .x((d, i) => x(i))
+                .y0(y(0))
+                .y1(d => y(d));
+            
+            // Create the SVG container.
+            const svg = d3.create("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            // add the area fill to the svg
+            svg.append("path")
+                .attr("d", area(formattedData))
+                .attr("fill", lineColor)
+                .attr("stroke", lineColor)
+                .attr("strokeWidth", "1.0")
+                .attr("opacity", "0.5")
+
+            // add the line to the svg
+            svg.append("path")
+                .attr("d", line(formattedData))
+                .attr("fill", "none")
+                .attr("stroke", lineColor)
+                .attr("strokeWidth", "1.5")
+
+            // create a dataString for the svg
+            const svgString = 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(svg.nodes()[0]));
+            
+            // create an image to assign the svg data string to, then return it
+            const img = new Image();
+            img.src = svgString
+            return img
         }
 
         const genImage = (canvas) => {
@@ -247,6 +340,27 @@ const MapComponent = ({
         }
     }
 
+    const drawCanvasBorder = (width, height, ctx) => {
+        const lineWidth = 4
+        ctx.beginPath();
+        ctx.strokeStyle = lineColor; // make this a var later?
+        ctx.lineWidth = lineWidth;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(width, 0);
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.lineTo(0, -(lineWidth / 2));
+
+        ctx.moveTo(width - width * (1.0 - xModifier), 0);
+        ctx.lineTo(width - width * (1.0 - xModifier), height - height * (1.0 - yModifier));
+
+        ctx.moveTo(width, height - height * (1.0 - yModifier));
+        ctx.lineTo(0, height - height * (1.0 - yModifier));
+
+        ctx.stroke();
+        // ctx.lineWidth = 1;
+    }
+
     return (
         <div>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
@@ -256,4 +370,4 @@ const MapComponent = ({
     )
 }
 
-export default MapComponent;
+export default MapComponent2;
