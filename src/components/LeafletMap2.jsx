@@ -77,7 +77,8 @@ const MapComponent2 = ({
     // 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
     const drawMap = () => {
-        console.log('drawing map')
+        setLoading(true);
+
         // if (mapRef.current) return; // Map already initialized
         if (mapRef.current) {
             mapRef.current.eachLayer((layer) => {
@@ -94,9 +95,7 @@ const MapComponent2 = ({
             mapRef.current.keyboard.disable();
             mapRef.current.dragging.disable();
         }
-
-        setLoading(true);
-        
+      
         var polyline = new L.Polyline(polylines, {
             color: lineColor,
             weight: 3,
@@ -201,27 +200,39 @@ const MapComponent2 = ({
             const offCtxGraph = offscreenCanvasG.getContext('2d');
 
             // generate the graph image
-            const graphImage = await genGraph(dimensions.x, dimensions.y, lineColor)
-            offCtxGraph.drawImage(graphImage, 0, 0)
-            // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
-            ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
+            // const graphImage = 
+            genGraph(dimensions.x, dimensions.y, lineColor).then(graphImage => {
+                // debugger
+                if (graphImage) {
+                    offCtxGraph.drawImage(graphImage, 0, 0)
+                    // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
+                    ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
 
-            if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-            }
-            else if (hadToAdjust) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-            }
-            else {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-            }
+                    if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
+                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+                    }
+                    else if (hadToAdjust) {
+                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+                    }
+                    else {
+                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+                    }
+                    
+                    generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
+                        genImage(canvas)
+                    });
+                }
+                
+            })
+
+            
 
             // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
             //     genImage(canvas);
             // });
-            await generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
-                genImage(canvas)
-            });
+            // await generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
+            //     genImage(canvas)
+            // });
         }
 
         const genGraph = async (justWidth, justHeight) => {
@@ -290,6 +301,9 @@ const MapComponent2 = ({
             // create an image to assign the svg data string to, then return it
             const img = new Image();
             img.src = svgString
+            img.onload = () => {
+                return img
+            }
             return img
         }
 

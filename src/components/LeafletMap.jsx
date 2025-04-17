@@ -207,7 +207,11 @@ const MapComponent = ({
                 let dataURL = canvas.toDataURL();
     
                 // hide map
-                map.style.display = 'None';
+                if (map) {
+                    map.style.display = 'None';
+                } else {
+                    return
+                }
                 // Create an image element
                 const img = new Image();
                 img.width = dimensions.x;
