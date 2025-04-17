@@ -194,38 +194,54 @@ const MapComponent2 = ({
             // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
             offCtx.putImageData(mapImg, 0,0);
 
-            // // create an offscreen canvas to draw/hold the image on
-            const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
+            // // // create an offscreen canvas to draw/hold the image on
+            // const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
 
-            const offCtxGraph = offscreenCanvasG.getContext('2d');
+            // const offCtxGraph = offscreenCanvasG.getContext('2d');
 
+            if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+            }
+            else if (hadToAdjust) {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+            }
+            else {
+                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
+            }
             // generate the graph image
             // const graphImage = 
-            genGraph(dimensions.x, dimensions.y, lineColor).then(graphImage => {
-                // debugger
-                if (graphImage) {
-                    offCtxGraph.drawImage(graphImage, 0, 0)
-                    // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
-                    ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
-
-                    if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
-                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-                    }
-                    else if (hadToAdjust) {
-                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-                    }
-                    else {
-                        ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
-                    }
-                    
-                    generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
-                        genImage(canvas)
-                    });
-                }
-                
-            })
-
+            genGraph(dimensions.x, dimensions.y, lineColor, canvas)
             
+            // .then(graphImage => {
+            //     // debugger
+            //     if (graphImage) {
+            //         offCtxGraph.drawImage(graphImage, 0, 0)
+            //         // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
+            //         ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
+
+            //         generateText2(
+            //             polylineBounds, 
+            //             xModifier, 
+            //             yModifier, 
+            //             canvas, 
+            //             lineColor, 
+            //             hadToAdjust, 
+            //             mapRef, 
+            //             activity, 
+            //             showDistance, 
+            //             showElevGain, 
+            //             showPace, 
+            //             showDuration, 
+            //             showAvgPower, 
+            //             showAvgSpeed, 
+            //             showWorkDone, 
+            //             placementGrid
+            //         ).then(() => {
+            //             genImage(canvas)
+            //         });
+            //     }
+                
+            // })
 
             // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
             //     genImage(canvas);
@@ -235,13 +251,14 @@ const MapComponent2 = ({
             // });
         }
 
-        const genGraph = async (justWidth, justHeight) => {
+        const genGraph = async (justWidth, justHeight, lineColor, canvas) => {
             // const marginTop = 20,
             // marginRight = 20,
             // marginBottom = 30,
             // marginLeft = 40,
             const width = justWidth;
             const height = justHeight * (1 - yModifier - 0.01);
+            const ctx = canvas.getContext('2d');
 
             // meters to miles 
             // 1 meter = 0.0006213712 miles
@@ -301,10 +318,42 @@ const MapComponent2 = ({
             // create an image to assign the svg data string to, then return it
             const img = new Image();
             img.src = svgString
+            // img.onload = () => {
+            //     return img
+            // }
             img.onload = () => {
-                return img
+                // // create an offscreen canvas to draw/hold the image on
+                const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
+                const offCtxGraph = offscreenCanvasG.getContext('2d');
+                offCtxGraph.drawImage(img, 0, 0)
+                // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
+                ctx.drawImage(offscreenCanvasG, 0, justHeight - justHeight * 0.14)
+
+                generateText2(
+                    xModifier, 
+                    yModifier, 
+                    canvas, 
+                    lineColor, 
+                    mapRef, 
+                    activity, 
+                    showDistance, 
+                    showElevGain, 
+                    showPace, 
+                    showDuration, 
+                    showAvgPower, 
+                    showAvgSpeed, 
+                    showWorkDone, 
+                    placementGrid
+                ).then(() => {
+                    genImage(canvas)
+                });
+
             }
-            return img
+            // setTimeout(() => {
+            //     return img
+            // }, 100)
+            // return img
+            
         }
 
         const genImage = (canvas) => {
@@ -320,10 +369,19 @@ const MapComponent2 = ({
                 img.width = dimensions.x;
                 img.height = dimensions.y;
                 img.id = 'genImage';
+                img.src = dataURL;
+
+                // create a second, larger image thats invisible but has a higher zindex so is selected when you hold to download
+                // const img2 = new Image();
+                // img2.width = dimensions.x * 5;
+                // img2.height = dimensions.y * 5;
+                // img2.id = 'genImageBig';
+                // img2.src = dataURL;
+
                 document.getElementById('images').innerHTML = '';
                 document.getElementById('images').appendChild(img);
-                img.src = dataURL;
-                                
+                // document.getElementById('images').appendChild(img2);
+        
                 paintBackground(canvas.width, canvas.height);
                 polyline.removeFrom(mapRef.current);
     
@@ -372,7 +430,6 @@ const MapComponent2 = ({
         ctx.lineTo(0, height - height * (1.0 - yModifier));
 
         ctx.stroke();
-        // ctx.lineWidth = 1;
     }
 
     return (

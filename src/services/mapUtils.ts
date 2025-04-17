@@ -254,7 +254,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
     });
 }
 
-export const generateText2 = async (bounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid) => {
+export const generateText2 = async (xModifier, yModifier, canvas, lineColor, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid) => {
     await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
@@ -272,7 +272,7 @@ export const generateText2 = async (bounds, xModifier, yModifier, canvas, lineCo
         const textBoxDimensions = {x: dimensions.x - (dimensions.x * (1.0 - xModifier)), y: dimensions.y * (1.0 - yModifier)}
 
         // get canvas width / 3
-        let centerY = (lowestPixel / 2);
+        // let centerY = (lowestPixel / 2);
         let third = (textBoxDimensions.x) / 3;
 
         // if (hadToAdjust) {

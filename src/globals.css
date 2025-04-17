@@ -325,6 +325,12 @@ body {
     z-index: 99;
 }
 
+#genImageBig {
+  opacity: 0.0;
+  z-index: 1234;
+  position: absolute;
+}
+
 .emptyActivityDisplay {
   text-align: center;
   margin-top: 25vh;
