@@ -303,7 +303,7 @@ const MapComponent2 = ({
                 .attr("fill", lineColor)
                 .attr("stroke", lineColor)
                 .attr("strokeWidth", "1.0")
-                .attr("opacity", "0.5")
+                // .attr("opacity", "0.5")
 
             // add the line to the svg
             svg.append("path")

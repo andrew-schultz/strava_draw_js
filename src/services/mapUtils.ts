@@ -88,6 +88,18 @@ export const calculateTextPlacement = (
             textWidth: ctx.measureText(workDoneText).width,
             textHeight: ctx.measureText(workDoneText).fontBoundingBoxDescent,
         },
+        // showWeightedAvgPower: {
+        //     name: 'weighted_avg_power', 
+        //     isOn: showWeightedAvgPower,
+        //     location: null,
+        //     val: weightedAvgPower,
+        //     labelTextSize: 'med',
+        //     valWidth: ctx.measureText(weightedAvgPower).width,
+        //     valHeight: ctx.measureText(weightedAvgPower).fontBoundingBoxDescent,
+        //     text: weightedAvgPowerText,
+        //     textWidth: ctx.measureText(weightedAvgPowerText).width,
+        //     textHeight: ctx.measureText(weightedAvgPowerText).fontBoundingBoxDescent,
+        // },
     };
 
     const onGrid = {
