@@ -4,6 +4,10 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+import "tilelayer-canvas";
+import TilelayerCanvas from "./TilelayerCanvas";
+import domtoimage from 'dom-to-image';
+
 
 import * as d3 from "d3";
 
@@ -12,10 +16,10 @@ import Spinner from "./Spinner";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTextGridProvider } from "../providers/TextGridProvider";
-import { generateText2, findPixelBounds, paintBackground } from "../services/mapUtils";
+import { generateText2, findPixelBounds, paintBackground, getBase64Image } from "../services/mapUtils";
 
 
-const MapComponent2 = ({
+const MapComponent3 = ({
     polylines, 
     activity,
     data,
@@ -39,15 +43,11 @@ const MapComponent2 = ({
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - infoDiv.offsetHeight;
-    let tLayer;
 
-    const [mapPadding, setMapPadding] = useState(0.01)
     const [xModifier, setXModifier] = useState(0.70);
     const [yModifier, setYModifier] = useState(0.85);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
-    // const [drawing, setDrawing] = useState(false)
-    let drawing = false
 
     useEffect(() => {
         setMounted(true)
@@ -78,21 +78,9 @@ const MapComponent2 = ({
     // 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
     // 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
-    // water color: rgb(212, 217, 220)
-
-
     const drawMap = () => {
-        setLoading(true);
-        console.log('drawing')
+        setLoading(false);
 
-        // if (!drawNow) {
-        //     console.log("don't draw")
-        //     // setDrawing(false)
-        //     drawing = false
-        //     setLoading(false);
-        //     return
-        // }
-        drawing = true
         // if (mapRef.current) return; // Map already initialized
         if (mapRef.current) {
             mapRef.current.eachLayer((layer) => {
@@ -100,8 +88,8 @@ const MapComponent2 = ({
             });
         } else {
             mapRef.current = L.map('map', {attributionControl: false, zoomControl: false, renderer: L.canvas() });
-
             // L.tileLayer('map').addTo(mapRef.current)
+
             // L.tileLayer.canvas('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(mapRef.current)
             mapRef.current.touchZoom.disable();
             mapRef.current.doubleClickZoom.disable();
@@ -110,18 +98,17 @@ const MapComponent2 = ({
             mapRef.current.keyboard.disable();
             mapRef.current.dragging.disable();
         }
-        // tLayer = L.tileLayer('http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}.png', {opacity: 0.25}).addTo(mapRef.current)
-        tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
-
+      
         var polyline = new L.Polyline(polylines, {
-            color: 'red',
+            color: lineColor,
             weight: 3,
-            opacity: 1
+            opacity: 1,
+            // zoomOffset: 1,
         });
 
         polyline.addTo(mapRef.current);
-        // const initialPolylineBounds = polyline.getBounds().pad(mapPadding);
-        const initialPolylineBounds = polyline.getBounds()
+        // const initialPolylineBounds = polyline.getBounds().pad(.01);
+        const initialPolylineBounds = polyline.getBounds();
 
         let polylineBounds = initialPolylineBounds;
         // calc how close the north and south lat's are, if within a threshold then do not adjust bounds
@@ -155,70 +142,35 @@ const MapComponent2 = ({
         //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.015, adjustedPolylineBounds._southWest.lng);
         //     polylineBounds = L.latLngBounds(corner1, corner2);
         // }
-        // debugger
-        
-        // calculate the aspect ratio of the polylineBounds
-        // compare it to the aspect ratio of the canvas division we want to eventually draw to
-        // extend lat / lng until we meet the aspect r
 
         mapRef.current.fitBounds(polylineBounds);
+        // const tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
 
         const drawText = async (polylineBounds, canvas, lineColor) => {
-            await new Promise( resolve => tLayer.on("load", resolve()))
-
             const ctx = canvas.getContext('2d');
             
             // get the image data for exactly the map, returns top, left, right, and bottom pixels/coords
-            let bindingCoords = await findPixelBounds(lineColor, canvas, 'red');
+            let bindingCoords = await findPixelBounds(lineColor, canvas);
             
             // getImageData(left x coord, top y coord, width, height)
             let dimensions = mapRef.current.getSize();
-            // debugger
+
             // calculate binding width / height based on returned coords
-            const bindingWidth = (bindingCoords.right - bindingCoords.left);
-            const bindingHeight = (bindingCoords.last - bindingCoords.first);
-
-            // bindingWidth/Height is the specific to the bounds of the image, we need to expand on those to get the bounds + the any height / width to fit the box area
-            // we konw that to be width * xModifier and height * yModifier
-            const insetMapWidth = canvas.width * xModifier;
-            const insetMapHeight = canvas.height * yModifier;
-
-            const insetMapWidthD = dimensions.x * (xModifier)
-            const insetMapHeightD = dimensions.y * (yModifier)
-
-            // I think we need to calc the dif in the binding width/height and the insetmap width/height so we can adjust the left and first coords
-            // if we get the percent dif between the width/heights then we can multiply the bindingcoords by that percent to change it?
-            // maybe dividie if its smaller, tbd
-            const wPer = bindingWidth / insetMapWidth;
-            const hPer = bindingHeight / insetMapHeight;
-
-            let xCoord = (bindingCoords.left * wPer) / 2
-            let yCoord = (bindingCoords.first * hPer) / 2
-
-            const canvasInsetDiffW = (canvas.width - insetMapWidth) / 2
-            const canvasInsetDiffH = (canvas.height - insetMapHeight) / 2
-            // if (insetMapWidth > bindingWidth) {
-            //     xCoord = bindingCoords.left / wPer
-            // }
-
-            // if (insetMapHeight > bindingHeight) {
-            //     yCoord = bindingCoords.first / -hPer
-            // }
+            const bindingWidth = bindingCoords.right - bindingCoords.left;
+            const bindingHeight = bindingCoords.last - bindingCoords.first;
 
             // get image data from map canvas
-            let mapImg = ctx.getImageData(canvasInsetDiffW, 0, canvas.width, canvas.height);
-// debugger
-            // let mapImg = ctx.getImageData(canvasInsetDiffW, 0, insetMapWidth, insetMapHeight);
-            // debugger
+            let mapImg = ctx.getImageData(bindingCoords.left, bindingCoords.first, bindingWidth, bindingHeight);
+
             // clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // // draw border in canvas
             // drawCanvasBorder(dimensions.x, dimensions.y, ctx);
 
             // calculate / adjust width / size until both just fit within bounds
-            let justFitWidth = insetMapWidth;
-            let justFitHeight = insetMapHeight;
+            let justFitWidth = bindingWidth;
+            let justFitHeight = bindingHeight;
             let justFitVar = 1.0;
 
             // width and height modifiers are .05 less than the modifiers used to draw the border lines
@@ -227,34 +179,143 @@ const MapComponent2 = ({
             //     justFitHeight = bindingHeight * justFitVar;
             //     justFitVar -= 0.02;
             // }
+            // L.tileLayer.canvas('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png').addTo(mapRef.current)
+            // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {zoomOffset: 0, opacity: 0.5}).addTo(mapRef.current)
+            const tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            const hey = await new Promise(resolve => tLayer.on("load", () => {
+                const tileContainer = document.getElementsByClassName('leaflet-tile-container')[0]
+                // debugger
+                let w = dimensions.x
+                let h = dimensions.y
+                // debugger
+                const offscreenCanvasTiles = new OffscreenCanvas(bindingWidth, bindingHeight);
+                // const offscreenCanvas = new OffscreenCanvas(dimensions.x, dimensions.y);
 
-            // draw border in canvas
-            // debugger
-            drawCanvasBorder(dimensions.x, dimensions.y, ctx);
+                const offCtxT = offscreenCanvasTiles.getContext('2d');
+                let maxX = 0
+                let maxY = 0
 
-            // calculate width/height with aspect ratio
+                for (let tile of tileContainer.children) {
+
+                    let tileX = tile._leaflet_pos.x
+                    let tileY = tile._leaflet_pos.y
+                    if (tileX < maxX) {
+                        maxX = tileX
+                    }
+
+                    if (tileY < maxY) {
+                        maxY = tileY
+                    }
+                }
+
+                for (let tile of tileContainer.children) {
+                    let tileX = tile._leaflet_pos.x
+                    let tileY = tile._leaflet_pos.y
+                    offCtxT.drawImage(tile, tileX, tileY, tile.width, tile.height)
+                }
+                console.log('_________')
+
+                ctx.drawImage(offscreenCanvasTiles, 0, 0, bindingWidth, bindingHeight)
+
+                // calculate width/height with aspect ratio
+                let newWidth = justFitWidth;
+                let newHeight = justFitHeight;
+
+                // create an offscreen canvas to draw/hold the image on
+                // const offscreenCanvas = new OffscreenCanvas(bindingWidth, bindingHeight);
+                const offscreenCanvas = new OffscreenCanvas(dimensions.x, dimensions.y);
+
+                const offCtx = offscreenCanvas.getContext('2d');
+                
+                let hadToAdjust = false;
+                let widthDif = Math.abs((dimensions.x - newWidth) / 2);
+                let heightDif = (dimensions.y - newHeight) / 2
+
+                // let heightDif = ((dimensions.y * yModifier) - newHeight) /2;
+                // let heightDif = (dimensions.y - newHeight) / 2
+
+                // redraw the image data to the offscreen canvas
+                // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+                offCtx.putImageData(mapImg, 0,0);
+
+                ctx.drawImage(offscreenCanvas, 0, 0, dimensions.x, dimensions.y, widthDif, 0, dimensions.x, dimensions.y)
+
+                // ctx.drawImage(offscreenCanvas, 0, 0, dimensions.x + (dimensions.x * 0.01), dimensions.y + (dimensions.y * 0.01), widthDif, 0, dimensions.x, dimensions.y)
+
+                // ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 0, dimensions.x, dimensions.y);
+
+                // ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, 0, 0, dimensions.x, dimensions.y)
+                    // ctx.drawImage(offscreenCanvasTiles, 0, 0, bindingWidth, bindingHeight, 0, 0, dimensions.x, dimensions.y)
+                // genGraph(dimensions.x, dimensions.y, lineColor, canvas)
+            }))
+            // tLayer.on('load', () => {
+            //     const mapDiv = document.getElementById('map')
+            //     const mapx = dimensions.x
+            //     const mapy = dimensions.y
+            //     const tileContainer = document.getElementsByClassName('leaflet-tile-container')[0]
+            //     // debugger
+            //     const offscreenCanvasTiles = new OffscreenCanvas(bindingWidth, bindingHeight);
+            //     // const offscreenCanvas = new OffscreenCanvas(dimensions.x, dimensions.y);
+
+            //     const offCtxT = offscreenCanvasTiles.getContext('2d');
+
+            //     for (let tile of tileContainer.children) {
+            //         // iterate through the tiles, draw each one to an offscreencanvas
+            //         // let w = tile.width
+            //         // let h = tile.height
+            //         // let rawsrc = tile.src
+            //         // debugger
+            //         // let src = getBase64Image(rawsrc)
+            //         let tileX = tile._leaflet_pos.x
+            //         let tileY = tile._leaflet_pos.y
+            //         offCtxT.drawImage(tile, tileX, tileY)
+            //     }
+                
+            // })
+
+            // // polyline.addTo(mapRef.current);
+            // polyline.removeFrom(mapRef.current)
+
+            // // draw border in canvas
+            // // drawCanvasBorder(dimensions.x, dimensions.y, ctx);
+
+            // // calculate width/height with aspect ratio
             // let newWidth = justFitWidth;
             // let newHeight = justFitHeight;
 
-            // create an offscreen canvas to draw/hold the image on
-            const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
-            const offCtx = offscreenCanvas.getContext('2d');
+            // // create an offscreen canvas to draw/hold the image on
+            // const offscreenCanvas = new OffscreenCanvas(bindingWidth, bindingHeight);
+            // // const offscreenCanvas = new OffscreenCanvas(dimensions.x, dimensions.y);
+
+            // const offCtx = offscreenCanvas.getContext('2d');
             
             // let hadToAdjust = false;
-            // let widthDif = ()
+            // // let widthDif = ()
             // let widthDif = ((dimensions.x * xModifier) - newWidth) / 2;
             // let heightDif = ((dimensions.y * yModifier) - newHeight) /2;
-            // let heightDif = (dimensions.y - newHeight) / 2
+            // // let heightDif = (dimensions.y - newHeight) / 2
 
-            // redraw the image data to the offscreen canvas
-            // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
-            offCtx.putImageData(mapImg, 0,0);
+            // // redraw the image data to the offscreen canvas
+            // // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+            // offCtx.putImageData(mapImg, 0,0);
 
-            // create an offscreen canvas to draw/hold the image on
-            // const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
+            // // // // create an offscreen canvas to draw/hold the image on
+            // // const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
 
-            // const offCtxGraph = offscreenCanvasG.getContext('2d');
+            // // const offCtxGraph = offscreenCanvasG.getContext('2d');
+            // // (dimensions.x - bindingWidth) / 2
+            // // debugger
+            // // ctx.drawImage(offscreenCanvas, 0, 0, dimensions.x, dimensions.y, 0, 0, dimensions.x, dimensions.y)
+            // polyline.addTo(mapRef.current);
+            // // debugger
+            // const mapDiv = document.getElementById('map')
 
+            // const mapx = dimensions.x
+            // const mapy = dimensions.y
+            // // debugger
+
+            
+            // ctx.drawImage(offscreenCanvas2, 0, 0, bindingWidth, bindingHeight, 0, 0, dimensions.x, dimensions.y)
             // if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
             //     ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             // }
@@ -264,133 +325,12 @@ const MapComponent2 = ({
             // else {
             //     ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             // }
-
-            // tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
-            const tileContainer = document.getElementsByClassName('leaflet-tile-container')[0]
-            const offscreenCanvasTiles = new OffscreenCanvas(insetMapWidth, insetMapHeight);
-            const offCtxT = offscreenCanvasTiles.getContext('2d');
-
-            const combinedCanvas = new OffscreenCanvas(insetMapWidth, insetMapHeight)
-            const ccCtx = combinedCanvas.getContext('2d')
-
-            let maxX = 0
-            let maxY = 0
-
-            if (tileContainer && tileContainer.children) {
-                for (let tile of tileContainer.children) {
-                    let tileX = tile._leaflet_pos.x
-                    let tileY = tile._leaflet_pos.y
-
-                    if (tileX < maxX) {
-                        maxX = tileX
-                    }
-
-                    if (tileY < maxY) {
-                        maxY = tileY
-                    }
-                }
-                // console.log(dimensions.x)
-                // console.log(bindingWidth)
-                // console.log(insetMapWidth)
-                for (let tile of tileContainer.children) {
-                    let tileX = tile._leaflet_pos.x
-                    let tileY = tile._leaflet_pos.y
-                    tile.crossOrigin = "Anonymous";
-                    offCtxT.drawImage(tile, tileX, tileY, tile.width, tile.height)
-                }
-            }
-                
-            // console.log('_________')
-
-            
-            // const arDX = insetMapWidth * xModifier
-            // const arDY = insetMapHeight * yModifier
-            // // calculate the aspect ratio dif between the mapcanvas and the polyline canvas
-            // const originalAspectRatio = bindingWidth / bindingHeight;
-            // const targetAspectRatio = arDX / arDY;
-            
-            // let newWidthc, newHeightc;
-            
-            // if (originalAspectRatio > targetAspectRatio) {
-            //     newWidthc = arDX;
-            //     newHeightc = arDX / originalAspectRatio;
-            // } else {
-            //     newHeightc = arDY;
-            //     newWidthc = arDY * originalAspectRatio;
-            // }
-            // debugger
-
-            // draw the mapCanvas to the combined canvas
-            ccCtx.globalAlpha = 0.5
-
-            // we need to get the diff of the width / height between canvastiles and insetmapwidth so we can adjust the 0's and the width
-            let tWDiff = (dimensions.x - bindingWidth) / 2
-            let tHDiff = (insetMapHeight - bindingHeight) / 2
-            if (dimensions.x > insetMapWidth) {
-                tWDiff = tWDiff * -1
-            }
-            if (dimensions.y > insetMapHeight) {
-                tHDiff = tHDiff * -1
-            }
-            // debugger
-            // console.log(dimensions.x)
-            // console.log(dimensions.x * xModifier)
-            console.log(insetMapWidth)
-            console.log(insetMapWidth - tWDiff)
-            // debugger
-            
-            // what if we getImageData from the tiles canvas from the correct area then draw that?
-            const tileImageData = offCtxT.getImageData(0, 0, insetMapWidth, insetMapHeight)
-
-            ccCtx.putImageData(tileImageData, 0, 0, 0, 0, insetMapWidth, insetMapHeight)
-
-
-            // draw the polyline to the combined canvas
-            // (dimensions.x - newWidthc) / 2 === (width of canvas box - aspect ratio modified width) / 2
-            // console.log((dimensions.y - insetMapHeight) / 2)
-            // console.log((dimensions.x - insetMapWidth) / 2)
-            console.log(offscreenCanvas.width, offscreenCanvas.height)
-            // (dimensions.x - insetMapWidth) / 2,
-            // (dimensions.y - insetMapHeight) / 2,
-            ccCtx.globalAlpha = 1.0
-            ccCtx.drawImage(
-                offscreenCanvas, 
-                (dimensions.x - insetMapWidth) / 2,
-                0, 
-                insetMapWidth,
-                insetMapHeight,
-                0,
-                0,
-                dimensions.x * xModifier, 
-                dimensions.y * yModifier
-            );
-            // debugger
-            // ccCtx.drawImage(
-            //     offscreenCanvas, 
-            //     0,
-            //     0,
-            //     dimensions.x * xModifier, 
-            //     dimensions.y * yModifier
-                
-            // );
-            console.log('gen map')
-            // instead of drawing the polyline and maptiles to the main canvas, draw to another new offscreen canvas
-            // then draw a scaled version of the drawn canvas to the main canvas
-            // debugger
-            // calculate the width and height of the box that we need to grab from 
-            // if its smaller than the width of the combinedCanvas, we need to cut it out, otherwise we can use the cc width
-            // 
-            // debugger
-            // ctx.drawImage(combinedCanvas, 0, 0, insetMapWidth, insetMapHeight, 0, 0, insetMapWidth, insetMapHeight)
-            // debugger
-            ctx.drawImage(combinedCanvas, 0, 0, dimensions.x, dimensions.y, 0, 0, dimensions.x * xModifier, dimensions.y * yModifier)
-            genGraph(dimensions.x, dimensions.y, lineColor, canvas)
             // generate the graph image
-
+            // genGraph(dimensions.x, dimensions.y, lineColor, canvas)
         }
 
         const genGraph = async (justWidth, justHeight, lineColor, canvas) => {
-            console.log('gen graph')
+            // debugger
             // const marginTop = 20,
             // marginRight = 20,
             // marginBottom = 30,
@@ -502,7 +442,7 @@ const MapComponent2 = ({
                 let dataURL = canvas.toDataURL();
     
                 // hide map
-                // map.style.display = 'None';
+                map.style.display = 'None';
                 // Create an image element
                 const img = new Image();
                 img.width = dimensions.x;
@@ -521,13 +461,12 @@ const MapComponent2 = ({
                 document.getElementById('images').appendChild(img);
                 // document.getElementById('images').appendChild(img2);
         
-                paintBackground(canvas.width, canvas.height);
-                polyline.removeFrom(mapRef.current);
+                // paintBackground(canvas.width, canvas.height);
+                // polyline.removeFrom(mapRef.current);
     
                 setTimeout(() => {
                     var map = document.getElementById('map');
-                    // map.style.display = 'None';
-                    // drawing = false
+                    map.style.display = 'None';
                     setLoading(false);
                 }, 10);
             }, 100);
@@ -576,9 +515,9 @@ const MapComponent2 = ({
         <div>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
             <div id="images"></div>
-            <div id="map" style={{ height: `${mapHeight}px`, border: "1px solid black" }} />
+            <div id="map" style={{ height: `${mapHeight}px` }} />
         </div>
     )
 }
 
-export default MapComponent2;
+export default MapComponent3;

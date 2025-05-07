@@ -489,11 +489,14 @@ export const findLowestPixel = async (lineColor, canvas) => {
     return Math.round(rowsAbove);
 }
 
-export const findPixelBounds = async (lineColor, canvas) => {
+export const findPixelBounds = async (lineColor, canvas, optionalColor=false) => {
     // const canvas = document.getElementsByTagName('canvas')[0];
     const ctx = canvas.getContext("2d");
     const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
+    let color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
+    if (optionalColor) {
+        color = {r: 255, g: 0, b: 0, a: 255}
+    }
     const pix = imgd.data; // array of pixels
     let firstPixel = null;
     let lastPixel = null;
@@ -569,3 +572,14 @@ export const paintBackground = (x, y) => {
     ctx.fillStyle = "#dddddd";
     ctx.fillRect(0, 0, x, y);
 }
+
+export const getBase64Image = (img) =>  {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
+    // return dataURL.replace(/^data:image\/?[A-z]*;base64,/);
+    return dataURL
+  }
