@@ -139,7 +139,7 @@ const TextOptionsModal = ({
                                         <div className="slidersContainerTextOptionInnerGrid" key={`unitsSliderContainer1`}>
                                             <div className="textOptionLabelGrid" >
                                                 {/* <p>{'(km) Units (mi)'}</p> */}
-                                                <p className='shortTop'>{'km / mi'}</p>
+                                                <p className='shortTop'>{'km | mi'}</p>
                                             </div>
                                             <div className="textOptionInputGrid">
                                                 <input 

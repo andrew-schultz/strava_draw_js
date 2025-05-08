@@ -507,6 +507,9 @@ export const getMovingTime = (activity) => {
 
 export const getPaceTime = (rawPace) => {
     let seconds = (rawPace % 60).toFixed(0);
+    if (parseInt(seconds) < 10) {
+        seconds = `0${seconds}`
+    }
     let minutes = Math.round((rawPace / 60) - 1.0);
     let hours = Math.round(minutes / 6.0);
     let time = `${minutes}:${seconds}`;

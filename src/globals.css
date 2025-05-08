@@ -355,7 +355,7 @@ body {
     justify-content: center;
     z-index: 102;
     left: 0px;
-    top: 30%;
+    top: 15%;
 }
 
 .helpModalContent {
@@ -369,7 +369,7 @@ body {
 }
 
 .helpModalContentMain {
-  padding-top: 0px;
+  padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -379,6 +379,18 @@ body {
   padding: 0px 30px;
   margin-top: 2.5px;
   margin-bottom: 0px;
+}
+
+.helpModalContentPWide {
+  padding: 0px 0px;
+  margin-top: 3.5px;
+  margin-bottom: 0px;
+}
+
+
+.helpModalContentSubDiv {
+  text-align: left;
+  padding: 0px 5px;
 }
 
 .helpModalContentP .first{
