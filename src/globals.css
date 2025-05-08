@@ -746,6 +746,10 @@ body {
   font-weight: bold;
 }
 
+.shortTop {
+  margin-top: 5px;
+}
+
 .slidersContainer {
     display: inline-block;
     width: 50px;
@@ -762,6 +766,10 @@ body {
   display: flex;
   justify-content: space-between;
   width: 100%;
+
+  &.bottomPadding {
+    padding-bottom: 5px;
+  }
 }
 
 .sliderContainerRowItem {

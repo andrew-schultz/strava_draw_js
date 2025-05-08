@@ -36,6 +36,7 @@ const MapComponent2 = ({
         showWorkDone,
         lineColor,
         showText,
+        useMiles,
     } = useTextGridProvider();
 
     const mapRef = useRef(null);
@@ -343,7 +344,8 @@ const MapComponent2 = ({
                     showAvgPower, 
                     showAvgSpeed, 
                     showWorkDone, 
-                    placementGrid
+                    placementGrid,
+                    useMiles,
                 ).then(() => {
                     genImage(canvas)
                 });

@@ -119,6 +119,7 @@ export const TextGridProvider = ({ children }) => {
     const [rawLineColor, setRawLine] = useState('1');
     const [showText, setShowText] = useState(true);
     const [rawShowText, setRawShowText] = useState('2');
+    const [useMiles, setUseMiles] = useState(true);
 
     useEffect(() => {
         setMounted(true);
@@ -151,6 +152,10 @@ export const TextGridProvider = ({ children }) => {
     useEffect(() => {
         onChangeOptionAssign('showWorkDone', showWorkDone);
     }, [showWorkDone])
+
+    // useEffect(() => {
+    //     onChangeOptionAssing('useMiles', )
+    // }, [useMiles])
 
     const handleSetColor = (e) => {
         const rawVal = e.target.value;
@@ -271,6 +276,7 @@ export const TextGridProvider = ({ children }) => {
         rawLineColor,
         showText,
         rawShowText,
+        useMiles,
         setGrid,
         setOnList,
         resetGrid,
@@ -289,6 +295,7 @@ export const TextGridProvider = ({ children }) => {
         handleSetColor,
         handleShowText,
         setLineColor,
+        setUseMiles,
     };
 
     if (!mounted) {

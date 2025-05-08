@@ -136,7 +136,26 @@ const getLabelFontSize = (size) => {
     }
 }
 
-export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid) => {
+const getLabelFontSizeCalc = (size, vSize, textAreaSize) => {
+    if (size === 'xsmall') {
+        return '12pt'
+    }
+    if (size === 'small') {
+        return '13pt'
+    }
+    else if (size === 'med') {
+        return '1.75em'
+    }
+    else if (size == 'large') {
+        // debugger
+        if (vSize / textAreaSize > 0.8) {
+            return '1.9em'
+        }
+        return '2.1em'
+    }
+}
+
+export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles) => {
     await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
@@ -164,19 +183,49 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
 
         // get width of text and calculate / convert human readable value
         // distance
-        const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+
+        let distance, totalElevation, pace;
         const distanceText = 'Distance';
-        // const distanceTextWidth = ctx.measureText(distanceText).width;
-
-        // total elev / evel gain
-        const totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
         const totalElevationText = 'Elev. Gain';
-        // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
-
-        // pace
-        const paceVal = activity.duration / (activity.distance / 1609.34)
-        const pace = `${(getPaceTime(paceVal))} /mi`;
         const paceText = 'Pace';
+
+
+        if (useMiles) {
+            // get width of text and calculate / convert human readable value
+            // distance
+            distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+            // const distanceText = 'Distance';
+            // const distanceTextWidth = ctx.measureText(distanceText).width;
+
+            // total elev / evel gain
+            totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
+            // const totalElevationText = 'Elev. Gain';
+            // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
+
+            // pace
+            const paceVal = activity.duration / (activity.distance / 1609.34);
+            pace = `${(getPaceTime(paceVal.toFixed(2)))} /mi`;
+            // const paceText = 'Pace';
+            // const paceTextWidth = ctx.measureText(paceText).width;
+        } else {
+            distance = `${(activity.distance / 1000).toFixed(2)} km`;
+            totalElevation = `${Math.round(activity.elev_gain)} m`;
+            const paceVal = activity.duration / (activity.distance / 1000);
+            pace = `${(getPaceTime(paceVal.toFixed(2)))} /km`;
+        }
+        // const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+        // const distanceText = 'Distance';
+        // // const distanceTextWidth = ctx.measureText(distanceText).width;
+
+        // // total elev / evel gain
+        // const totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
+        // const totalElevationText = 'Elev. Gain';
+        // // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
+
+        // // pace
+        // const paceVal = activity.duration / (activity.distance / 1609.34)
+        // const pace = `${(getPaceTime(paceVal))} /mi`;
+        // const paceText = 'Pace';
         // const paceTextWidth = ctx.measureText(paceText).width;
 
         // moving time / duration
@@ -190,7 +239,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         // const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
         // avg speed
-        const avgSpeed = getAvgSpeed(activity);
+        const avgSpeed = getAvgSpeed(activity, useMiles);
         const avgSpeedText = 'Avg Speed';
         // const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
 
@@ -266,7 +315,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
     });
 }
 
-export const generateText2 = async (xModifier, yModifier, canvas, lineColor, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid) => {
+export const generateText2 = async (xModifier, yModifier, canvas, lineColor, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles) => {
     await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
@@ -302,23 +351,35 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         // count the number of selected / on stats
         // divide the height by the count
 
-
-        // get width of text and calculate / convert human readable value
-        // distance
-        const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+        let distance, totalElevation, pace;
         const distanceText = 'Distance';
-        // const distanceTextWidth = ctx.measureText(distanceText).width;
-
-        // total elev / evel gain
-        const totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
         const totalElevationText = 'Elev. Gain';
-        // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
-
-        // pace
-        const paceVal = activity.duration / (activity.distance / 1609.34)
-        const pace = `${(getPaceTime(paceVal.toFixed(2)))} /mi`;
         const paceText = 'Pace';
-        // const paceTextWidth = ctx.measureText(paceText).width;
+
+
+        if (useMiles) {
+            // get width of text and calculate / convert human readable value
+            // distance
+            distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
+            // const distanceText = 'Distance';
+            // const distanceTextWidth = ctx.measureText(distanceText).width;
+
+            // total elev / evel gain
+            totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
+            // const totalElevationText = 'Elev. Gain';
+            // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
+
+            // pace
+            const paceVal = activity.duration / (activity.distance / 1609.34);
+            pace = `${(getPaceTime(paceVal.toFixed(2)))} /mi`;
+            // const paceText = 'Pace';
+            // const paceTextWidth = ctx.measureText(paceText).width;
+        } else {
+            distance = `${(activity.distance / 1000).toFixed(2)} km`;
+            totalElevation = `${Math.round(activity.elev_gain)} m`;
+            const paceVal = activity.duration / (activity.distance / 1000);
+            pace = `${(getPaceTime(paceVal.toFixed(2)))} /km`;
+        }
 
         // moving time / duration
         const movingTime = getMovingTime(activity);
@@ -331,7 +392,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         // const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
         // avg speed
-        const avgSpeed = getAvgSpeed(activity);
+        const avgSpeed = getAvgSpeed(activity, useMiles);
         const avgSpeedText = 'Avg Speed';
         // const avgSpeedTextWidth = ctx.measureText(avgSpeedText).width;
 
@@ -352,6 +413,9 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
 
         const textYSize = (dimensions.y - (dimensions.y * (1.0 - yModifier))) / count;
 
+        // calculate the width of the text column, compare with the calculated width of the val, make it smaller if you gotta
+        const textBoxWidth = (dimensions.x * (1.0 - xModifier))
+
         // debugger
         Object.keys(textMatrix).forEach((key) => {
             const val = textMatrix[key]
@@ -366,7 +430,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
                     // set value font
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
                 if (val.location == 2) {
@@ -374,7 +438,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.font = `bold ${getLabelFontSize(val.labelTextSize)} Arial`;
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
                 if (val.location == 3) {
@@ -382,7 +446,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.font = `bold ${getLabelFontSize(val.labelTextSize)} Arial`;
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
 
@@ -394,7 +458,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
                     // set value font
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
 
@@ -403,7 +467,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.font = `bold ${getLabelFontSize(val.labelTextSize)} Arial`;
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
 
@@ -412,7 +476,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
                     ctx.font = `bold ${getLabelFontSize(val.labelTextSize)} Arial`;
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
 
-                    ctx.font = `bold ${getLabelFontSize('large')} Arial`;
+                    ctx.font = `bold ${getLabelFontSizeCalc('large', val.valWidth, textBoxWidth)} Arial`;
                     ctx.fillText(val.val, halfCenter, verticalValHeightCalc(val, textYSize));
                 }
             }
@@ -457,8 +521,12 @@ export const getAvgPower = (activity) => {
     return `${Math.round(activity.avg_watts)} w`;
 }
 
-export const getAvgSpeed = (activity) => {
-    return `${(activity.avg_speed * 2.23694).toFixed(1)} mi/h`;
+export const getAvgSpeed = (activity, useMiles=true) => {
+    if (useMiles) {
+        return `${(activity.avg_speed * 2.23694).toFixed(1)} mi/h`;
+    } else {
+        return `${(activity.avg_speed * 3.6).toFixed(1)} km/h`;
+    }
 }
 
 export const getWorkDone = (activity) => {

@@ -32,6 +32,7 @@ const MapComponent = ({
         showWorkDone,
         lineColor,
         showText,
+        useMiles,
     } = useTextGridProvider();
 
     const mapRef = useRef(null);
@@ -195,7 +196,7 @@ const MapComponent = ({
             // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
             //     genImage(canvas);
             // });
-            await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
+            await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles).then(() => {
                 genImage(canvas);
             });
         }
