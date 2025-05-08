@@ -2,9 +2,7 @@ import {
     useState,
     useEffect,
     useContext,
-    useReducer,
     createContext,
-    Dispatch
 } from "react";
 import { useActivitiesProvider } from "./ActivitiesProvider";
 
@@ -152,10 +150,6 @@ export const TextGridProvider = ({ children }) => {
     useEffect(() => {
         onChangeOptionAssign('showWorkDone', showWorkDone);
     }, [showWorkDone])
-
-    // useEffect(() => {
-    //     onChangeOptionAssing('useMiles', )
-    // }, [useMiles])
 
     const handleSetColor = (e) => {
         const rawVal = e.target.value;

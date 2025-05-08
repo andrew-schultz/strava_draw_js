@@ -3,8 +3,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { exchangeAuthCode, getApiActivities, getFirstApiActivities } from '../services/api';
 import { setDivToViewportSize } from '../services/utils';
-// import { getActivities, getAuthorization, getAccessToken } from "../services/strava";
-// import ActivityDetail from "./ActivityDetail"
 import ActivityList from "./ActivityList"
 import cookieCutter from "@boiseitguru/cookie-cutter";
 import Spinner from "./Spinner"
@@ -12,7 +10,6 @@ import { useActivitiesProvider } from '../providers/ActivitiesProvider'
 import { useAuthProvider } from '../providers/AuthProvider';
 import LoginComponent from './LoginComponent';
 import LogoutComponent from './LogoutComponent';
-// import { useTextGridProvider } from '../providers/TextGridProvider';
 
 
 const HomeMain = () => {
@@ -21,8 +18,6 @@ const HomeMain = () => {
     const scrollRef = useRef(null);
     const [scope, setScope] = useState();
     const [code, setCode] = useState();
-    // const [mounted, setMounted] = useState(false);
-    // const [scrollFixed, setScrollFixed] = useState(false);
 
     const {
         apiToken,
@@ -91,7 +86,6 @@ const HomeMain = () => {
                             setOffset(offset + 100)
                         } else  {
                             setOffset(offset + response['activities'].length)
-                            // setMoreToGet(false)
                         }
                     }
                     
@@ -117,11 +111,9 @@ const HomeMain = () => {
                     // if therses a code, mind as well try to exchange it
                     if (localCode && token) {
                         let res = await handleExchangeAuthCode(localCode, token, localScope)
-                        // setLoading(false)
                     } else {
                         setLoading(false)
                     }
-                    
                     // show an error about authorizing strava
                 }
                 
@@ -136,14 +128,10 @@ const HomeMain = () => {
             else if (localCode && localApiToken && !activities) {
                 handleExchangeAuthCode(localCode, localApiToken, localScope)
             } 
-            // else if (code && !localApiToken) {
-
-            // }
             else {
                 setLoading(false)
             }
         } else {
-            // debugger
             const scrollNow = activities.filter(activity => activity.external_id == homeScrollId)
             console.log('scrollNow', scrollNow)
             if (homeScrollId && scrollNow) {
@@ -158,24 +146,10 @@ const HomeMain = () => {
             setSelectedActivity(null)
             setLoading(false)
         }
-        // setMounted(true)
 
         const d = document.getElementById('mainScrollable')
         setDivToViewportSize(d);
     }, [])
-
-    // useEffect(() => {
-    //     if (mounted && !loading) {
-    //         const scrollEl = document.getElementById('mainScrollable')
-    //         console.log('homescroll', homeScrollPosition)
-    //         console.log('top', scrollEl.scrollTop)
-    //         if (scrollEl.scrollTop != homeScrollPosition) {
-    //             scrollEl.scrollTo(0, 0)
-    //             console.log('scrollllllllltop')
-    //             setScrollFixed(true)
-    //         }
-    //     }
-    // }, [mounted, loading])
 
     useEffect(() => {
         if (reachedBottom && moreToGet) {

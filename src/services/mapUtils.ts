@@ -147,7 +147,6 @@ const getLabelFontSizeCalc = (size, vSize, textAreaSize) => {
         return '1.75em'
     }
     else if (size == 'large') {
-        // debugger
         if (vSize / textAreaSize > 0.8) {
             return '1.9em'
         }
@@ -181,9 +180,6 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         const thirdCenter = third / 2;
         // const halfCenter = half / 2;
 
-        // get width of text and calculate / convert human readable value
-        // distance
-
         let distance, totalElevation, pace;
         const distanceText = 'Distance';
         const totalElevationText = 'Elev. Gain';
@@ -194,18 +190,15 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
             // get width of text and calculate / convert human readable value
             // distance
             distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
-            // const distanceText = 'Distance';
             // const distanceTextWidth = ctx.measureText(distanceText).width;
 
             // total elev / evel gain
             totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
-            // const totalElevationText = 'Elev. Gain';
             // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
             // pace
             const paceVal = activity.duration / (activity.distance / 1609.34);
             pace = `${(getPaceTime(paceVal.toFixed(2)))} /mi`;
-            // const paceText = 'Pace';
             // const paceTextWidth = ctx.measureText(paceText).width;
         } else {
             distance = `${(activity.distance / 1000).toFixed(2)} km`;
@@ -213,20 +206,6 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
             const paceVal = activity.duration / (activity.distance / 1000);
             pace = `${(getPaceTime(paceVal.toFixed(2)))} /km`;
         }
-        // const distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
-        // const distanceText = 'Distance';
-        // // const distanceTextWidth = ctx.measureText(distanceText).width;
-
-        // // total elev / evel gain
-        // const totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
-        // const totalElevationText = 'Elev. Gain';
-        // // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
-
-        // // pace
-        // const paceVal = activity.duration / (activity.distance / 1609.34)
-        // const pace = `${(getPaceTime(paceVal))} /mi`;
-        // const paceText = 'Pace';
-        // const paceTextWidth = ctx.measureText(paceText).width;
 
         // moving time / duration
         const movingTime = getMovingTime(activity);
@@ -325,9 +304,6 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
 
         // get width/height of map canvas
         let dimensions = mapRef.current.getSize();
-        // if (hadToAdjust) {
-        //     dimensions = {x: canvas.width, y: canvas.height};
-        // }
 
         // use the modifiers from the graphBorder to determine textBoxDimensions
         const textBoxDimensions = {x: dimensions.x - (dimensions.x * (1.0 - xModifier)), y: dimensions.y * (1.0 - yModifier)}
@@ -336,10 +312,6 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         // let centerY = (lowestPixel / 2);
         let third = (textBoxDimensions.x) / 3;
 
-        // if (hadToAdjust) {
-        //     centerY = lowestPixel + 50;
-        // }
-
         // const third = (textBoxDimensions.x + 100) / 3;
         const half = textBoxDimensions.x / 2;
         
@@ -347,7 +319,6 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         const thirdCenter = third / 2;
         const halfCenter = dimensions.x - (dimensions.x * (1.0 - xModifier) / 2)
 
-        // 
         // count the number of selected / on stats
         // divide the height by the count
 
@@ -361,18 +332,15 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
             // get width of text and calculate / convert human readable value
             // distance
             distance = `${(activity.distance / 1609.34).toFixed(2)} mi`;
-            // const distanceText = 'Distance';
             // const distanceTextWidth = ctx.measureText(distanceText).width;
 
             // total elev / evel gain
             totalElevation = `${Math.round(activity.elev_gain * 3.281)} ft`;
-            // const totalElevationText = 'Elev. Gain';
             // const totalElevationTextWidth = ctx.measureText(totalElevationText).width;
 
             // pace
             const paceVal = activity.duration / (activity.distance / 1609.34);
             pace = `${(getPaceTime(paceVal.toFixed(2)))} /mi`;
-            // const paceText = 'Pace';
             // const paceTextWidth = ctx.measureText(paceText).width;
         } else {
             distance = `${(activity.distance / 1000).toFixed(2)} km`;
@@ -416,15 +384,12 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         // calculate the width of the text column, compare with the calculated width of the val, make it smaller if you gotta
         const textBoxWidth = (dimensions.x * (1.0 - xModifier))
 
-        // debugger
         Object.keys(textMatrix).forEach((key) => {
             const val = textMatrix[key]
-            // debugger
 
             if (val) {
                 if (val.location == 1) {
                     // grid 1
-                    // debugger
                     // set text font
                     ctx.font = `bold ${getLabelFontSize(val.labelTextSize)} Arial`;
                     ctx.fillText(val.text, halfCenter, verticalTextHeightCalc(val, textYSize));
@@ -537,7 +502,6 @@ export const getWorkDone = (activity) => {
 }
 
 export const findLowestPixel = async (lineColor, canvas) => {
-    // const canvas = document.getElementsByTagName('canvas')[0];
     const ctx = canvas.getContext("2d");
     const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
@@ -561,7 +525,6 @@ export const findLowestPixel = async (lineColor, canvas) => {
 }
 
 export const findPixelBounds = async (lineColor, canvas) => {
-    // const canvas = document.getElementsByTagName('canvas')[0];
     const ctx = canvas.getContext("2d");
     const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const color = lineColor === 'white' ? {r:255, g:255, b:255, a:255} : {r:0, g:0, b:0, a:255};
@@ -624,8 +587,6 @@ export const removeBackground = async (canvas) => {
     }
 
     ctx.putImageData(imgd, 0, 0);
-    // debugger
-    // return imgd
     return ctx
 }
 

@@ -4,9 +4,6 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
-// import "tilelayer-canvas";
-// import TilelayerCanvas from "./TilelayerCanvas";
-
 
 import { useEffect, useState, useRef } from 'react';
 import Spinner from "./Spinner";
@@ -106,32 +103,13 @@ const MapComponent = ({
 
         // would be good to eventually redo this calc including the text to check if its going off the page
         //      should adjust if going off the page    
-            
-        // if (northSouthDiff > 0.1) {
-        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.08);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.035, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.035, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
-        // else 
+
         if (northSouthDiff > 0.06) {
             let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
             const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.025, adjustedPolylineBounds._northEast.lng);
             const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.025, adjustedPolylineBounds._southWest.lng);
             polylineBounds = L.latLngBounds(corner1, corner2);
         }
-        // else if (northSouthDiff > 0.03) {
-        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.03);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.010, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.010, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
-        // else if (northSouthDiff > 0.02) {
-        //     let adjustedPolylin9eBounds = initialPolylineBounds.pad(0.04);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.015, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.015, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
 
         mapRef.current.fitBounds(polylineBounds);
 
@@ -193,9 +171,6 @@ const MapComponent = ({
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
             }
 
-            // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
-            //     genImage(canvas);
-            // });
             await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles).then(() => {
                 genImage(canvas);
             });

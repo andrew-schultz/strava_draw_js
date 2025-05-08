@@ -18,9 +18,6 @@ const signRequest = (data) => {
 }
 
 const csrfAuth = async () => {
-    // const getHeaders = {
-    //     'Accept': "application/json, text/plain, */*",
-    // }
     const data = {
         csrf: true,
     }
@@ -28,12 +25,8 @@ const csrfAuth = async () => {
 
     const getHeaders = {
         'Accept': "application/json, text/plain, */*",
-        // 'X-Signature': signature,
-        // 'X-Timestamp': timestamp,
         'Authorization': signature,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Headers": '*',
-        // "Access-Control-Allow-Origin": '*',
     }
 
     const getResponse = await fetch(`${apiURL}api/v1/strava/auth/`, {
@@ -47,27 +40,13 @@ const csrfAuth = async () => {
 
 
 export const exchangeAuthCode = async (code, token, scope) => {
-
-    // const getHeaders = {
-    //     'Accept': "application/json, text/plain, */*",
-    // }
-
-    // const getResponse = await fetch(`${apiURL}api/v1/strava/auth/`, {
-    //     method: "GET",
-    //     headers: getHeaders,
-    // });
-
     const csrfTokenCookie = await csrfAuth();
-    // debugger
-
     const body = JSON.stringify({code: code, scope: scope})
-    // debugger
     const headers = {
         'Accept': "application/json, text/plain, */*",
         'X-CSRFToken': csrfTokenCookie,
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const response = await fetch(`${apiURL}api/v1/strava/auth/`, {
         method: "POST",
@@ -93,11 +72,8 @@ export const signup = async (email, password, passwordConfirm) => {
     const headers = {
         'Accept': "application/json, text/plain, */*",
         'X-CSRFToken': csrfTokenCookie,
-        // 'X-Signature': signature,
-        // 'X-Timestamp': timestamp,
         'Authorization': signature,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const response = await fetch(`${apiURL}api/v1/auth/signup/`, {
         method: "POST",
@@ -122,11 +98,8 @@ export const login = async (email, password) => {
     const headers = {
         'Accept': "application/json, text/plain, */*",
         'X-CSRFToken': csrfTokenCookie,
-        // 'X-Signature': signature,
-        // 'X-Timestamp': timestamp,
         'Authorization': signature,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const response = await fetch(`${apiURL}api/v1/auth/login/`, {
         method: "POST",
@@ -142,10 +115,8 @@ export const logout = async (token) => {
     const csrfTokenCookie = await csrfAuth();
     const headers = {
         'Accept': "application/json, text/plain, */*",
-        // 'X-CSRFToken': csrfTokenCookie,
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const response = await fetch(`${apiURL}api/v1/auth/logout/`, {
         method: "GET",
@@ -163,7 +134,6 @@ export const getApiActivities = async (token, offset=0) => {
         'X-CSRFToken': csrfTokenCookie,
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const url = offset > 0 ? `${apiURL}api/v1/activity/?limit=100&offset=${offset}` : `${apiURL}api/v1/activity/`
     const response = await fetch(url, {
@@ -182,7 +152,6 @@ export const getFirstApiActivities = async (token, offset=0) => {
         'X-CSRFToken': csrfTokenCookie,
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const url = `${apiURL}api/v1/activity/first/`
     const response = await fetch(url, {
@@ -201,7 +170,6 @@ export const getApiActivityStreams = async (token, activity_id, stream_types) =>
         'X-CSRFToken': csrfTokenCookie,
         'Authorization': `Bearer ${token}`,
         "Content-Type": "application/json",
-        // "Access-Control-Allow-Origin": '*',
     }
     const url = `${apiURL}api/v1/activity_stream/${activity_id}/?stream_types=${stream_types}`
     const response = await fetch(url, {

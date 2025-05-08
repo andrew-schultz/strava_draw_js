@@ -14,7 +14,6 @@ const HelpModal = () => {
                 <div>
                     <div className='helpModalContainer'>
                         <div className='helpModalContent buttonShadowFloatOptions'>
-                            {/* <p className='closeModalHelp' onClick={toggleHelpModal}>X</p> */}
                             <div className='helpModalContentMain'>
                                 <p className='helpModalContentP'><span className='helpModalContentPSpan'>How to Download / Save</span></p>
                                 <p className='helpModalContentPWide'>Long press / right click the image to save. Only the map lines and stat text will be saved on a transparent background.</p>

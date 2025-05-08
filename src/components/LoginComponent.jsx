@@ -41,7 +41,6 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                     if (resp['detail']) {
                         // show errors
                         setErrorMessage(resp['detail'])
-                        // setErrorMessage("There's an issue with your email or password")
                     }
                     else {
                         if (resp['token']) {
@@ -86,7 +85,6 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
                                 setActivities(null)
                                 setMoreToGet(false)
                             }
-                            // setShowAuthButton(true)
                         }
                     }
                 }

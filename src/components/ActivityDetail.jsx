@@ -1,27 +1,18 @@
 "use client";
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import HelpModal from "./HelpModal";
 import TextOptionsModal from './TextOptionsModal';
-import { useTextGridProvider } from '../providers/TextGridProvider';
-// import cookieCutter from "@boiseitguru/cookie-cutter";
 import { formatStrDate } from '../services/utils';
 import { getApiActivityStreams } from '../services/api';
 import { useAuthProvider } from '../providers/AuthProvider';
 import { useActivitiesProvider } from '../providers/ActivitiesProvider';
 import Spinner from './Spinner';
 import MapWrapper from './MapWrapper';
-// import AreaPlot from './AreaPlot';
-// import LinePlot from './LinePlot';
-// import BarPlot from './BarPlot';
 
 var polyline = require('@mapbox/polyline');
 
-// const ActivityDetail = ({activity, setActivity, layout, setLayout}) => {
 const ActivityDetail = ({activity, setActivity, }) => {
-
-    // const [layout, setLayout] = useState('1')
     const {
         apiToken,
     } = useAuthProvider();
@@ -34,33 +25,6 @@ const ActivityDetail = ({activity, setActivity, }) => {
         setLoading,
     } = useActivitiesProvider()
 
-    const gridBase = {
-        1: {
-            position: 1,
-            val: null,
-        },
-        2: {
-            position: 2,
-            val: null,
-        },
-        3: {
-            position: 3,
-            val: null,
-        },
-        4: {
-            position: 4,
-            val: null,
-        }, 
-        5: {
-            position: 5,
-            val: null,
-        },
-        6: {
-            position: 6,
-            val: null,
-        },
-    }
-
     const [polylines, setPolylines] = useState();
     const date = activity && activity.start_date ? formatStrDate(activity.start_date) : null;
 
@@ -68,7 +32,6 @@ const ActivityDetail = ({activity, setActivity, }) => {
     
     useEffect(() =>  {
         setLoading(true)
-        // debugger
         const handleGetActivityStreams = async () => {
             const activityStreams = await getApiActivityStreams(apiToken, activity['external_id'], 'altitude')
             const localActivityStreams = {}
@@ -79,7 +42,6 @@ const ActivityDetail = ({activity, setActivity, }) => {
             setLoading(false)
         }
         handleGetActivityStreams()
-        // setActivityStreams(activityStreams)
         if (activity.polyline) {
             let polylines = activity.polyline;
             let decoded_polylines = polyline.decode(polylines);
@@ -89,9 +51,6 @@ const ActivityDetail = ({activity, setActivity, }) => {
 
     const localSetActivity = () => {
         setActivityStreams()
-        // setActivity()
-        // setActivity(null)
-        // cookieCutter.set('selectedActivity', null, { expires: new Date(0) })
         router.back();
     }
 
@@ -118,7 +77,6 @@ const ActivityDetail = ({activity, setActivity, }) => {
         }
 
         ctx.putImageData(imgd, 0, 0);
-        // return imgd
     }
 
     const DownloadCanvasAsImage = async () => {
@@ -149,42 +107,20 @@ const ActivityDetail = ({activity, setActivity, }) => {
             <div className='ActivityListItemDetailTextContainer' id='ActivityListItemDetailTextContainer'>
                 <div className='controlContainer'>
                     <div className="mapButton buttonShadow" onClick={localSetActivity}>Back</div>
-                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
-                        <p className="activityListButtonP link">View on Strava</p>
-                    </a> */}
                     <div className='buttonsContainer'>
                         <TextOptionsModal 
                             activity={activity}
                         ></TextOptionsModal>
-                        {/* <HelpModal></HelpModal> */}
                     </div>
                 </div>
                 <div className="activityListItemTextBox">
                     <p className="activityListButtonP nameBig">{activity.name}</p>
                     <p className="activityListButtonP date last">{date}</p>
-                        {/* <span className='spanLeft'>{date}</span>
-                        <span className='spanRight'>
-                            <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
-                                <p className="activityListButtonP link">View on Strava</p>
-                            </a>
-                        </span>
-                    </p> */}
-                    {/* <p className="activityListButtonP last">
-                        <span className='spanLeft'>Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</span>
-                        <span className='spanRight'>
-                            <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}>
-                                <p className="activityListButtonP link">View on Strava</p>
-                            </a>
-                        </span>
-                    </p> */}
-                    {/* <p className="activityListButtonP">Distance: {`${(activity.distance / 1609.34).toFixed(2)} mi`}</p> */}
-                    {/* <a className="activityListButtonPLink" href={`https://www.strava.com/activities/${activity.external_id}`}><p className="activityListButtonP link last">View on Strava</p></a> */}
                 </div>
             </div>
             
-            {/* {loading ? ( */}
             <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
-            {/* // ) : ( null )} */}
+            
             {polylines && !loading ? (
                 <MapWrapper polylines={polylines} activity={activity} activityStreams={activityStreams} layout={layout}></MapWrapper>
             ) : (

@@ -111,32 +111,12 @@ const MapComponent2 = ({
 
         // would be good to eventually redo this calc including the text to check if its going off the page
         //      should adjust if going off the page    
-            
-        // if (northSouthDiff > 0.1) {
-        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.08);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.035, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.035, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
-        // else 
         if (northSouthDiff > 0.06) {
             let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
             const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.025, adjustedPolylineBounds._northEast.lng);
             const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.025, adjustedPolylineBounds._southWest.lng);
             polylineBounds = L.latLngBounds(corner1, corner2);
         }
-        // else if (northSouthDiff > 0.03) {
-        //     let adjustedPolylineBounds = initialPolylineBounds.pad(0.03);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.010, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.010, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
-        // else if (northSouthDiff > 0.02) {
-        //     let adjustedPolylin9eBounds = initialPolylineBounds.pad(0.04);
-        //     const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.015, adjustedPolylineBounds._northEast.lng);
-        //     const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.015, adjustedPolylineBounds._southWest.lng);
-        //     polylineBounds = L.latLngBounds(corner1, corner2);
-        // }
 
         mapRef.current.fitBounds(polylineBounds);
 
@@ -158,9 +138,6 @@ const MapComponent2 = ({
 
             // clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // // draw border in canvas
-            // drawCanvasBorder(dimensions.x, dimensions.y, ctx);
 
             // calculate / adjust width / size until both just fit within bounds
             let justFitWidth = bindingWidth;
@@ -186,7 +163,6 @@ const MapComponent2 = ({
             const offCtx = offscreenCanvas.getContext('2d');
             
             let hadToAdjust = false;
-            // let widthDif = ()
             let widthDif = ((dimensions.x * xModifier) - newWidth) / 2;
             let heightDif = ((dimensions.y * yModifier) - newHeight) /2;
             // let heightDif = (dimensions.y - newHeight) / 2
@@ -194,11 +170,6 @@ const MapComponent2 = ({
             // redraw the image data to the offscreen canvas
             // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
             offCtx.putImageData(mapImg, 0,0);
-
-            // // // create an offscreen canvas to draw/hold the image on
-            // const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
-
-            // const offCtxGraph = offscreenCanvasG.getContext('2d');
 
             if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
@@ -210,53 +181,10 @@ const MapComponent2 = ({
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, heightDif, justFitWidth, justFitHeight);
             }
             // generate the graph image
-            // const graphImage = 
             genGraph(dimensions.x, dimensions.y, lineColor, canvas)
-            
-            // .then(graphImage => {
-            //     // debugger
-            //     if (graphImage) {
-            //         offCtxGraph.drawImage(graphImage, 0, 0)
-            //         // to calc the height, take whatever the float val modifier is from the genGraph func and make it .01 less to give us some padding on top
-            //         ctx.drawImage(offscreenCanvasG, 0, dimensions.y - dimensions.y * 0.14)
-
-            //         generateText2(
-            //             polylineBounds, 
-            //             xModifier, 
-            //             yModifier, 
-            //             canvas, 
-            //             lineColor, 
-            //             hadToAdjust, 
-            //             mapRef, 
-            //             activity, 
-            //             showDistance, 
-            //             showElevGain, 
-            //             showPace, 
-            //             showDuration, 
-            //             showAvgPower, 
-            //             showAvgSpeed, 
-            //             showWorkDone, 
-            //             placementGrid
-            //         ).then(() => {
-            //             genImage(canvas)
-            //         });
-            //     }
-                
-            // })
-
-            // await generateText(polylineBounds, canvas, lineColor, hadToAdjust).then(removeBackground(canvas)).then(() => {
-            //     genImage(canvas);
-            // });
-            // await generateText2(polylineBounds, xModifier, yModifier, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid).then(() => {
-            //     genImage(canvas)
-            // });
         }
 
         const genGraph = async (justWidth, justHeight, lineColor, canvas) => {
-            // const marginTop = 20,
-            // marginRight = 20,
-            // marginBottom = 30,
-            // marginLeft = 40,
             const width = justWidth;
             const height = justHeight * (1 - yModifier - 0.01);
             const ctx = canvas.getContext('2d');
@@ -272,17 +200,8 @@ const MapComponent2 = ({
                 formattedData.push(fD)
             })
 
-            // const yExtent = d3.extent(formattedData)
-            // yExtent[0] -= 10
-            // // yExtent[1] = 300
-            
-            // if (yExtent[1] < yExtent[0] + 200) {
-            //     yExtent[1] = yExtent[0] + 200
-            // }
-            // debugger
             // make the scales for the x and y axis
             const x = d3.scaleLinear([0, data.length - 1], [0, width]);
-            // const y = d3.scaleLinear(yExtent, [height, 0]);
             const y = d3.scaleLinear(d3.extent(formattedData), [height, 0]);
         
             const line = d3.line((d, i) => x(i), y);
@@ -304,7 +223,6 @@ const MapComponent2 = ({
                 .attr("fill", lineColor)
                 .attr("stroke", lineColor)
                 .attr("strokeWidth", "1.0")
-                // .attr("opacity", "0.5")
 
             // add the line to the svg
             svg.append("path")
@@ -319,9 +237,6 @@ const MapComponent2 = ({
             // create an image to assign the svg data string to, then return it
             const img = new Image();
             img.src = svgString
-            // img.onload = () => {
-            //     return img
-            // }
             img.onload = () => {
                 // // create an offscreen canvas to draw/hold the image on
                 const offscreenCanvasG = new OffscreenCanvas(canvas.width, canvas.height);
@@ -349,13 +264,7 @@ const MapComponent2 = ({
                 ).then(() => {
                     genImage(canvas)
                 });
-
             }
-            // setTimeout(() => {
-            //     return img
-            // }, 100)
-            // return img
-            
         }
 
         const genImage = (canvas) => {
@@ -373,16 +282,8 @@ const MapComponent2 = ({
                 img.id = 'genImage';
                 img.src = dataURL;
 
-                // create a second, larger image thats invisible but has a higher zindex so is selected when you hold to download
-                // const img2 = new Image();
-                // img2.width = dimensions.x * 5;
-                // img2.height = dimensions.y * 5;
-                // img2.id = 'genImageBig';
-                // img2.src = dataURL;
-
                 document.getElementById('images').innerHTML = '';
                 document.getElementById('images').appendChild(img);
-                // document.getElementById('images').appendChild(img2);
         
                 paintBackground(canvas.width, canvas.height);
                 polyline.removeFrom(mapRef.current);

@@ -18,14 +18,10 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
     const [showPasswordError, setShowPasswordError] = useState(false)
     const [showPasswordConfirmError, setShowPasswordConfirmError] = useState(false)
 
-
     const {
         setApiToken,
         setShowAuthButton,
     } = useAuthProvider();
-
-    // const redirectUri = process.env.NEXT_PUBLIC_STRAVA_REDIRECT_URI
-    // const authUrl = `http://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=activity:read_all`
 
     const handleSignup = async (e) => {
         setLoading(true)
@@ -48,7 +44,6 @@ const SignupComponent = ({loading, setLoading, handleToggleSignup, setOptionText
                     if (resp) {
                         if (resp['detail']) {
                             // show errors
-                            // setErrorMessage(resp['errors']['detail'])
                             setErrorMessage(resp['detail'])
                             setShowAuthButton(false)
                         } else if (resp['email'] || resp['password'] || resp['password_confirm']) {

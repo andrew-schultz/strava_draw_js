@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import TextGrid from './TextGrid';
 import { useTextGridProvider } from '../providers/TextGridProvider';
 import { useActivitiesProvider } from '../providers/ActivitiesProvider';
@@ -84,22 +84,6 @@ const TextOptionsModal = ({
                                 <div className='textOptionsTitle'>
                                     {/* <p>Options</p> */}
                                 </div>
-                                {/* <div className="slidersContainerTextOptionInner" key={`layoutSliderContainer1`} >
-                                    <div className="textOptionLabel">
-                                        <p>{'Layout'}</p>
-                                    </div>
-                                    <div className="textOptionInput">
-                                        <input 
-                                            type="range" 
-                                            min="1" 
-                                            max="2" 
-                                            value={localLayout} 
-                                            className={`textOptionInputActual slider ${localLayout == '2' ? ('on') : ('off')}`} 
-                                            id="lineColorSelector" 
-                                            onChange={(e) => handleSetLayout(e.target.value)}
-                                        ></input>
-                                    </div>
-                                </div> */}
                                 <div className='sliderContainerRow'>
                                     <div className="slidersContainerTextOptionInnerGrid" key={`layoutSliderContainer1`}>
                                         <div className="textOptionLabelGrid">
@@ -138,7 +122,6 @@ const TextOptionsModal = ({
                                     <div className='sliderContainerRowItem'>
                                         <div className="slidersContainerTextOptionInnerGrid" key={`unitsSliderContainer1`}>
                                             <div className="textOptionLabelGrid" >
-                                                {/* <p>{'(km) Units (mi)'}</p> */}
                                                 <p className='shortTop'>{'km | mi'}</p>
                                             </div>
                                             <div className="textOptionInputGrid">
@@ -174,9 +157,6 @@ const TextOptionsModal = ({
                                     </div>
                                 </div>
                                 <div className='optionsDivider'></div>
-                                {/* <div className='textOptionsTitle'>
-                                    <p>Stat Options</p>
-                                </div> */}
                                 <div className='sliderContainerRow'>
                                     <div className='sliderContainerRowItem'>
                                         <div className="slidersContainerTextOptionInnerGrid"  key={`durationSliderContainer1`}>
@@ -254,7 +234,6 @@ const TextOptionsModal = ({
                                 <div className='sliderContainerRow'>
                                     <div className="slidersContainerTextOptionInnerGrid" id="dragOptionAvgWatts"  key={`avgPowerSliderContainer1`}>
                                         <div className="textOptionLabelGrid">
-                                            {/* <p className={`${activity.average_watts ? 'active' : 'disabledLabel'}`}>{'Avg Power'}</p> */}
                                             <p className='active'>{'Avg Power'}</p>
                                         </div>
                                         <div className="textOptionInputGrid">
@@ -262,10 +241,8 @@ const TextOptionsModal = ({
                                                 type="range"
                                                 min="1"
                                                 max="2"
-                                                // disabled={activity.average_watts ? false : true}
                                                 value={showAvgPower ? '2' : '1'}
                                                 className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')}`}
-                                                // className={`textOptionInputActual slider ${showAvgPower ? ('on') : ('off')} ${activity.kilojoules ? 'active' : 'disabled'}`} 
                                                 id={`${'avgPower'}Selector`} 
                                                 onChange={(e) => setShowAvgPower(e.target.value == '1' ? false : true)}
                                             ></input>
@@ -309,7 +286,6 @@ const TextOptionsModal = ({
                                 </div>
 
                             </div>
-                            {/* <div className='optionsDivider'></div> */}
                             <TextGrid
                                 activity={activity}
                             >
