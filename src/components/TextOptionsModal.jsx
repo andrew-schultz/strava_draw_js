@@ -31,6 +31,8 @@ const TextOptionsModal = ({
         showText,
         handleShowText,
         setLineColor,
+        useMiles,
+        setUseMiles,
     } = useTextGridProvider();
 
     const {
@@ -82,23 +84,7 @@ const TextOptionsModal = ({
                                 <div className='textOptionsTitle'>
                                     {/* <p>Options</p> */}
                                 </div>
-                                <div className="slidersContainerTextOptionInner" key={`lineColorSliderContainer1`} >
-                                    <div className="textOptionLabel">
-                                        <p>{'Line Color'}</p>
-                                    </div>
-                                    <div className="textOptionInput">
-                                        <input 
-                                            type="range" 
-                                            min="1" 
-                                            max="2" 
-                                            value={rawLineColor} 
-                                            className={`textOptionInputActual slider ${lineColor == 'black' ? ('on') : ('off')}`} 
-                                            id="lineColorSelector" 
-                                            onChange={(e) => handleSetColor(e)}
-                                        ></input>
-                                    </div>
-                                </div>
-                                <div className="slidersContainerTextOptionInner" key={`layoutSliderContainer1`} >
+                                {/* <div className="slidersContainerTextOptionInner" key={`layoutSliderContainer1`} >
                                     <div className="textOptionLabel">
                                         <p>{'Layout'}</p>
                                     </div>
@@ -112,6 +98,24 @@ const TextOptionsModal = ({
                                             id="lineColorSelector" 
                                             onChange={(e) => handleSetLayout(e.target.value)}
                                         ></input>
+                                    </div>
+                                </div> */}
+                                <div className='sliderContainerRow'>
+                                    <div className="slidersContainerTextOptionInnerGrid" key={`layoutSliderContainer1`}>
+                                        <div className="textOptionLabelGrid">
+                                            <p>{'Layout'}</p>
+                                        </div>
+                                        <div className="textOptionInputGrid">
+                                            <input 
+                                                type="range" 
+                                                min="1" 
+                                                max="2" 
+                                                value={localLayout} 
+                                                className={`textOptionInputActual slider ${localLayout == '2' ? ('on') : ('off')}`} 
+                                                id="lineColorSelector" 
+                                                onChange={(e) => handleSetLayout(e.target.value)}
+                                            ></input>
+                                        </div>
                                     </div>
                                 </div>
                                 {/* <div className="slidersContainerTextOptionInner" key={`showTextSliderContainer1`}>
@@ -130,6 +134,45 @@ const TextOptionsModal = ({
                                         ></input>
                                     </div>
                                 </div> */}
+                                <div className='sliderContainerRow bottomPadding'>
+                                    <div className='sliderContainerRowItem'>
+                                        <div className="slidersContainerTextOptionInnerGrid" key={`unitsSliderContainer1`}>
+                                            <div className="textOptionLabelGrid" >
+                                                {/* <p>{'(km) Units (mi)'}</p> */}
+                                                <p className='shortTop'>{'km / mi'}</p>
+                                            </div>
+                                            <div className="textOptionInputGrid">
+                                                <input 
+                                                    type="range"
+                                                    min="1"
+                                                    max="2"
+                                                    value={useMiles ? '2' : '1'}
+                                                    className={`textOptionInputActual slider ${useMiles ? ('on') : ('off')}`} 
+                                                    id={`${'unit'}Selector`} 
+                                                    onChange={(e) => setUseMiles(e.target.value == '1' ? false : true)}
+                                                ></input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='sliderContainerRowItem'>
+                                        <div className="slidersContainerTextOptionInnerGrid" key={`lineColorSliderContainer1`} >
+                                            <div className="textOptionLabelGrid">
+                                                <p className='shortTop'>{'Line Color'}</p>
+                                            </div>
+                                            <div className="textOptionInputGrid">
+                                                <input 
+                                                    type="range" 
+                                                    min="1" 
+                                                    max="2" 
+                                                    value={rawLineColor} 
+                                                    className={`textOptionInputActual slider ${lineColor == 'black' ? ('on') : ('off')}`} 
+                                                    id="lineColorSelector" 
+                                                    onChange={(e) => handleSetColor(e)}
+                                                ></input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className='optionsDivider'></div>
                                 {/* <div className='textOptionsTitle'>
                                     <p>Stat Options</p>
