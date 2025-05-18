@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import TextGrid from './TextGrid';
+import TextGrid2 from './TextGrid2';
 import { useTextGridProvider } from '../providers/TextGridProvider';
 import { useActivitiesProvider } from '../providers/ActivitiesProvider';
 
@@ -286,10 +287,16 @@ const TextOptionsModal = ({
                                 </div>
 
                             </div>
-                            <TextGrid
+   
+                            {/* <TextGrid
                                 activity={activity}
-                            >
-                            </TextGrid>
+                            /> */}
+
+                            <TextGrid2
+                                activity={activity}
+                                layout={localLayout}
+                            />
+                            
                         </div>
                     </div>
                 </div>

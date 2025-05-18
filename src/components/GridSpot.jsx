@@ -18,8 +18,9 @@ const GridSpot = ({
             onDragStart={onDragStart}
             onDragLeave={onDragLeave}
             data-id={position}
+            data-active={1}
         >
-            <p data-id={position}>{option && option.val ? option.val.displayName : null}</p>
+            <p data-active={1} data-id={position}>{option && option.val ? option.val.displayName : null}</p>
         </div>
     )
 };

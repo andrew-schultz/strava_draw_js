@@ -5,9 +5,13 @@ import { useTextGridProvider } from '../providers/TextGridProvider'
 
 const TextGrid2 = ({
     activity,
+    layout,
 }) => {
     let lastTapTime = 0;
     let gridElements = [];
+
+    // set ignoreDisable to true to omit the disabled grid functionality
+    const ignoreDisable = true;
 
     const {
         grid,
@@ -22,9 +26,11 @@ const TextGrid2 = ({
     const dropHandler = (event) => {
         event.preventDefault();
         const data = event.dataTransfer.getData("gridOption");
-        const destinationId = event.target.dataset.id
-        swapGridSpot(data, destinationId)
         const element = event.target;
+        if (element.dataset.active == '1') {
+            const destinationId = element.dataset.id
+            swapGridSpot(data, destinationId)
+        }
         element.classList.remove('dragOver')
     }
 
@@ -113,11 +119,13 @@ const TextGrid2 = ({
             const touch = event.changedTouches[0];
             const originId = event.target.dataset.id
             gridElements.forEach((element) => {
+                const active = element.el.dataset.active
                 if (
                     touch.clientX >= element.rect.left &&
                     touch.clientX <= element.rect.right &&
                     touch.clientY >= element.rect.top &&
-                    touch.clientY <= element.rect.bottom
+                    touch.clientY <= element.rect.bottom &&
+                    element.el.dataset.active == '1'
                 ) {
                     // Touch is inside the element
                     // Handle the drag event here 
@@ -141,7 +149,7 @@ const TextGrid2 = ({
         <div className='textOptionsOrderGrid'>
             <div className='textOptionsOrderGridRow'>
                 {
-                    grid[1].val ? (
+                    (grid[1].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={1}
                             option={grid[1]} 
@@ -159,7 +167,7 @@ const TextGrid2 = ({
                     )
                 }
                 {
-                    grid[2].val ? (
+                    (grid[2].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={2}
                             option={grid[2]} 
@@ -177,7 +185,7 @@ const TextGrid2 = ({
                     )
                 }
                 {
-                    grid[3].val ? (
+                    (grid[3].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={3}
                             option={grid[3]}
@@ -197,7 +205,7 @@ const TextGrid2 = ({
             </div>
             <div className='textOptionsOrderGridRow'>
                 {
-                    grid[4].val ? (
+                    (grid[4].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={4}
                             option={grid[4]} 
@@ -215,7 +223,7 @@ const TextGrid2 = ({
                     )
                 }
                 {
-                    grid[5].val ? (
+                    (grid[5].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={5}
                             option={grid[5]} 
@@ -233,7 +241,7 @@ const TextGrid2 = ({
                     )
                 }
                 {
-                    grid[6].val ? (
+                    (grid[6].val && layout == '2') || layout == '1' || ignoreDisable ? (
                         <GridSpot
                             position={6}
                             option={grid[6]} 

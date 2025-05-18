@@ -31,6 +31,7 @@ const HelpModal = () => {
                                 <div className=''>
                                     <p className='helpModalContentPWide'><span className='helpModalContentPSpan'>Option 1:</span> A simple representation of the your route over the selected stat's.</p>
                                     <p className='helpModalContentPWide'><span className='helpModalContentPSpan'>Option 2:</span> A more stylized layout that also contains a graph depicting the routes elevation profile.</p>
+                                    <p className='helpModalContentPWide'><span className='helpModalContentPSpan'>Note:</span> Empty grid spots are ignored when Layout Option 2 is selected.</p>
                                 </div>
                             </div>
                         </div>

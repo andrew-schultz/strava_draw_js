@@ -389,6 +389,8 @@ body {
 
 
 .helpModalContentSubDiv {
+  width: fit-content;
+  margin: 0 auto;
   text-align: left;
   padding: 0px 5px;
 }
@@ -534,6 +536,10 @@ body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+
+  &.disabled {
+    background-color: grey;
+  }
 
   &.position1 {
     border-top: 2px solid black;

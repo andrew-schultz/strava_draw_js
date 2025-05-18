@@ -1,7 +1,7 @@
 export const calculateTextPlacement = (
     distance, elevationGain, pace, duration, avgPower, avgSpeed, workDone,
     distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, workDoneText,
-    ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid
+    ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout
 ) => {
     const keys = {
         showDistance: {
@@ -102,6 +102,26 @@ export const calculateTextPlacement = (
         // },
     };
 
+    // const onGrid = {
+    //     1: null,
+    //     2: null,
+    //     3: null,
+    //     4: null,
+    //     5: null,
+    //     6: null,
+    // }
+
+    // Object.keys(placementGrid).forEach((id) => {
+    //     if (placementGrid[id].val) {
+    //         keys[placementGrid[id].val.field].location = id;
+    //         onGrid[id] = keys[placementGrid[id].val.field];
+    //     }
+    // })
+    const onGrid = populateGrid(placementGrid, keys, layout)
+    return onGrid
+}
+
+const populateGrid = (placementGrid, keys, layout) => {
     const onGrid = {
         1: null,
         2: null,
@@ -110,13 +130,25 @@ export const calculateTextPlacement = (
         5: null,
         6: null,
     }
-
-    Object.keys(placementGrid).forEach((id) => {
-        if (placementGrid[id].val) {
-            keys[placementGrid[id].val.field].location = id;
-            onGrid[id] = keys[placementGrid[id].val.field];
-        }
-    })
+    
+    if (layout == 1) {
+        Object.keys(placementGrid).forEach((id) => {
+            if (placementGrid[id].val) {
+                keys[placementGrid[id].val.field].location = id;
+                onGrid[id] = keys[placementGrid[id].val.field];
+            }
+        })
+    }
+    else {
+        let currId = 1
+        Object.keys(placementGrid).forEach((id) => {
+            if (placementGrid[id].val) {
+                keys[placementGrid[id].val.field].location = currId;
+                onGrid[currId] = keys[placementGrid[id].val.field];
+                currId += 1
+            }
+        })
+    }
 
     return onGrid
 }
@@ -228,7 +260,8 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         // const workDoneTextWidth = ctx.measureText(workDoneText).width;
 
         // get matrix positions
-        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid);
+        const layout = 1
+        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout);
 
         Object.keys(textMatrix).forEach((key) => {
             const val = textMatrix[key]
@@ -370,7 +403,8 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         // const workDoneTextWidth = ctx.measureText(workDoneText).width;
 
         // get matrix positions
-        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid);
+        const layout = 2
+        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout);
         
         let count = 0;
         Object.keys(textMatrix).forEach((key) => {
