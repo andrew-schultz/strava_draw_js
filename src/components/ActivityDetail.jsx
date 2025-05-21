@@ -32,6 +32,7 @@ const ActivityDetail = ({activity, setActivity, }) => {
     
     useEffect(() =>  {
         setLoading(true)
+       
         const handleGetActivityStreams = async () => {
             const activityStreams = await getApiActivityStreams(apiToken, activity['external_id'], 'altitude')
             const localActivityStreams = {}
@@ -41,7 +42,18 @@ const ActivityDetail = ({activity, setActivity, }) => {
             setActivityStreams(localActivityStreams)
             setLoading(false)
         }
-        handleGetActivityStreams()
+
+        if (activity.activity_streams && activity.activity_streams.length > 0) {
+            const localActivityStreams = {}
+            activity.activity_streams.forEach(stream => {
+                localActivityStreams[stream['stream_type']] = stream
+            });
+            setActivityStreams(localActivityStreams)
+            setLoading(false)
+        } else {
+            handleGetActivityStreams()
+        }
+
         if (activity.polyline) {
             let polylines = activity.polyline;
             let decoded_polylines = polyline.decode(polylines);
