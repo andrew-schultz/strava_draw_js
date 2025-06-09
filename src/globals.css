@@ -80,6 +80,10 @@ body {
   display: flex;
   align-items: center;
   overflow-y: hidden !important;
+
+  &.main {
+      justify-content: center;
+  }
 }
 
 .titleBox {
@@ -912,6 +916,12 @@ body {
     &.home {
 
     }
+}
+
+.spinnerContainerOuter {
+  &.active {
+    width: 100%;
+  }
 }
 
 .spinnerSubContainer {

@@ -27,11 +27,13 @@ const TextInput = ({
                     <p className='loginInputLabelP'>{labelText}</p>
                 </div>
                 <input className='loginInput' placeholder={placeholderOption} name={nameOption} type={typeOption} onChange={localHandleSetPassword}></input>
-                {showFieldError ? ( 
+            </div>
+            {
+                showFieldError ? ( 
                 <div className='loginInputError'>
                     <p className='formInputError'>{fieldError}</p>
-                </div>) : null}
-            </div>
+                </div>) : null
+            }
         </div>
     )
 }

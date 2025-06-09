@@ -1,6 +1,6 @@
 const Spinner = ({loading, setLoading, typeOption, optionText=null}) => {
     return (
-        <div>
+        <div className={`spinnerContainerOuter ${loading ? 'active' : null}`}>
             { loading ? (
             <div className={`spinnerContainer ${typeOption}`}>
                 <div className='spinnerSubContainer'>

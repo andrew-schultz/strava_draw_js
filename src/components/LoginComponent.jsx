@@ -30,6 +30,7 @@ const LoginComponent = ({loading, setLoading, setOptionText, code, scope}) => {
 
     const handleLogin = async (e) => {
         setLoading(true)
+        setOptionText('')
         setShowEmailError(false)
         setShowPasswordError(false)
         setErrorMessage(null)
