@@ -93,6 +93,14 @@ const onListBase = {
         position: null,
         displayName: 'Work Done',
     },
+    'showWeightedPower': {
+        name: 'showWeightedPower',
+        on: false,
+        field: 'showWeightedPower',
+        dataId: 8,
+        position: null,
+        displayName: 'Weighted Power',
+    },
 }
 
 
@@ -118,6 +126,7 @@ export const TextGridProvider = ({ children }) => {
     const [showText, setShowText] = useState(true);
     const [rawShowText, setRawShowText] = useState('2');
     const [useMiles, setUseMiles] = useState(true);
+    const [showWeightedPower, setShowWeightedPower] = useState(false)
 
     useEffect(() => {
         setMounted(true);
@@ -150,6 +159,11 @@ export const TextGridProvider = ({ children }) => {
     useEffect(() => {
         onChangeOptionAssign('showWorkDone', showWorkDone);
     }, [showWorkDone])
+
+    useEffect(() => {
+        onChangeOptionAssign('showWeightedPower', showWeightedPower);
+    }, [showWeightedPower])
+
 
     const handleSetColor = (e) => {
         const rawVal = e.target.value;
@@ -271,6 +285,7 @@ export const TextGridProvider = ({ children }) => {
         showText,
         rawShowText,
         useMiles,
+        showWeightedPower,
         setGrid,
         setOnList,
         resetGrid,
@@ -290,6 +305,7 @@ export const TextGridProvider = ({ children }) => {
         handleShowText,
         setLineColor,
         setUseMiles,
+        setShowWeightedPower,
     };
 
     if (!mounted) {

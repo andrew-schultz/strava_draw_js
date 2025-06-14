@@ -1,7 +1,7 @@
 export const calculateTextPlacement = (
-    distance, elevationGain, pace, duration, avgPower, avgSpeed, workDone,
-    distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, workDoneText,
-    ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout
+    distance, elevationGain, pace, duration, avgPower, avgSpeed, workDone, weightedPower,
+    distanceText, totalElevationText, paceText, durationText, avgPowerText, avgSpeedText, workDoneText, weightedPowerText,
+    ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, layout
 ) => {
     const keys = {
         showDistance: {
@@ -88,18 +88,18 @@ export const calculateTextPlacement = (
             textWidth: ctx.measureText(workDoneText).width,
             textHeight: ctx.measureText(workDoneText).fontBoundingBoxDescent,
         },
-        // showWeightedAvgPower: {
-        //     name: 'weighted_avg_power', 
-        //     isOn: showWeightedAvgPower,
-        //     location: null,
-        //     val: weightedAvgPower,
-        //     labelTextSize: 'med',
-        //     valWidth: ctx.measureText(weightedAvgPower).width,
-        //     valHeight: ctx.measureText(weightedAvgPower).fontBoundingBoxDescent,
-        //     text: weightedAvgPowerText,
-        //     textWidth: ctx.measureText(weightedAvgPowerText).width,
-        //     textHeight: ctx.measureText(weightedAvgPowerText).fontBoundingBoxDescent,
-        // },
+        showWeightedPower: {
+            name: 'weighted_avg_power', 
+            isOn: showWeightedPower,
+            location: null,
+            val: weightedPower,
+            labelTextSize: 'med',
+            valWidth: ctx.measureText(weightedPower).width,
+            valHeight: ctx.measureText(weightedPower).fontBoundingBoxDescent,
+            text: weightedPowerText,
+            textWidth: ctx.measureText(weightedPowerText).width,
+            textHeight: ctx.measureText(weightedPowerText).fontBoundingBoxDescent,
+        },
     };
 
     // const onGrid = {
@@ -186,7 +186,7 @@ const getLabelFontSizeCalc = (size, vSize, textAreaSize) => {
     }
 }
 
-export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles) => {
+export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, useMiles) => {
     await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
@@ -249,6 +249,11 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         const avgPowerText = 'Avg Power';
         // const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
+        // weighted power
+        const weightedPower = getWeightedPower(activity);
+        const weightedPowerText = 'W Avg Pwr';
+        // const weightedPowerText = 'Weighted Power';
+
         // avg speed
         const avgSpeed = getAvgSpeed(activity, useMiles);
         const avgSpeedText = 'Avg Speed';
@@ -261,7 +266,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
 
         // get matrix positions
         const layout = 1
-        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout);
+        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, weightedPower, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, weightedPowerText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, layout);
 
         Object.keys(textMatrix).forEach((key) => {
             const val = textMatrix[key]
@@ -327,7 +332,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
     });
 }
 
-export const generateText2 = async (xModifier, yModifier, canvas, lineColor, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles) => {
+export const generateText2 = async (xModifier, yModifier, canvas, lineColor, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, useMiles) => {
     await findLowestPixel(lineColor, canvas).then((lowestPixel) => {
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
@@ -392,6 +397,11 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
         const avgPowerText = 'Avg Power';
         // const avgPowerTextWidth = ctx.measureText(avgPowerText).width;
 
+        // weighted power
+        const weightedPower = getWeightedPower(activity);
+        const weightedPowerText = 'W Avg Pwr';
+        // const weightedPowerText = 'Weighted Power';
+
         // avg speed
         const avgSpeed = getAvgSpeed(activity, useMiles);
         const avgSpeedText = 'Avg Speed';
@@ -404,7 +414,7 @@ export const generateText2 = async (xModifier, yModifier, canvas, lineColor, map
 
         // get matrix positions
         const layout = 2
-        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, layout);
+        const textMatrix = calculateTextPlacement(distance, totalElevation, pace, movingTime, avgPower, avgSpeed, workDone, weightedPower, distanceText, totalElevationText, paceText, movingTimeText, avgPowerText, avgSpeedText, workDoneText, weightedPowerText, ctx, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, layout);
         
         let count = 0;
         Object.keys(textMatrix).forEach((key) => {
@@ -521,6 +531,10 @@ export const getPaceTime = (rawPace) => {
 
 export const getAvgPower = (activity) => {
     return `${Math.round(activity.avg_watts)} w`;
+}
+
+export const getWeightedPower = (activity) => {
+    return `${Math.round(activity.weighted_average_watts)} w`;
 }
 
 export const getAvgSpeed = (activity, useMiles=true) => {

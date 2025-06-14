@@ -27,6 +27,7 @@ const MapComponent = ({
         showAvgPower,
         showAvgSpeed,
         showWorkDone,
+        showWeightedPower,
         lineColor,
         showText,
         useMiles,
@@ -171,7 +172,7 @@ const MapComponent = ({
                 ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
             }
 
-            await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, placementGrid, useMiles).then(() => {
+            await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, useMiles).then(() => {
                 genImage(canvas);
             });
         }

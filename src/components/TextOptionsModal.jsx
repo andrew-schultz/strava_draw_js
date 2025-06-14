@@ -34,6 +34,8 @@ const TextOptionsModal = ({
         setLineColor,
         useMiles,
         setUseMiles,
+        showWeightedPower,
+        setShowWeightedPower,
     } = useTextGridProvider();
 
     const {
@@ -281,6 +283,22 @@ const TextOptionsModal = ({
                                                 className={`textOptionInputActual slider ${showWorkDone ? ('on') : ('off')}`} 
                                                 id={`${'workDone'}Selector`} 
                                                 onChange={(e) => setShowWorkDone(e.target.value == '1' ? false : true)}
+                                            ></input>
+                                        </div>
+                                    </div>
+                                    <div className="slidersContainerTextOptionInnerGrid" id="dragOptionWeightedPower"  key={`weightedPowerSliderContainer1`}>
+                                        <div className="textOptionLabelGrid">
+                                            <p className='active'>{'Weighted Power'}</p>
+                                        </div>
+                                        <div className="textOptionInputGrid">
+                                            <input 
+                                                type="range"
+                                                min="1"
+                                                max="2"
+                                                value={showWeightedPower ? '2' : '1'}
+                                                className={`textOptionInputActual slider ${showWeightedPower ? ('on') : ('off')}`}
+                                                id={`${'weightedPower'}Selector`} 
+                                                onChange={(e) => setShowWeightedPower(e.target.value == '1' ? false : true)}
                                             ></input>
                                         </div>
                                     </div>

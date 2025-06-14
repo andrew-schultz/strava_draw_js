@@ -34,6 +34,7 @@ const MapComponent2 = ({
         showAvgPower,
         showAvgSpeed,
         showWorkDone,
+        showWeightedPower,
         lineColor,
         showText,
         useMiles,
@@ -259,6 +260,7 @@ const MapComponent2 = ({
                     showAvgPower, 
                     showAvgSpeed, 
                     showWorkDone, 
+                    showWeightedPower,
                     placementGrid,
                     useMiles,
                 ).then(() => {
