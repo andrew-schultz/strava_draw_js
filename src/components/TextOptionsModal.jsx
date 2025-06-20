@@ -36,6 +36,8 @@ const TextOptionsModal = ({
         setUseMiles,
         showWeightedPower,
         setShowWeightedPower,
+        showMap,
+        setShowMap
     } = useTextGridProvider();
 
     const {
@@ -88,23 +90,44 @@ const TextOptionsModal = ({
                                     {/* <p>Options</p> */}
                                 </div>
                                 <div className='sliderContainerRow'>
-                                    <div className="slidersContainerTextOptionInnerGrid" key={`layoutSliderContainer1`}>
-                                        <div className="textOptionLabelGrid">
-                                            <p>{'Layout'}</p>
+                                    <div className='sliderContainerRowItem'>
+                                        <div className="slidersContainerTextOptionInnerGrid" key={`layoutSliderContainer1`}>
+                                            <div className="textOptionLabelGrid">
+                                                <p>{'Layout'}</p>
+                                            </div>
+                                            <div className="textOptionInputGrid">
+                                                <input 
+                                                    type="range" 
+                                                    min="1" 
+                                                    max="2" 
+                                                    value={localLayout} 
+                                                    className={`textOptionInputActual slider ${localLayout == '2' ? ('on') : ('off')}`} 
+                                                    id="lineColorSelector" 
+                                                    onChange={(e) => handleSetLayout(e.target.value)}
+                                                ></input>
+                                            </div>
                                         </div>
-                                        <div className="textOptionInputGrid">
-                                            <input 
-                                                type="range" 
-                                                min="1" 
-                                                max="2" 
-                                                value={localLayout} 
-                                                className={`textOptionInputActual slider ${localLayout == '2' ? ('on') : ('off')}`} 
-                                                id="lineColorSelector" 
-                                                onChange={(e) => handleSetLayout(e.target.value)}
-                                            ></input>
+                                    </div>
+                                    <div className='sliderContainerRowItem'>
+                                        <div className="slidersContainerTextOptionInnerGrid" key={`showMapSliderContainer1`}>
+                                            <div className="textOptionLabelGrid">
+                                                <p>{'Show Map'}</p>
+                                            </div>
+                                            <div className="textOptionInputGrid">
+                                                <input 
+                                                    type="range"
+                                                    min="1"
+                                                    max="2"
+                                                    value={showMap ? '2' : '1'}
+                                                    className={`textOptionInputActual slider ${showMap ? ('on') : ('off')}`} 
+                                                    id={`${'showMap'}Selector`} 
+                                                    onChange={(e) => setShowMap(e.target.value == '1' ? false : true)}
+                                                ></input>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 {/* <div className="slidersContainerTextOptionInner" key={`showTextSliderContainer1`}>
                                     <div className="textOptionLabel">
                                         <p>{'Show Text'}</p>

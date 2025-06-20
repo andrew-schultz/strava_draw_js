@@ -191,6 +191,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         const ctx = canvas.getContext("2d");
         ctx.font = "bold 16pt Arial";
         ctx.fillStyle = lineColor;
+        ctx.globalAlpha = 1.0
 
         // get width/height of map canvas
         let dimensions = mapRef.current.getSize();
@@ -199,7 +200,7 @@ export const generateText = async (bounds, canvas, lineColor, hadToAdjust, mapRe
         }
 
         // get canvas width / 3
-        let centerY = (lowestPixel / 2);
+        let centerY = (lowestPixel / 2) - 25;
         let third = (dimensions.x) / 3;
 
         if (hadToAdjust) {

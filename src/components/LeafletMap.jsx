@@ -6,6 +6,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 
 import { useEffect, useState, useRef } from 'react';
+import leafletImage from "../services/leafletImage";
 import Spinner from "./Spinner";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -31,8 +32,9 @@ const MapComponent = ({
         lineColor,
         showText,
         useMiles,
+        showMap,
     } = useTextGridProvider();
-
+    let tLayer
     const mapRef = useRef(null);
     const infoDiv = document.getElementById('ActivityListItemDetailTextContainer');
     const mapHeight = window.innerHeight - infoDiv.offsetHeight;
@@ -88,6 +90,27 @@ const MapComponent = ({
             mapRef.current.dragging.disable();
         }
 
+        if (showMap) {
+            // tLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}', {opacity: 0.25}).addTo(mapRef.current)
+            // tLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {opacity: 0.25}).addTo(mapRef.current)
+            // tLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            // tLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            // tLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {opacity: 0.25}).addTo(mapRef.current)
+            tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            // if (lineColor == 'black') {
+                // tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            // }
+            // else {
+                // tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+            // }
+        }
+        // if (lineColor == 'black') {
+            // tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+        // }
+        // else {
+            // tLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {opacity: 0.25}).addTo(mapRef.current)
+        // }
+
         setLoading(true);
         
         var polyline = new L.Polyline(polylines, {
@@ -97,7 +120,7 @@ const MapComponent = ({
         });
 
         polyline.addTo(mapRef.current);
-        const initialPolylineBounds = polyline.getBounds();
+        const initialPolylineBounds = polyline.getBounds().pad(0.25);;
         let polylineBounds = initialPolylineBounds;
         // calc how close the north and south lat's are, if within a threshold then do not adjust bounds
         const northSouthDiff = initialPolylineBounds._northEast.lat - initialPolylineBounds._southWest.lat;
@@ -106,78 +129,163 @@ const MapComponent = ({
         //      should adjust if going off the page    
 
         if (northSouthDiff > 0.06) {
-            let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
-            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.025, adjustedPolylineBounds._northEast.lng);
-            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.025, adjustedPolylineBounds._southWest.lng);
+            // let adjustedPolylineBounds = initialPolylineBounds.pad(0.06);
+            let adjustedPolylineBounds = initialPolylineBounds
+            const corner1 = L.latLng(adjustedPolylineBounds._northEast.lat - 0.035, adjustedPolylineBounds._northEast.lng);
+            const corner2 =  L.latLng(adjustedPolylineBounds._southWest.lat - 0.035, adjustedPolylineBounds._southWest.lng);
             polylineBounds = L.latLngBounds(corner1, corner2);
         }
 
         mapRef.current.fitBounds(polylineBounds);
 
         const drawText = async (polylineBounds, canvas, lineColor) => {
-            const ctx = canvas.getContext('2d');
+            // const ctx = canvas.getContext('2d');
             
             // get the image data for exactly the map, returns top, left, right, and bottom pixels/coords
-            let bindingCoords = await findPixelBounds(lineColor, canvas);
+            // let bindingCoords = await findPixelBounds(lineColor, canvas);
             
             // getImageData(left x coord, top y coord, width, height)
-            let dimensions = mapRef.current.getSize();
+            // let dimensions = mapRef.current.getSize();
 
             // calculate binding width / height based on returned coords
-            const bindingWidth = bindingCoords.right - bindingCoords.left;
-            const bindingHeight = bindingCoords.last - bindingCoords.first;
+            // const bindingWidth = bindingCoords.right - bindingCoords.left;
+            // const bindingHeight = bindingCoords.last - bindingCoords.first;
 
             // get image data from map canvas
-            let mapImg = ctx.getImageData(bindingCoords.left, bindingCoords.first, bindingWidth, bindingHeight);
+            // let mapImg = ctx.getImageData(bindingCoords.left, bindingCoords.first, bindingWidth, bindingHeight);
 
             // clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // calculate / adjust width / size until both just fit within bounds
-            let justFitWidth = bindingWidth;
-            let justFitHeight = bindingHeight;
-            let justFitVar = 1.0;
+            // let justFitWidth = bindingWidth;
+            // let justFitHeight = bindingHeight;
+            // let justFitVar = 1.0;
 
-            console.log(dimensions.y, dimensions.y * 0.70)
-            while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.70)) {
-                justFitWidth = bindingWidth * justFitVar;
-                justFitHeight = bindingHeight * justFitVar;
-                justFitVar -= 0.05;
-                console.log(justFitVar, justFitHeight, justFitWidth)
-            }
+            // console.log(dimensions.y, dimensions.y * 0.70)
+            // while (justFitWidth > dimensions.x || justFitHeight > (dimensions.y * 0.70)) {
+            //     justFitWidth = bindingWidth * justFitVar;
+            //     justFitHeight = bindingHeight * justFitVar;
+            //     justFitVar -= 0.05;
+            //     console.log(justFitVar, justFitHeight, justFitWidth)
+            // }
 
-            // calculate width/height with aspect ratio
-            let newWidth = justFitWidth;
-            let newHeight = justFitHeight;
+            // // calculate width/height with aspect ratio
+            // let newWidth = justFitWidth;
+            // let newHeight = justFitHeight;
 
-            // create an offscreen canvas to draw/hold the image on
-            const offscreenCanvas = new OffscreenCanvas(bindingWidth, bindingHeight);
-            const offCtx = offscreenCanvas.getContext('2d');
+            // // create an offscreen canvas to draw/hold the image on
+            // const offscreenCanvas = new OffscreenCanvas(bindingWidth, bindingHeight);
+            // const offCtx = offscreenCanvas.getContext('2d');
             
             let hadToAdjust = false;
-            let widthDif = (dimensions.x - newWidth) / 2;
-            // let heightDif = (dimensions.y - newHeight) / 2
+            // let widthDif = (dimensions.x - newWidth) / 2;
+            // // let heightDif = (dimensions.y - newHeight) / 2
 
-            // redraw the image data to the offscreen canvas
-            // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
-            offCtx.putImageData(mapImg, 0, 0);
+            // // redraw the image data to the offscreen canvas
+            // // def putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+            // offCtx.putImageData(mapImg, 0, 0);
 
-            if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 0, justFitWidth, justFitHeight);
-            }
-            else if (hadToAdjust) {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 10, justFitWidth, justFitHeight);
-            }
-            else {
-                ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
-            }
+            // if (bindingWidth < dimensions.x && bindingHeight < dimensions.y) {
+            //     ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 0, justFitWidth, justFitHeight);
+            // }
+            // else if (hadToAdjust) {
+            //     ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, 10, justFitWidth, justFitHeight);
+            // }
+            // else {
+            //     ctx.drawImage(offscreenCanvas, 0, 0, bindingWidth, bindingHeight, widthDif, -30, justFitWidth, justFitHeight);
+            // }
 
             await generateText(polylineBounds, canvas, lineColor, hadToAdjust, mapRef, activity, showDistance, showElevGain, showPace, showDuration, showAvgPower, showAvgSpeed, showWorkDone, showWeightedPower, placementGrid, useMiles).then(() => {
                 genImage(canvas);
             });
         }
 
+        const removeBackground = async (c) => {
+            var ctx = c.getContext("2d")
+            var imgd = ctx.getImageData(0, 0, c.width, c.height),
+                pix = imgd.data,
+                newColor = {r:0, g:0, b:0, a:0},
+                lightColor = {r:245, g:245, b:245, a:1.0};
+
+            for (var i = 0, n = pix.length; i < n; i += 4) {
+                var r = pix[i],
+                    g = pix[i+1],
+                    b = pix[i+2];
+
+                // If its white then change it
+                // console.log(r, g, b)
+                // if (r < 221 && g < 221 && b < 221) { 
+                // if (r == 164 && g == 175 && b == 183) {
+                //     // Change the white to whatever.
+                //     pix[i] = 255;
+                //     pix[i+1] = 255;
+                //     pix[i+2] = 255;
+                // }
+                // if (r > 80 && r < 200 && g > 80 && g < 200 && b > 80 && b < 205) {
+                //     // Change the white to whatever.
+                //     pix[i] = 255;
+                //     pix[i+1] = 255;
+                //     pix[i+2] = 255;
+                // }
+
+                if (r <= 225 && g <= 225 && b <= 225) { 
+                    // Change the white to whatever.
+                    pix[i] = newColor.r;
+                    pix[i+1] = newColor.g;
+                    pix[i+2] = newColor.b;
+                    pix[i+3] = newColor.a;
+                }
+                else if (r > 240 && r < 245 && g > 240 && g < 245 && b > 240 && b < 245) {
+                    // console.log(r, g, b)
+                    pix[i] = newColor.r;
+                    pix[i+1] = newColor.g;
+                    pix[i+2] = newColor.b;
+                    pix[i+3] = newColor.a;
+                }
+                else if (r > 244 && r < 250 && g > 244 && g < 250 && b > 244 && b < 250) {
+                    // pix[i] = lightColor.r;
+                    // pix[i+1] = lightColor.g;
+                    // pix[i+2] = lightColor.b;
+                    // pix[i+3] = 0.9;
+                }
+
+                // if (r <= 180 && g <= 200 && b <= 225) { 
+
+                //     // Change the white to whatever.
+                //     pix[i] = newColor.r;
+                //     pix[i+1] = newColor.g;
+                //     pix[i+2] = newColor.b;
+                //     pix[i+3] = newColor.a;
+                // }
+            }
+            ctx.putImageData(imgd, 0, 0);
+
+            return c
+        }
+
         const genImage = (canvas) => {
+            leafletImage(mapRef.current, async (err, canvas)  => {
+                // now you have canvas
+                // example thing to do with that canvas:
+                
+                var img = document.createElement('img');
+                var dimensions = mapRef.current.getSize();
+                img.width = dimensions.x;
+                img.height = dimensions.y;
+
+                var cleanCanvas = await removeBackground(canvas)
+                // debugger
+                img.src = await cleanCanvas.toDataURL();
+                // debugger
+                const limages = document.getElementById('limages')
+                if (limages) {
+                    limages.innerHTML = '';
+                    limages.appendChild(img);
+                }
+     
+            });
+
             setTimeout(() => {
                 let dimensions = mapRef.current.getSize();
                 let map = document.getElementById('map');
@@ -190,16 +298,16 @@ const MapComponent = ({
                     return
                 }
                 // Create an image element
-                const img = new Image();
-                img.width = dimensions.x;
-                img.height = dimensions.y;
-                img.id = 'genImage';
-                document.getElementById('images').innerHTML = '';
-                document.getElementById('images').appendChild(img);
-                img.src = dataURL;
+                // const img = new Image();
+                // img.width = dimensions.x;
+                // img.height = dimensions.y;
+                // img.id = 'genImage';
+                // document.getElementById('images').innerHTML = '';
+                // document.getElementById('images').appendChild(img);
+                // img.src = dataURL;
                                 
-                paintBackground(canvas.width, canvas.height);
-                polyline.removeFrom(mapRef.current);
+                // paintBackground(canvas.width, canvas.height);
+                // polyline.removeFrom(mapRef.current);
     
                 setTimeout(() => {
                     var map = document.getElementById('map');
@@ -231,6 +339,7 @@ const MapComponent = ({
     return (
         <div>
             <Spinner loading={loading} setLoading={setLoading} typeOption={'map'}></Spinner>
+            <div id="limages"></div>
             <div id="images"></div>
             <div id="map" style={{ height: `${mapHeight}px` }} />
         </div>

@@ -127,6 +127,7 @@ export const TextGridProvider = ({ children }) => {
     const [rawShowText, setRawShowText] = useState('2');
     const [useMiles, setUseMiles] = useState(true);
     const [showWeightedPower, setShowWeightedPower] = useState(false)
+    const [showMap, setShowMap] = useState(false)
 
     useEffect(() => {
         setMounted(true);
@@ -286,6 +287,7 @@ export const TextGridProvider = ({ children }) => {
         rawShowText,
         useMiles,
         showWeightedPower,
+        showMap,
         setGrid,
         setOnList,
         resetGrid,
@@ -306,6 +308,7 @@ export const TextGridProvider = ({ children }) => {
         setLineColor,
         setUseMiles,
         setShowWeightedPower,
+        setShowMap,
     };
 
     if (!mounted) {
